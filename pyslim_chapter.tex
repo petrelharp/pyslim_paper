@@ -17,16 +17,16 @@
 \usepackage{floatrow}
 
 % local definitions
-%\newcommand{\msprime}[0]{\texttt{msprime}\xspace}
-%\newcommand{\tskit}[0]{\texttt{tskit}\xspace}
-%\newcommand{\slim}[0]{\texttt{SLiM}\xspace}
-%\newcommand{\pyslim}[0]{\texttt{pyslim}\xspace}
-%\newcommand{\allel}[0]{\texttt{scikit-allel}\xspace}
-%\newcommand*{\eg}{e.g.\xcomma}
-%\newcommand*{\ie}{i.e.\xcomma}
+\newcommand{\msprime}[0]{\texttt{msprime}\xspace}
+\newcommand{\tskit}[0]{\texttt{tskit}\xspace}
+\newcommand{\slim}[0]{\texttt{SLiM}\xspace}
+\newcommand{\pyslim}[0]{\texttt{pyslim}\xspace}
+\newcommand{\allel}[0]{\texttt{scikit-allel}\xspace}
+\newcommand*{\eg}{e.g.\xcomma}
+\newcommand*{\ie}{i.e.\xcomma}
 
 
-%m\linenumbers
+%\linenumbers
 
 \begin{document}
 
@@ -50,6 +50,19 @@ Lorem ipsum
 \date{}
 
 \section*{Introduction}
-Lorem ipsum
+% The importance of simulations in popgen and flavors of simulations
+Because of the difficulty in obtaining analytical solutions to complex evolutionary scenarios, simulations have been an invaluable tool in population genetics for the past six decades.
+The coalescent process, which models the ancestry of sampled genomes, is perhaps the most common framework for population genetic simulation because of its efficiency: it bypasses the need to represent entire populations in memory and the sampling of gametes every generation.
+Despite its efficiency, the coalescent has strict assumptions (\eg neutrality) which limits applicability.
+Forward-in-time simulations are much more flexible, but they come with a high computational cost.
+Advancements both in computational power and software development have made these simulations much more accessible and popular.
+
+% The tree sequence and its utility in bridging forward-in-time and coalescent simulations
+A key development that has decreased the computational cost of both coalescent and forward-in-time simulations is the tree sequence, a data structure that concisely encodes correlated genealogies along the genome.
+In the context of forward-in-time simulations, the recording of tree sequences increases efficiency because it allows for (i) the omission of neutral mutations during the simulation process and (ii) the use of fast coalescent as a neutral "burn-in" phase, such that the forward simulation can begin with an equilibrium level of genetic diversity.
+
+% The pyslim package and overview of the chapter
+Here, we present \texttt{pyslim}, a Python package for reading and modifying \tskit tree sequences produced by the popular coalescent and forward-in-time simulation tools such as \texttt{SLiM} and \texttt{msprime}.
+
 
 \end{document}
