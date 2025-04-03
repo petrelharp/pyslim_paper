@@ -31,15 +31,15 @@
 \begin{document}
 
 \title{Bridging forward-in-time and coalescent simulations using pyslim}
-\author[1,2]{Peter L. Ralph}
-\author[3]{Murillo F. Rodrigues}
-\author[4]{Shyamalika Gopalan}
+\author[1]{Shyamalika Gopalan}
+\author[2,3]{Murillo F. Rodrigues}
+\author[3,4]{Peter L. Ralph}
 %\author[5]{Ben Haller}
 
-\affil[1]{Department of Biology and Institute of Ecology and Evolution, University of Oregon}
-\affil[2]{Department of Mathematics, University of Oregon}
-\affil[3]{Division of Genetics, Oregon National Primate Center, Oregon Health \& Science University}
-\affil[4]{Department of Genetics and Biochemistry and Center for Human Genetics, Clemson University}
+\affil[1]{Department of Genetics and Biochemistry and Center for Human Genetics, Clemson University}
+\affil[2]{Division of Genetics, Oregon National Primate Center, Oregon Health \& Science University}
+\affil[3]{Department of Biology and Institute of Ecology and Evolution, University of Oregon}
+\affil[4]{Department of Mathematics, University of Oregon}
 %\affil[5]{Department of Computational Biology, Cornell University}
 
 \maketitle
@@ -51,18 +51,38 @@ Lorem ipsum
 
 \section*{Introduction}
 % The importance of simulations in popgen and flavors of simulations
-Because of the difficulty in obtaining analytical solutions to complex evolutionary scenarios, simulations have been an invaluable tool in population genetics for the past six decades.
-The coalescent process, which models the ancestry of sampled genomes, is perhaps the most common framework for population genetic simulation because of its efficiency: it bypasses the need to represent entire populations in memory and the sampling of gametes every generation.
+Simulations have been an invaluable tool in population genetics for the past six decades.
+%because of the difficulty in obtaining analytical solutions to complex evolutionary scenarios.
+The two main strategies for population genetic simulation differ in the direction of the process: forward or backward-in-time.
+The coalescent process models the ancestry of sampled genomes back in time until they coalesce into one most common recent ancestor (MRCA).
+It is perhaps the most common framework for population genetic simulation because of its efficiency:
+it bypasses the need to represent entire populations in memory and the sampling of gametes every generation.
 Despite its efficiency, the coalescent has strict assumptions (\eg neutrality) which limits applicability.
-Forward-in-time simulations are much more flexible, but they come with a high computational cost.
-Advancements both in computational power and software development have made these simulations much more accessible and popular.
+Forward-in-time simulations starts with actual individuals and applies evolutionary rules (\eg mutation, recombination, selection) over generations until a certain criterion is met.
+Thus, forward-in-time simulations are much more flexible, but they come with a high computational cost.
 
 % The tree sequence and its utility in bridging forward-in-time and coalescent simulations
-A key development that has decreased the computational cost of both coalescent and forward-in-time simulations is the tree sequence, a data structure that concisely encodes correlated genealogies along the genome.
-In the context of forward-in-time simulations, the recording of tree sequences increases efficiency because it allows for (i) the omission of neutral mutations during the simulation process and (ii) the use of fast coalescent as a neutral "burn-in" phase, such that the forward simulation can begin with an equilibrium level of genetic diversity.
+Recent advancements both in computational power and software development have made simulations much more accessible and popular.
+A key development that has decreased the computational cost of simulations is the tree sequence,
+a data structure that concisely encodes correlated genealogies along the genome.
+In the context of forward-in-time simulations,
+the recording of tree sequences increases efficiency because it allows for
+(i) the omission of neutral mutations during the simulation process, and
+(ii) the use of fast coalescent as a neutral "burn-in" phase,
+such that the forward simulation can begin with an equilibrium level of genetic diversity.
+Further, using tree sequences it is possible to bridge forward and backwards methods, 
+for example by using the coalescent to ensure all lineages coalesce into a single common ancestor (a process called \"recapitation\").
 
 % The pyslim package and overview of the chapter
-Here, we present \texttt{pyslim}, a Python package for reading and modifying \tskit tree sequences produced by the popular coalescent and forward-in-time simulation tools such as \texttt{SLiM} and \texttt{msprime}.
+Here, we present \pyslim, a Python package for reading and modifying \tskit tree sequences produced by
+the popular coalescent and forward-in-time simulation tools such as \slim and \msprime.
+\pyslim provides a way to perform \"hybrid\" simulations, combining both forwards and backwards (coalescent) methods.
+We will describe the main uses of \pyslim: (i) recapitation, which is the process of filling in the history of the first-generation individuals which have not coalesced, (ii) generation of initial diversity for forward-in-time simulations, (iii) parallelization of multi-species simulations, and (iv) complex simulation of alternating life cycles.
 
+\section*{Parallelizing forward-in-time simulations of multiple species}
+
+Any two branches stemming from the same node in a species tree are independent from each other and thus can be simulated in parallel (assuming no migration between the species).
+For example, in the phylogeny depicted in CITE, branches of the same color can be simulated in parallel.
+To do so, we will need to (i) simulate the history of each branch and (ii) join the resulting simulations together onto one multi-species history.
 
 \end{document}
