@@ -1,0 +1,14 @@
+name: pyslim
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - jupyterlab
+  - ipykernel
+  - pandas
+  - numpy
+  - matplotlib
+  - msprime
+  - pyslim
+  - slim
+  - tskit
