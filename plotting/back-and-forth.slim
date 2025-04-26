@@ -1,0 +1,25 @@
+initialize() {
+	initializeTreeSeq();
+	initializeMutationRate(1e-2);
+	// phenotype-causing mutation - technically neutral, but will be used to determine reproduction/transmission probabilities
+	initializeMutationType("m1", 0, "f", 0);
+	// back-mutation - reverts back to ancestral state
+	initializeMutationType("m2", 0, "f", 0);
+	c(m1,m2).convertToSubstitution = F;
+	// enforce mutually exclusive replacement for derived/ancestral mutations
+	c(m1,m2).mutationStackGroup = 1;
+	c(m1,m2).mutationStackPolicy = 'l';	
+	initializeGenomicElementType("g1", c(m1, m2), c(1.0, 1.0));
+	
+	// uniform chromosome of length 100 kb with uniform recombination
+	initializeGenomicElement(g1, 0, 1);
+	initializeRecombinationRate(0);
+	setSeed(2134);
+}
+
+// create a population of 500 individuals
+1 early() {
+	sim.addSubpop("p1", 50);
+}
+
+200 late() { sim.treeSeqOutput("out.trees"); }
