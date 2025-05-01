@@ -1,0 +1,909 @@
+rule all:
+	input:
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf77_H120_on_inf_day_18_on_overall_day_445.ts",
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf78_H121_on_inf_day_12_on_overall_day_417.ts",
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf79_H122_on_inf_day_26_on_overall_day_426.ts",
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf80_H123_on_inf_day_29_on_overall_day_451.ts",
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf81_H124_on_inf_day_23_on_overall_day_445.ts"
+
+rule inf0:
+	input:
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim"
+	output:
+		temporary("/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf0_seed_on_inf_day_21_on_overall_day_21.ts")
+	shell:
+		"""
+			/home/shyamag/.conda/envs/slim-env/bin/slim -l 0 -seed 59879 -d "INF_ID='inf0'" -d "INFILE='NULL'" -d "INPUT_HOST_ID='seed'" -d "OUTPUT_HOST_IDS='H1;H2;H3'" -d "TRANSMISSION_DAY=21" -d "OUTPUT_DIR='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/'" -d "N_FOUNDERS=20" -d "REPRODUCTION_BENEFIT=1" -d "TRANSMISSION_BENEFIT=1" /data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim
+		"""
+
+rule inf1:
+	input:
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim",
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf0_seed_on_inf_day_21_on_overall_day_21.ts"
+	output:
+		temporary("/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf1_H1_on_inf_day_20_on_overall_day_41.ts")
+	shell:
+		"""
+			/home/shyamag/.conda/envs/slim-env/bin/slim -l 0 -seed 96128 -d "INF_ID='inf1'" -d "INFILE='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf0_seed_on_inf_day_21_on_overall_day_21.ts'" -d "INPUT_HOST_ID='H1'" -d "OUTPUT_HOST_IDS='H4;H5;H6'" -d "TRANSMISSION_DAY=20" -d "OUTPUT_DIR='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/'" -d "N_FOUNDERS=20" -d "REPRODUCTION_BENEFIT=1" -d "TRANSMISSION_BENEFIT=1" /data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim
+		"""
+
+rule inf2:
+	input:
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim",
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf0_seed_on_inf_day_21_on_overall_day_21.ts"
+	output:
+		temporary("/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf2_H3_on_inf_day_26_on_overall_day_47.ts")
+	shell:
+		"""
+			/home/shyamag/.conda/envs/slim-env/bin/slim -l 0 -seed 91546 -d "INF_ID='inf2'" -d "INFILE='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf0_seed_on_inf_day_21_on_overall_day_21.ts'" -d "INPUT_HOST_ID='H3'" -d "OUTPUT_HOST_IDS='H7;H8'" -d "TRANSMISSION_DAY=26" -d "OUTPUT_DIR='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/'" -d "N_FOUNDERS=20" -d "REPRODUCTION_BENEFIT=1" -d "TRANSMISSION_BENEFIT=1" /data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim
+		"""
+
+rule inf3:
+	input:
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim",
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf1_H1_on_inf_day_20_on_overall_day_41.ts"
+	output:
+		temporary("/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf3_H4_on_inf_day_25_on_overall_day_66.ts")
+	shell:
+		"""
+			/home/shyamag/.conda/envs/slim-env/bin/slim -l 0 -seed 33958 -d "INF_ID='inf3'" -d "INFILE='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf1_H1_on_inf_day_20_on_overall_day_41.ts'" -d "INPUT_HOST_ID='H4'" -d "OUTPUT_HOST_IDS='H9;H10'" -d "TRANSMISSION_DAY=25" -d "OUTPUT_DIR='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/'" -d "N_FOUNDERS=20" -d "REPRODUCTION_BENEFIT=1" -d "TRANSMISSION_BENEFIT=1" /data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim
+		"""
+
+rule inf4:
+	input:
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim",
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf1_H1_on_inf_day_20_on_overall_day_41.ts"
+	output:
+		temporary("/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf4_H5_on_inf_day_16_on_overall_day_57.ts")
+	shell:
+		"""
+			/home/shyamag/.conda/envs/slim-env/bin/slim -l 0 -seed 81253 -d "INF_ID='inf4'" -d "INFILE='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf1_H1_on_inf_day_20_on_overall_day_41.ts'" -d "INPUT_HOST_ID='H5'" -d "OUTPUT_HOST_IDS='H11'" -d "TRANSMISSION_DAY=16" -d "OUTPUT_DIR='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/'" -d "N_FOUNDERS=20" -d "REPRODUCTION_BENEFIT=1" -d "TRANSMISSION_BENEFIT=1" /data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim
+		"""
+
+rule inf5:
+	input:
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim",
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf2_H3_on_inf_day_26_on_overall_day_47.ts"
+	output:
+		temporary("/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf5_H8_on_inf_day_23_on_overall_day_70.ts")
+	shell:
+		"""
+			/home/shyamag/.conda/envs/slim-env/bin/slim -l 0 -seed 93118 -d "INF_ID='inf5'" -d "INFILE='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf2_H3_on_inf_day_26_on_overall_day_47.ts'" -d "INPUT_HOST_ID='H8'" -d "OUTPUT_HOST_IDS='H12'" -d "TRANSMISSION_DAY=23" -d "OUTPUT_DIR='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/'" -d "N_FOUNDERS=20" -d "REPRODUCTION_BENEFIT=1" -d "TRANSMISSION_BENEFIT=1" /data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim
+		"""
+
+rule inf6:
+	input:
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim",
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf3_H4_on_inf_day_25_on_overall_day_66.ts"
+	output:
+		temporary("/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf6_H10_on_inf_day_20_on_overall_day_86.ts")
+	shell:
+		"""
+			/home/shyamag/.conda/envs/slim-env/bin/slim -l 0 -seed 91665 -d "INF_ID='inf6'" -d "INFILE='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf3_H4_on_inf_day_25_on_overall_day_66.ts'" -d "INPUT_HOST_ID='H10'" -d "OUTPUT_HOST_IDS='H13;H14;H15'" -d "TRANSMISSION_DAY=20" -d "OUTPUT_DIR='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/'" -d "N_FOUNDERS=20" -d "REPRODUCTION_BENEFIT=1" -d "TRANSMISSION_BENEFIT=1" /data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim
+		"""
+
+rule inf7:
+	input:
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim",
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf4_H5_on_inf_day_16_on_overall_day_57.ts"
+	output:
+		temporary("/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf7_H11_on_inf_day_14_on_overall_day_71.ts")
+	shell:
+		"""
+			/home/shyamag/.conda/envs/slim-env/bin/slim -l 0 -seed 21221 -d "INF_ID='inf7'" -d "INFILE='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf4_H5_on_inf_day_16_on_overall_day_57.ts'" -d "INPUT_HOST_ID='H11'" -d "OUTPUT_HOST_IDS='H16'" -d "TRANSMISSION_DAY=14" -d "OUTPUT_DIR='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/'" -d "N_FOUNDERS=20" -d "REPRODUCTION_BENEFIT=1" -d "TRANSMISSION_BENEFIT=1" /data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim
+		"""
+
+rule inf8:
+	input:
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim",
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf5_H8_on_inf_day_23_on_overall_day_70.ts"
+	output:
+		temporary("/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf8_H12_on_inf_day_23_on_overall_day_93.ts")
+	shell:
+		"""
+			/home/shyamag/.conda/envs/slim-env/bin/slim -l 0 -seed 27667 -d "INF_ID='inf8'" -d "INFILE='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf5_H8_on_inf_day_23_on_overall_day_70.ts'" -d "INPUT_HOST_ID='H12'" -d "OUTPUT_HOST_IDS='H17'" -d "TRANSMISSION_DAY=23" -d "OUTPUT_DIR='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/'" -d "N_FOUNDERS=20" -d "REPRODUCTION_BENEFIT=1" -d "TRANSMISSION_BENEFIT=1" /data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim
+		"""
+
+rule inf9:
+	input:
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim",
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf6_H10_on_inf_day_20_on_overall_day_86.ts"
+	output:
+		temporary("/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf9_H14_on_inf_day_22_on_overall_day_108.ts")
+	shell:
+		"""
+			/home/shyamag/.conda/envs/slim-env/bin/slim -l 0 -seed 61706 -d "INF_ID='inf9'" -d "INFILE='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf6_H10_on_inf_day_20_on_overall_day_86.ts'" -d "INPUT_HOST_ID='H14'" -d "OUTPUT_HOST_IDS='H18;H19;H20;H21;H22'" -d "TRANSMISSION_DAY=22" -d "OUTPUT_DIR='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/'" -d "N_FOUNDERS=20" -d "REPRODUCTION_BENEFIT=1" -d "TRANSMISSION_BENEFIT=1" /data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim
+		"""
+
+rule inf10:
+	input:
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim",
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf6_H10_on_inf_day_20_on_overall_day_86.ts"
+	output:
+		temporary("/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf10_H15_on_inf_day_25_on_overall_day_111.ts")
+	shell:
+		"""
+			/home/shyamag/.conda/envs/slim-env/bin/slim -l 0 -seed 60187 -d "INF_ID='inf10'" -d "INFILE='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf6_H10_on_inf_day_20_on_overall_day_86.ts'" -d "INPUT_HOST_ID='H15'" -d "OUTPUT_HOST_IDS='H23'" -d "TRANSMISSION_DAY=25" -d "OUTPUT_DIR='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/'" -d "N_FOUNDERS=20" -d "REPRODUCTION_BENEFIT=1" -d "TRANSMISSION_BENEFIT=1" /data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim
+		"""
+
+rule inf11:
+	input:
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim",
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf8_H12_on_inf_day_23_on_overall_day_93.ts"
+	output:
+		temporary("/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf11_H17_on_inf_day_18_on_overall_day_111.ts")
+	shell:
+		"""
+			/home/shyamag/.conda/envs/slim-env/bin/slim -l 0 -seed 99654 -d "INF_ID='inf11'" -d "INFILE='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf8_H12_on_inf_day_23_on_overall_day_93.ts'" -d "INPUT_HOST_ID='H17'" -d "OUTPUT_HOST_IDS='H24'" -d "TRANSMISSION_DAY=18" -d "OUTPUT_DIR='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/'" -d "N_FOUNDERS=20" -d "REPRODUCTION_BENEFIT=1" -d "TRANSMISSION_BENEFIT=1" /data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim
+		"""
+
+rule inf12:
+	input:
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim",
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf9_H14_on_inf_day_22_on_overall_day_108.ts"
+	output:
+		temporary("/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf12_H19_on_inf_day_29_on_overall_day_137.ts")
+	shell:
+		"""
+			/home/shyamag/.conda/envs/slim-env/bin/slim -l 0 -seed 76905 -d "INF_ID='inf12'" -d "INFILE='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf9_H14_on_inf_day_22_on_overall_day_108.ts'" -d "INPUT_HOST_ID='H19'" -d "OUTPUT_HOST_IDS='H25;H26'" -d "TRANSMISSION_DAY=29" -d "OUTPUT_DIR='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/'" -d "N_FOUNDERS=20" -d "REPRODUCTION_BENEFIT=1" -d "TRANSMISSION_BENEFIT=1" /data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim
+		"""
+
+rule inf13:
+	input:
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim",
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf9_H14_on_inf_day_22_on_overall_day_108.ts"
+	output:
+		temporary("/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf13_H20_on_inf_day_19_on_overall_day_127.ts")
+	shell:
+		"""
+			/home/shyamag/.conda/envs/slim-env/bin/slim -l 0 -seed 13788 -d "INF_ID='inf13'" -d "INFILE='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf9_H14_on_inf_day_22_on_overall_day_108.ts'" -d "INPUT_HOST_ID='H20'" -d "OUTPUT_HOST_IDS='H27;H28'" -d "TRANSMISSION_DAY=19" -d "OUTPUT_DIR='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/'" -d "N_FOUNDERS=20" -d "REPRODUCTION_BENEFIT=1" -d "TRANSMISSION_BENEFIT=1" /data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim
+		"""
+
+rule inf14:
+	input:
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim",
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf11_H17_on_inf_day_18_on_overall_day_111.ts"
+	output:
+		temporary("/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf14_H24_on_inf_day_16_on_overall_day_127.ts")
+	shell:
+		"""
+			/home/shyamag/.conda/envs/slim-env/bin/slim -l 0 -seed 64016 -d "INF_ID='inf14'" -d "INFILE='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf11_H17_on_inf_day_18_on_overall_day_111.ts'" -d "INPUT_HOST_ID='H24'" -d "OUTPUT_HOST_IDS='H29'" -d "TRANSMISSION_DAY=16" -d "OUTPUT_DIR='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/'" -d "N_FOUNDERS=20" -d "REPRODUCTION_BENEFIT=1" -d "TRANSMISSION_BENEFIT=1" /data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim
+		"""
+
+rule inf15:
+	input:
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim",
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf12_H19_on_inf_day_29_on_overall_day_137.ts"
+	output:
+		temporary("/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf15_H25_on_inf_day_21_on_overall_day_158.ts")
+	shell:
+		"""
+			/home/shyamag/.conda/envs/slim-env/bin/slim -l 0 -seed 68857 -d "INF_ID='inf15'" -d "INFILE='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf12_H19_on_inf_day_29_on_overall_day_137.ts'" -d "INPUT_HOST_ID='H25'" -d "OUTPUT_HOST_IDS='H30;H31'" -d "TRANSMISSION_DAY=21" -d "OUTPUT_DIR='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/'" -d "N_FOUNDERS=20" -d "REPRODUCTION_BENEFIT=1" -d "TRANSMISSION_BENEFIT=1" /data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim
+		"""
+
+rule inf16:
+	input:
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim",
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf13_H20_on_inf_day_19_on_overall_day_127.ts"
+	output:
+		temporary("/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf16_H27_on_inf_day_24_on_overall_day_151.ts")
+	shell:
+		"""
+			/home/shyamag/.conda/envs/slim-env/bin/slim -l 0 -seed 13304 -d "INF_ID='inf16'" -d "INFILE='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf13_H20_on_inf_day_19_on_overall_day_127.ts'" -d "INPUT_HOST_ID='H27'" -d "OUTPUT_HOST_IDS='H32'" -d "TRANSMISSION_DAY=24" -d "OUTPUT_DIR='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/'" -d "N_FOUNDERS=20" -d "REPRODUCTION_BENEFIT=1" -d "TRANSMISSION_BENEFIT=1" /data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim
+		"""
+
+rule inf17:
+	input:
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim",
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf13_H20_on_inf_day_19_on_overall_day_127.ts"
+	output:
+		temporary("/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf17_H28_on_inf_day_27_on_overall_day_154.ts")
+	shell:
+		"""
+			/home/shyamag/.conda/envs/slim-env/bin/slim -l 0 -seed 81160 -d "INF_ID='inf17'" -d "INFILE='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf13_H20_on_inf_day_19_on_overall_day_127.ts'" -d "INPUT_HOST_ID='H28'" -d "OUTPUT_HOST_IDS='H33;H34'" -d "TRANSMISSION_DAY=27" -d "OUTPUT_DIR='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/'" -d "N_FOUNDERS=20" -d "REPRODUCTION_BENEFIT=1" -d "TRANSMISSION_BENEFIT=1" /data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim
+		"""
+
+rule inf18:
+	input:
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim",
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf14_H24_on_inf_day_16_on_overall_day_127.ts"
+	output:
+		temporary("/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf18_H29_on_inf_day_20_on_overall_day_147.ts")
+	shell:
+		"""
+			/home/shyamag/.conda/envs/slim-env/bin/slim -l 0 -seed 35834 -d "INF_ID='inf18'" -d "INFILE='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf14_H24_on_inf_day_16_on_overall_day_127.ts'" -d "INPUT_HOST_ID='H29'" -d "OUTPUT_HOST_IDS='H35'" -d "TRANSMISSION_DAY=20" -d "OUTPUT_DIR='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/'" -d "N_FOUNDERS=20" -d "REPRODUCTION_BENEFIT=1" -d "TRANSMISSION_BENEFIT=1" /data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim
+		"""
+
+rule inf19:
+	input:
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim",
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf15_H25_on_inf_day_21_on_overall_day_158.ts"
+	output:
+		temporary("/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf19_H30_on_inf_day_22_on_overall_day_180.ts")
+	shell:
+		"""
+			/home/shyamag/.conda/envs/slim-env/bin/slim -l 0 -seed 62518 -d "INF_ID='inf19'" -d "INFILE='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf15_H25_on_inf_day_21_on_overall_day_158.ts'" -d "INPUT_HOST_ID='H30'" -d "OUTPUT_HOST_IDS='H36'" -d "TRANSMISSION_DAY=22" -d "OUTPUT_DIR='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/'" -d "N_FOUNDERS=20" -d "REPRODUCTION_BENEFIT=1" -d "TRANSMISSION_BENEFIT=1" /data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim
+		"""
+
+rule inf20:
+	input:
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim",
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf16_H27_on_inf_day_24_on_overall_day_151.ts"
+	output:
+		temporary("/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf20_H32_on_inf_day_20_on_overall_day_171.ts")
+	shell:
+		"""
+			/home/shyamag/.conda/envs/slim-env/bin/slim -l 0 -seed 32363 -d "INF_ID='inf20'" -d "INFILE='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf16_H27_on_inf_day_24_on_overall_day_151.ts'" -d "INPUT_HOST_ID='H32'" -d "OUTPUT_HOST_IDS='H37'" -d "TRANSMISSION_DAY=20" -d "OUTPUT_DIR='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/'" -d "N_FOUNDERS=20" -d "REPRODUCTION_BENEFIT=1" -d "TRANSMISSION_BENEFIT=1" /data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim
+		"""
+
+rule inf21:
+	input:
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim",
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf18_H29_on_inf_day_20_on_overall_day_147.ts"
+	output:
+		temporary("/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf21_H35_on_inf_day_10_on_overall_day_157.ts")
+	shell:
+		"""
+			/home/shyamag/.conda/envs/slim-env/bin/slim -l 0 -seed 52164 -d "INF_ID='inf21'" -d "INFILE='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf18_H29_on_inf_day_20_on_overall_day_147.ts'" -d "INPUT_HOST_ID='H35'" -d "OUTPUT_HOST_IDS='H38'" -d "TRANSMISSION_DAY=10" -d "OUTPUT_DIR='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/'" -d "N_FOUNDERS=20" -d "REPRODUCTION_BENEFIT=1" -d "TRANSMISSION_BENEFIT=1" /data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim
+		"""
+
+rule inf22:
+	input:
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim",
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf19_H30_on_inf_day_22_on_overall_day_180.ts"
+	output:
+		temporary("/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf22_H36_on_inf_day_19_on_overall_day_199.ts")
+	shell:
+		"""
+			/home/shyamag/.conda/envs/slim-env/bin/slim -l 0 -seed 450 -d "INF_ID='inf22'" -d "INFILE='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf19_H30_on_inf_day_22_on_overall_day_180.ts'" -d "INPUT_HOST_ID='H36'" -d "OUTPUT_HOST_IDS='H39'" -d "TRANSMISSION_DAY=19" -d "OUTPUT_DIR='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/'" -d "N_FOUNDERS=20" -d "REPRODUCTION_BENEFIT=1" -d "TRANSMISSION_BENEFIT=1" /data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim
+		"""
+
+rule inf23:
+	input:
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim",
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf20_H32_on_inf_day_20_on_overall_day_171.ts"
+	output:
+		temporary("/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf23_H37_on_inf_day_17_on_overall_day_188.ts")
+	shell:
+		"""
+			/home/shyamag/.conda/envs/slim-env/bin/slim -l 0 -seed 83753 -d "INF_ID='inf23'" -d "INFILE='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf20_H32_on_inf_day_20_on_overall_day_171.ts'" -d "INPUT_HOST_ID='H37'" -d "OUTPUT_HOST_IDS='H40'" -d "TRANSMISSION_DAY=17" -d "OUTPUT_DIR='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/'" -d "N_FOUNDERS=20" -d "REPRODUCTION_BENEFIT=1" -d "TRANSMISSION_BENEFIT=1" /data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim
+		"""
+
+rule inf24:
+	input:
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim",
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf21_H35_on_inf_day_10_on_overall_day_157.ts"
+	output:
+		temporary("/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf24_H38_on_inf_day_16_on_overall_day_173.ts")
+	shell:
+		"""
+			/home/shyamag/.conda/envs/slim-env/bin/slim -l 0 -seed 19658 -d "INF_ID='inf24'" -d "INFILE='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf21_H35_on_inf_day_10_on_overall_day_157.ts'" -d "INPUT_HOST_ID='H38'" -d "OUTPUT_HOST_IDS='H41;H42;H43'" -d "TRANSMISSION_DAY=16" -d "OUTPUT_DIR='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/'" -d "N_FOUNDERS=20" -d "REPRODUCTION_BENEFIT=1" -d "TRANSMISSION_BENEFIT=1" /data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim
+		"""
+
+rule inf25:
+	input:
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim",
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf22_H36_on_inf_day_19_on_overall_day_199.ts"
+	output:
+		temporary("/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf25_H39_on_inf_day_20_on_overall_day_219.ts")
+	shell:
+		"""
+			/home/shyamag/.conda/envs/slim-env/bin/slim -l 0 -seed 48356 -d "INF_ID='inf25'" -d "INFILE='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf22_H36_on_inf_day_19_on_overall_day_199.ts'" -d "INPUT_HOST_ID='H39'" -d "OUTPUT_HOST_IDS='H44'" -d "TRANSMISSION_DAY=20" -d "OUTPUT_DIR='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/'" -d "N_FOUNDERS=20" -d "REPRODUCTION_BENEFIT=1" -d "TRANSMISSION_BENEFIT=1" /data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim
+		"""
+
+rule inf26:
+	input:
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim",
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf23_H37_on_inf_day_17_on_overall_day_188.ts"
+	output:
+		temporary("/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf26_H40_on_inf_day_17_on_overall_day_205.ts")
+	shell:
+		"""
+			/home/shyamag/.conda/envs/slim-env/bin/slim -l 0 -seed 38529 -d "INF_ID='inf26'" -d "INFILE='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf23_H37_on_inf_day_17_on_overall_day_188.ts'" -d "INPUT_HOST_ID='H40'" -d "OUTPUT_HOST_IDS='H45;H46;H47;H48'" -d "TRANSMISSION_DAY=17" -d "OUTPUT_DIR='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/'" -d "N_FOUNDERS=20" -d "REPRODUCTION_BENEFIT=1" -d "TRANSMISSION_BENEFIT=1" /data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim
+		"""
+
+rule inf27:
+	input:
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim",
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf24_H38_on_inf_day_16_on_overall_day_173.ts"
+	output:
+		temporary("/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf27_H41_on_inf_day_30_on_overall_day_203.ts")
+	shell:
+		"""
+			/home/shyamag/.conda/envs/slim-env/bin/slim -l 0 -seed 86280 -d "INF_ID='inf27'" -d "INFILE='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf24_H38_on_inf_day_16_on_overall_day_173.ts'" -d "INPUT_HOST_ID='H41'" -d "OUTPUT_HOST_IDS='H49'" -d "TRANSMISSION_DAY=30" -d "OUTPUT_DIR='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/'" -d "N_FOUNDERS=20" -d "REPRODUCTION_BENEFIT=1" -d "TRANSMISSION_BENEFIT=1" /data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim
+		"""
+
+rule inf28:
+	input:
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim",
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf24_H38_on_inf_day_16_on_overall_day_173.ts"
+	output:
+		temporary("/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf28_H42_on_inf_day_25_on_overall_day_198.ts")
+	shell:
+		"""
+			/home/shyamag/.conda/envs/slim-env/bin/slim -l 0 -seed 4896 -d "INF_ID='inf28'" -d "INFILE='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf24_H38_on_inf_day_16_on_overall_day_173.ts'" -d "INPUT_HOST_ID='H42'" -d "OUTPUT_HOST_IDS='H50;H51'" -d "TRANSMISSION_DAY=25" -d "OUTPUT_DIR='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/'" -d "N_FOUNDERS=20" -d "REPRODUCTION_BENEFIT=1" -d "TRANSMISSION_BENEFIT=1" /data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim
+		"""
+
+rule inf29:
+	input:
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim",
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf24_H38_on_inf_day_16_on_overall_day_173.ts"
+	output:
+		temporary("/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf29_H43_on_inf_day_15_on_overall_day_188.ts")
+	shell:
+		"""
+			/home/shyamag/.conda/envs/slim-env/bin/slim -l 0 -seed 4882 -d "INF_ID='inf29'" -d "INFILE='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf24_H38_on_inf_day_16_on_overall_day_173.ts'" -d "INPUT_HOST_ID='H43'" -d "OUTPUT_HOST_IDS='H52'" -d "TRANSMISSION_DAY=15" -d "OUTPUT_DIR='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/'" -d "N_FOUNDERS=20" -d "REPRODUCTION_BENEFIT=1" -d "TRANSMISSION_BENEFIT=1" /data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim
+		"""
+
+rule inf30:
+	input:
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim",
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf26_H40_on_inf_day_17_on_overall_day_205.ts"
+	output:
+		temporary("/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf30_H45_on_inf_day_20_on_overall_day_225.ts")
+	shell:
+		"""
+			/home/shyamag/.conda/envs/slim-env/bin/slim -l 0 -seed 70650 -d "INF_ID='inf30'" -d "INFILE='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf26_H40_on_inf_day_17_on_overall_day_205.ts'" -d "INPUT_HOST_ID='H45'" -d "OUTPUT_HOST_IDS='H53;H54'" -d "TRANSMISSION_DAY=20" -d "OUTPUT_DIR='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/'" -d "N_FOUNDERS=20" -d "REPRODUCTION_BENEFIT=1" -d "TRANSMISSION_BENEFIT=1" /data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim
+		"""
+
+rule inf31:
+	input:
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim",
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf26_H40_on_inf_day_17_on_overall_day_205.ts"
+	output:
+		temporary("/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf31_H46_on_inf_day_22_on_overall_day_227.ts")
+	shell:
+		"""
+			/home/shyamag/.conda/envs/slim-env/bin/slim -l 0 -seed 12623 -d "INF_ID='inf31'" -d "INFILE='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf26_H40_on_inf_day_17_on_overall_day_205.ts'" -d "INPUT_HOST_ID='H46'" -d "OUTPUT_HOST_IDS='H55'" -d "TRANSMISSION_DAY=22" -d "OUTPUT_DIR='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/'" -d "N_FOUNDERS=20" -d "REPRODUCTION_BENEFIT=1" -d "TRANSMISSION_BENEFIT=1" /data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim
+		"""
+
+rule inf32:
+	input:
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim",
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf28_H42_on_inf_day_25_on_overall_day_198.ts"
+	output:
+		temporary("/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf32_H50_on_inf_day_22_on_overall_day_220.ts")
+	shell:
+		"""
+			/home/shyamag/.conda/envs/slim-env/bin/slim -l 0 -seed 75179 -d "INF_ID='inf32'" -d "INFILE='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf28_H42_on_inf_day_25_on_overall_day_198.ts'" -d "INPUT_HOST_ID='H50'" -d "OUTPUT_HOST_IDS='H56;H57;H58'" -d "TRANSMISSION_DAY=22" -d "OUTPUT_DIR='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/'" -d "N_FOUNDERS=20" -d "REPRODUCTION_BENEFIT=1" -d "TRANSMISSION_BENEFIT=1" /data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim
+		"""
+
+rule inf33:
+	input:
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim",
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf28_H42_on_inf_day_25_on_overall_day_198.ts"
+	output:
+		temporary("/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf33_H51_on_inf_day_26_on_overall_day_224.ts")
+	shell:
+		"""
+			/home/shyamag/.conda/envs/slim-env/bin/slim -l 0 -seed 62968 -d "INF_ID='inf33'" -d "INFILE='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf28_H42_on_inf_day_25_on_overall_day_198.ts'" -d "INPUT_HOST_ID='H51'" -d "OUTPUT_HOST_IDS='H59'" -d "TRANSMISSION_DAY=26" -d "OUTPUT_DIR='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/'" -d "N_FOUNDERS=20" -d "REPRODUCTION_BENEFIT=1" -d "TRANSMISSION_BENEFIT=1" /data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim
+		"""
+
+rule inf34:
+	input:
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim",
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf31_H46_on_inf_day_22_on_overall_day_227.ts"
+	output:
+		temporary("/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf34_H55_on_inf_day_14_on_overall_day_241.ts")
+	shell:
+		"""
+			/home/shyamag/.conda/envs/slim-env/bin/slim -l 0 -seed 87369 -d "INF_ID='inf34'" -d "INFILE='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf31_H46_on_inf_day_22_on_overall_day_227.ts'" -d "INPUT_HOST_ID='H55'" -d "OUTPUT_HOST_IDS='H60'" -d "TRANSMISSION_DAY=14" -d "OUTPUT_DIR='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/'" -d "N_FOUNDERS=20" -d "REPRODUCTION_BENEFIT=1" -d "TRANSMISSION_BENEFIT=1" /data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim
+		"""
+
+rule inf35:
+	input:
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim",
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf32_H50_on_inf_day_22_on_overall_day_220.ts"
+	output:
+		temporary("/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf35_H56_on_inf_day_18_on_overall_day_238.ts")
+	shell:
+		"""
+			/home/shyamag/.conda/envs/slim-env/bin/slim -l 0 -seed 54995 -d "INF_ID='inf35'" -d "INFILE='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf32_H50_on_inf_day_22_on_overall_day_220.ts'" -d "INPUT_HOST_ID='H56'" -d "OUTPUT_HOST_IDS='H61;H62'" -d "TRANSMISSION_DAY=18" -d "OUTPUT_DIR='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/'" -d "N_FOUNDERS=20" -d "REPRODUCTION_BENEFIT=1" -d "TRANSMISSION_BENEFIT=1" /data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim
+		"""
+
+rule inf36:
+	input:
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim",
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf32_H50_on_inf_day_22_on_overall_day_220.ts"
+	output:
+		temporary("/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf36_H57_on_inf_day_22_on_overall_day_242.ts")
+	shell:
+		"""
+			/home/shyamag/.conda/envs/slim-env/bin/slim -l 0 -seed 94801 -d "INF_ID='inf36'" -d "INFILE='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf32_H50_on_inf_day_22_on_overall_day_220.ts'" -d "INPUT_HOST_ID='H57'" -d "OUTPUT_HOST_IDS='H63;H64;H65'" -d "TRANSMISSION_DAY=22" -d "OUTPUT_DIR='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/'" -d "N_FOUNDERS=20" -d "REPRODUCTION_BENEFIT=1" -d "TRANSMISSION_BENEFIT=1" /data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim
+		"""
+
+rule inf37:
+	input:
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim",
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf35_H56_on_inf_day_18_on_overall_day_238.ts"
+	output:
+		temporary("/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf37_H61_on_inf_day_25_on_overall_day_263.ts")
+	shell:
+		"""
+			/home/shyamag/.conda/envs/slim-env/bin/slim -l 0 -seed 68976 -d "INF_ID='inf37'" -d "INFILE='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf35_H56_on_inf_day_18_on_overall_day_238.ts'" -d "INPUT_HOST_ID='H61'" -d "OUTPUT_HOST_IDS='H66'" -d "TRANSMISSION_DAY=25" -d "OUTPUT_DIR='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/'" -d "N_FOUNDERS=20" -d "REPRODUCTION_BENEFIT=1" -d "TRANSMISSION_BENEFIT=1" /data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim
+		"""
+
+rule inf38:
+	input:
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim",
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf35_H56_on_inf_day_18_on_overall_day_238.ts"
+	output:
+		temporary("/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf38_H62_on_inf_day_24_on_overall_day_262.ts")
+	shell:
+		"""
+			/home/shyamag/.conda/envs/slim-env/bin/slim -l 0 -seed 65920 -d "INF_ID='inf38'" -d "INFILE='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf35_H56_on_inf_day_18_on_overall_day_238.ts'" -d "INPUT_HOST_ID='H62'" -d "OUTPUT_HOST_IDS='H67;H68'" -d "TRANSMISSION_DAY=24" -d "OUTPUT_DIR='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/'" -d "N_FOUNDERS=20" -d "REPRODUCTION_BENEFIT=1" -d "TRANSMISSION_BENEFIT=1" /data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim
+		"""
+
+rule inf39:
+	input:
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim",
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf36_H57_on_inf_day_22_on_overall_day_242.ts"
+	output:
+		temporary("/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf39_H63_on_inf_day_20_on_overall_day_262.ts")
+	shell:
+		"""
+			/home/shyamag/.conda/envs/slim-env/bin/slim -l 0 -seed 31181 -d "INF_ID='inf39'" -d "INFILE='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf36_H57_on_inf_day_22_on_overall_day_242.ts'" -d "INPUT_HOST_ID='H63'" -d "OUTPUT_HOST_IDS='H69'" -d "TRANSMISSION_DAY=20" -d "OUTPUT_DIR='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/'" -d "N_FOUNDERS=20" -d "REPRODUCTION_BENEFIT=1" -d "TRANSMISSION_BENEFIT=1" /data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim
+		"""
+
+rule inf40:
+	input:
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim",
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf36_H57_on_inf_day_22_on_overall_day_242.ts"
+	output:
+		temporary("/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf40_H65_on_inf_day_31_on_overall_day_273.ts")
+	shell:
+		"""
+			/home/shyamag/.conda/envs/slim-env/bin/slim -l 0 -seed 14865 -d "INF_ID='inf40'" -d "INFILE='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf36_H57_on_inf_day_22_on_overall_day_242.ts'" -d "INPUT_HOST_ID='H65'" -d "OUTPUT_HOST_IDS='H70;H71;H72;H73'" -d "TRANSMISSION_DAY=31" -d "OUTPUT_DIR='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/'" -d "N_FOUNDERS=20" -d "REPRODUCTION_BENEFIT=1" -d "TRANSMISSION_BENEFIT=1" /data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim
+		"""
+
+rule inf41:
+	input:
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim",
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf37_H61_on_inf_day_25_on_overall_day_263.ts"
+	output:
+		temporary("/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf41_H66_on_inf_day_22_on_overall_day_285.ts")
+	shell:
+		"""
+			/home/shyamag/.conda/envs/slim-env/bin/slim -l 0 -seed 37246 -d "INF_ID='inf41'" -d "INFILE='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf37_H61_on_inf_day_25_on_overall_day_263.ts'" -d "INPUT_HOST_ID='H66'" -d "OUTPUT_HOST_IDS='H74'" -d "TRANSMISSION_DAY=22" -d "OUTPUT_DIR='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/'" -d "N_FOUNDERS=20" -d "REPRODUCTION_BENEFIT=1" -d "TRANSMISSION_BENEFIT=1" /data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim
+		"""
+
+rule inf42:
+	input:
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim",
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf38_H62_on_inf_day_24_on_overall_day_262.ts"
+	output:
+		temporary("/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf42_H68_on_inf_day_26_on_overall_day_288.ts")
+	shell:
+		"""
+			/home/shyamag/.conda/envs/slim-env/bin/slim -l 0 -seed 45945 -d "INF_ID='inf42'" -d "INFILE='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf38_H62_on_inf_day_24_on_overall_day_262.ts'" -d "INPUT_HOST_ID='H68'" -d "OUTPUT_HOST_IDS='H75;H76'" -d "TRANSMISSION_DAY=26" -d "OUTPUT_DIR='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/'" -d "N_FOUNDERS=20" -d "REPRODUCTION_BENEFIT=1" -d "TRANSMISSION_BENEFIT=1" /data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim
+		"""
+
+rule inf43:
+	input:
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim",
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf40_H65_on_inf_day_31_on_overall_day_273.ts"
+	output:
+		temporary("/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf43_H70_on_inf_day_25_on_overall_day_298.ts")
+	shell:
+		"""
+			/home/shyamag/.conda/envs/slim-env/bin/slim -l 0 -seed 48826 -d "INF_ID='inf43'" -d "INFILE='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf40_H65_on_inf_day_31_on_overall_day_273.ts'" -d "INPUT_HOST_ID='H70'" -d "OUTPUT_HOST_IDS='H77'" -d "TRANSMISSION_DAY=25" -d "OUTPUT_DIR='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/'" -d "N_FOUNDERS=20" -d "REPRODUCTION_BENEFIT=1" -d "TRANSMISSION_BENEFIT=1" /data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim
+		"""
+
+rule inf44:
+	input:
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim",
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf40_H65_on_inf_day_31_on_overall_day_273.ts"
+	output:
+		temporary("/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf44_H71_on_inf_day_16_on_overall_day_289.ts")
+	shell:
+		"""
+			/home/shyamag/.conda/envs/slim-env/bin/slim -l 0 -seed 21186 -d "INF_ID='inf44'" -d "INFILE='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf40_H65_on_inf_day_31_on_overall_day_273.ts'" -d "INPUT_HOST_ID='H71'" -d "OUTPUT_HOST_IDS='H78;H79'" -d "TRANSMISSION_DAY=16" -d "OUTPUT_DIR='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/'" -d "N_FOUNDERS=20" -d "REPRODUCTION_BENEFIT=1" -d "TRANSMISSION_BENEFIT=1" /data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim
+		"""
+
+rule inf45:
+	input:
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim",
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf40_H65_on_inf_day_31_on_overall_day_273.ts"
+	output:
+		temporary("/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf45_H72_on_inf_day_15_on_overall_day_288.ts")
+	shell:
+		"""
+			/home/shyamag/.conda/envs/slim-env/bin/slim -l 0 -seed 4447 -d "INF_ID='inf45'" -d "INFILE='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf40_H65_on_inf_day_31_on_overall_day_273.ts'" -d "INPUT_HOST_ID='H72'" -d "OUTPUT_HOST_IDS='H80'" -d "TRANSMISSION_DAY=15" -d "OUTPUT_DIR='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/'" -d "N_FOUNDERS=20" -d "REPRODUCTION_BENEFIT=1" -d "TRANSMISSION_BENEFIT=1" /data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim
+		"""
+
+rule inf46:
+	input:
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim",
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf40_H65_on_inf_day_31_on_overall_day_273.ts"
+	output:
+		temporary("/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf46_H73_on_inf_day_30_on_overall_day_303.ts")
+	shell:
+		"""
+			/home/shyamag/.conda/envs/slim-env/bin/slim -l 0 -seed 30970 -d "INF_ID='inf46'" -d "INFILE='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf40_H65_on_inf_day_31_on_overall_day_273.ts'" -d "INPUT_HOST_ID='H73'" -d "OUTPUT_HOST_IDS='H81'" -d "TRANSMISSION_DAY=30" -d "OUTPUT_DIR='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/'" -d "N_FOUNDERS=20" -d "REPRODUCTION_BENEFIT=1" -d "TRANSMISSION_BENEFIT=1" /data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim
+		"""
+
+rule inf47:
+	input:
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim",
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf42_H68_on_inf_day_26_on_overall_day_288.ts"
+	output:
+		temporary("/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf47_H75_on_inf_day_18_on_overall_day_306.ts")
+	shell:
+		"""
+			/home/shyamag/.conda/envs/slim-env/bin/slim -l 0 -seed 56302 -d "INF_ID='inf47'" -d "INFILE='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf42_H68_on_inf_day_26_on_overall_day_288.ts'" -d "INPUT_HOST_ID='H75'" -d "OUTPUT_HOST_IDS='H82;H83'" -d "TRANSMISSION_DAY=18" -d "OUTPUT_DIR='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/'" -d "N_FOUNDERS=20" -d "REPRODUCTION_BENEFIT=1" -d "TRANSMISSION_BENEFIT=1" /data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim
+		"""
+
+rule inf48:
+	input:
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim",
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf42_H68_on_inf_day_26_on_overall_day_288.ts"
+	output:
+		temporary("/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf48_H76_on_inf_day_17_on_overall_day_305.ts")
+	shell:
+		"""
+			/home/shyamag/.conda/envs/slim-env/bin/slim -l 0 -seed 96767 -d "INF_ID='inf48'" -d "INFILE='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf42_H68_on_inf_day_26_on_overall_day_288.ts'" -d "INPUT_HOST_ID='H76'" -d "OUTPUT_HOST_IDS='H84;H85'" -d "TRANSMISSION_DAY=17" -d "OUTPUT_DIR='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/'" -d "N_FOUNDERS=20" -d "REPRODUCTION_BENEFIT=1" -d "TRANSMISSION_BENEFIT=1" /data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim
+		"""
+
+rule inf49:
+	input:
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim",
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf43_H70_on_inf_day_25_on_overall_day_298.ts"
+	output:
+		temporary("/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf49_H77_on_inf_day_16_on_overall_day_314.ts")
+	shell:
+		"""
+			/home/shyamag/.conda/envs/slim-env/bin/slim -l 0 -seed 51567 -d "INF_ID='inf49'" -d "INFILE='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf43_H70_on_inf_day_25_on_overall_day_298.ts'" -d "INPUT_HOST_ID='H77'" -d "OUTPUT_HOST_IDS='H86;H87'" -d "TRANSMISSION_DAY=16" -d "OUTPUT_DIR='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/'" -d "N_FOUNDERS=20" -d "REPRODUCTION_BENEFIT=1" -d "TRANSMISSION_BENEFIT=1" /data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim
+		"""
+
+rule inf50:
+	input:
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim",
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf44_H71_on_inf_day_16_on_overall_day_289.ts"
+	output:
+		temporary("/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf50_H79_on_inf_day_15_on_overall_day_304.ts")
+	shell:
+		"""
+			/home/shyamag/.conda/envs/slim-env/bin/slim -l 0 -seed 91808 -d "INF_ID='inf50'" -d "INFILE='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf44_H71_on_inf_day_16_on_overall_day_289.ts'" -d "INPUT_HOST_ID='H79'" -d "OUTPUT_HOST_IDS='H88'" -d "TRANSMISSION_DAY=15" -d "OUTPUT_DIR='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/'" -d "N_FOUNDERS=20" -d "REPRODUCTION_BENEFIT=1" -d "TRANSMISSION_BENEFIT=1" /data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim
+		"""
+
+rule inf51:
+	input:
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim",
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf45_H72_on_inf_day_15_on_overall_day_288.ts"
+	output:
+		temporary("/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf51_H80_on_inf_day_20_on_overall_day_308.ts")
+	shell:
+		"""
+			/home/shyamag/.conda/envs/slim-env/bin/slim -l 0 -seed 28410 -d "INF_ID='inf51'" -d "INFILE='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf45_H72_on_inf_day_15_on_overall_day_288.ts'" -d "INPUT_HOST_ID='H80'" -d "OUTPUT_HOST_IDS='H89'" -d "TRANSMISSION_DAY=20" -d "OUTPUT_DIR='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/'" -d "N_FOUNDERS=20" -d "REPRODUCTION_BENEFIT=1" -d "TRANSMISSION_BENEFIT=1" /data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim
+		"""
+
+rule inf52:
+	input:
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim",
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf46_H73_on_inf_day_30_on_overall_day_303.ts"
+	output:
+		temporary("/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf52_H81_on_inf_day_23_on_overall_day_326.ts")
+	shell:
+		"""
+			/home/shyamag/.conda/envs/slim-env/bin/slim -l 0 -seed 84738 -d "INF_ID='inf52'" -d "INFILE='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf46_H73_on_inf_day_30_on_overall_day_303.ts'" -d "INPUT_HOST_ID='H81'" -d "OUTPUT_HOST_IDS='H90'" -d "TRANSMISSION_DAY=23" -d "OUTPUT_DIR='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/'" -d "N_FOUNDERS=20" -d "REPRODUCTION_BENEFIT=1" -d "TRANSMISSION_BENEFIT=1" /data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim
+		"""
+
+rule inf53:
+	input:
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim",
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf48_H76_on_inf_day_17_on_overall_day_305.ts"
+	output:
+		temporary("/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf53_H84_on_inf_day_24_on_overall_day_329.ts")
+	shell:
+		"""
+			/home/shyamag/.conda/envs/slim-env/bin/slim -l 0 -seed 70045 -d "INF_ID='inf53'" -d "INFILE='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf48_H76_on_inf_day_17_on_overall_day_305.ts'" -d "INPUT_HOST_ID='H84'" -d "OUTPUT_HOST_IDS='H91;H92;H93'" -d "TRANSMISSION_DAY=24" -d "OUTPUT_DIR='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/'" -d "N_FOUNDERS=20" -d "REPRODUCTION_BENEFIT=1" -d "TRANSMISSION_BENEFIT=1" /data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim
+		"""
+
+rule inf54:
+	input:
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim",
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf48_H76_on_inf_day_17_on_overall_day_305.ts"
+	output:
+		temporary("/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf54_H85_on_inf_day_16_on_overall_day_321.ts")
+	shell:
+		"""
+			/home/shyamag/.conda/envs/slim-env/bin/slim -l 0 -seed 44574 -d "INF_ID='inf54'" -d "INFILE='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf48_H76_on_inf_day_17_on_overall_day_305.ts'" -d "INPUT_HOST_ID='H85'" -d "OUTPUT_HOST_IDS='H94;H95'" -d "TRANSMISSION_DAY=16" -d "OUTPUT_DIR='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/'" -d "N_FOUNDERS=20" -d "REPRODUCTION_BENEFIT=1" -d "TRANSMISSION_BENEFIT=1" /data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim
+		"""
+
+rule inf55:
+	input:
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim",
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf49_H77_on_inf_day_16_on_overall_day_314.ts"
+	output:
+		temporary("/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf55_H86_on_inf_day_21_on_overall_day_335.ts")
+	shell:
+		"""
+			/home/shyamag/.conda/envs/slim-env/bin/slim -l 0 -seed 96578 -d "INF_ID='inf55'" -d "INFILE='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf49_H77_on_inf_day_16_on_overall_day_314.ts'" -d "INPUT_HOST_ID='H86'" -d "OUTPUT_HOST_IDS='H96'" -d "TRANSMISSION_DAY=21" -d "OUTPUT_DIR='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/'" -d "N_FOUNDERS=20" -d "REPRODUCTION_BENEFIT=1" -d "TRANSMISSION_BENEFIT=1" /data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim
+		"""
+
+rule inf56:
+	input:
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim",
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf49_H77_on_inf_day_16_on_overall_day_314.ts"
+	output:
+		temporary("/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf56_H87_on_inf_day_21_on_overall_day_335.ts")
+	shell:
+		"""
+			/home/shyamag/.conda/envs/slim-env/bin/slim -l 0 -seed 72541 -d "INF_ID='inf56'" -d "INFILE='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf49_H77_on_inf_day_16_on_overall_day_314.ts'" -d "INPUT_HOST_ID='H87'" -d "OUTPUT_HOST_IDS='H97'" -d "TRANSMISSION_DAY=21" -d "OUTPUT_DIR='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/'" -d "N_FOUNDERS=20" -d "REPRODUCTION_BENEFIT=1" -d "TRANSMISSION_BENEFIT=1" /data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim
+		"""
+
+rule inf57:
+	input:
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim",
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf50_H79_on_inf_day_15_on_overall_day_304.ts"
+	output:
+		temporary("/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf57_H88_on_inf_day_15_on_overall_day_319.ts")
+	shell:
+		"""
+			/home/shyamag/.conda/envs/slim-env/bin/slim -l 0 -seed 83297 -d "INF_ID='inf57'" -d "INFILE='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf50_H79_on_inf_day_15_on_overall_day_304.ts'" -d "INPUT_HOST_ID='H88'" -d "OUTPUT_HOST_IDS='H98'" -d "TRANSMISSION_DAY=15" -d "OUTPUT_DIR='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/'" -d "N_FOUNDERS=20" -d "REPRODUCTION_BENEFIT=1" -d "TRANSMISSION_BENEFIT=1" /data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim
+		"""
+
+rule inf58:
+	input:
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim",
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf51_H80_on_inf_day_20_on_overall_day_308.ts"
+	output:
+		temporary("/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf58_H89_on_inf_day_19_on_overall_day_327.ts")
+	shell:
+		"""
+			/home/shyamag/.conda/envs/slim-env/bin/slim -l 0 -seed 27959 -d "INF_ID='inf58'" -d "INFILE='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf51_H80_on_inf_day_20_on_overall_day_308.ts'" -d "INPUT_HOST_ID='H89'" -d "OUTPUT_HOST_IDS='H99'" -d "TRANSMISSION_DAY=19" -d "OUTPUT_DIR='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/'" -d "N_FOUNDERS=20" -d "REPRODUCTION_BENEFIT=1" -d "TRANSMISSION_BENEFIT=1" /data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim
+		"""
+
+rule inf59:
+	input:
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim",
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf53_H84_on_inf_day_24_on_overall_day_329.ts"
+	output:
+		temporary("/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf59_H91_on_inf_day_19_on_overall_day_348.ts")
+	shell:
+		"""
+			/home/shyamag/.conda/envs/slim-env/bin/slim -l 0 -seed 41436 -d "INF_ID='inf59'" -d "INFILE='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf53_H84_on_inf_day_24_on_overall_day_329.ts'" -d "INPUT_HOST_ID='H91'" -d "OUTPUT_HOST_IDS='H100'" -d "TRANSMISSION_DAY=19" -d "OUTPUT_DIR='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/'" -d "N_FOUNDERS=20" -d "REPRODUCTION_BENEFIT=1" -d "TRANSMISSION_BENEFIT=1" /data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim
+		"""
+
+rule inf60:
+	input:
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim",
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf53_H84_on_inf_day_24_on_overall_day_329.ts"
+	output:
+		temporary("/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf60_H92_on_inf_day_16_on_overall_day_345.ts")
+	shell:
+		"""
+			/home/shyamag/.conda/envs/slim-env/bin/slim -l 0 -seed 59747 -d "INF_ID='inf60'" -d "INFILE='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf53_H84_on_inf_day_24_on_overall_day_329.ts'" -d "INPUT_HOST_ID='H92'" -d "OUTPUT_HOST_IDS='H101'" -d "TRANSMISSION_DAY=16" -d "OUTPUT_DIR='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/'" -d "N_FOUNDERS=20" -d "REPRODUCTION_BENEFIT=1" -d "TRANSMISSION_BENEFIT=1" /data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim
+		"""
+
+rule inf61:
+	input:
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim",
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf54_H85_on_inf_day_16_on_overall_day_321.ts"
+	output:
+		temporary("/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf61_H95_on_inf_day_15_on_overall_day_336.ts")
+	shell:
+		"""
+			/home/shyamag/.conda/envs/slim-env/bin/slim -l 0 -seed 78113 -d "INF_ID='inf61'" -d "INFILE='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf54_H85_on_inf_day_16_on_overall_day_321.ts'" -d "INPUT_HOST_ID='H95'" -d "OUTPUT_HOST_IDS='H102'" -d "TRANSMISSION_DAY=15" -d "OUTPUT_DIR='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/'" -d "N_FOUNDERS=20" -d "REPRODUCTION_BENEFIT=1" -d "TRANSMISSION_BENEFIT=1" /data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim
+		"""
+
+rule inf62:
+	input:
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim",
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf55_H86_on_inf_day_21_on_overall_day_335.ts"
+	output:
+		temporary("/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf62_H96_on_inf_day_20_on_overall_day_355.ts")
+	shell:
+		"""
+			/home/shyamag/.conda/envs/slim-env/bin/slim -l 0 -seed 93176 -d "INF_ID='inf62'" -d "INFILE='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf55_H86_on_inf_day_21_on_overall_day_335.ts'" -d "INPUT_HOST_ID='H96'" -d "OUTPUT_HOST_IDS='H103'" -d "TRANSMISSION_DAY=20" -d "OUTPUT_DIR='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/'" -d "N_FOUNDERS=20" -d "REPRODUCTION_BENEFIT=1" -d "TRANSMISSION_BENEFIT=1" /data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim
+		"""
+
+rule inf63:
+	input:
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim",
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf58_H89_on_inf_day_19_on_overall_day_327.ts"
+	output:
+		temporary("/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf63_H99_on_inf_day_14_on_overall_day_341.ts")
+	shell:
+		"""
+			/home/shyamag/.conda/envs/slim-env/bin/slim -l 0 -seed 12093 -d "INF_ID='inf63'" -d "INFILE='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf58_H89_on_inf_day_19_on_overall_day_327.ts'" -d "INPUT_HOST_ID='H99'" -d "OUTPUT_HOST_IDS='H104'" -d "TRANSMISSION_DAY=14" -d "OUTPUT_DIR='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/'" -d "N_FOUNDERS=20" -d "REPRODUCTION_BENEFIT=1" -d "TRANSMISSION_BENEFIT=1" /data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim
+		"""
+
+rule inf64:
+	input:
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim",
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf59_H91_on_inf_day_19_on_overall_day_348.ts"
+	output:
+		temporary("/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf64_H100_on_inf_day_25_on_overall_day_373.ts")
+	shell:
+		"""
+			/home/shyamag/.conda/envs/slim-env/bin/slim -l 0 -seed 35337 -d "INF_ID='inf64'" -d "INFILE='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf59_H91_on_inf_day_19_on_overall_day_348.ts'" -d "INPUT_HOST_ID='H100'" -d "OUTPUT_HOST_IDS='H105'" -d "TRANSMISSION_DAY=25" -d "OUTPUT_DIR='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/'" -d "N_FOUNDERS=20" -d "REPRODUCTION_BENEFIT=1" -d "TRANSMISSION_BENEFIT=1" /data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim
+		"""
+
+rule inf65:
+	input:
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim",
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf60_H92_on_inf_day_16_on_overall_day_345.ts"
+	output:
+		temporary("/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf65_H101_on_inf_day_20_on_overall_day_365.ts")
+	shell:
+		"""
+			/home/shyamag/.conda/envs/slim-env/bin/slim -l 0 -seed 35279 -d "INF_ID='inf65'" -d "INFILE='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf60_H92_on_inf_day_16_on_overall_day_345.ts'" -d "INPUT_HOST_ID='H101'" -d "OUTPUT_HOST_IDS='H106;H107;H108;H109'" -d "TRANSMISSION_DAY=20" -d "OUTPUT_DIR='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/'" -d "N_FOUNDERS=20" -d "REPRODUCTION_BENEFIT=1" -d "TRANSMISSION_BENEFIT=1" /data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim
+		"""
+
+rule inf66:
+	input:
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim",
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf61_H95_on_inf_day_15_on_overall_day_336.ts"
+	output:
+		temporary("/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf66_H102_on_inf_day_24_on_overall_day_360.ts")
+	shell:
+		"""
+			/home/shyamag/.conda/envs/slim-env/bin/slim -l 0 -seed 52011 -d "INF_ID='inf66'" -d "INFILE='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf61_H95_on_inf_day_15_on_overall_day_336.ts'" -d "INPUT_HOST_ID='H102'" -d "OUTPUT_HOST_IDS='H110;H111'" -d "TRANSMISSION_DAY=24" -d "OUTPUT_DIR='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/'" -d "N_FOUNDERS=20" -d "REPRODUCTION_BENEFIT=1" -d "TRANSMISSION_BENEFIT=1" /data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim
+		"""
+
+rule inf67:
+	input:
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim",
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf62_H96_on_inf_day_20_on_overall_day_355.ts"
+	output:
+		temporary("/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf67_H103_on_inf_day_21_on_overall_day_376.ts")
+	shell:
+		"""
+			/home/shyamag/.conda/envs/slim-env/bin/slim -l 0 -seed 17568 -d "INF_ID='inf67'" -d "INFILE='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf62_H96_on_inf_day_20_on_overall_day_355.ts'" -d "INPUT_HOST_ID='H103'" -d "OUTPUT_HOST_IDS='H112'" -d "TRANSMISSION_DAY=21" -d "OUTPUT_DIR='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/'" -d "N_FOUNDERS=20" -d "REPRODUCTION_BENEFIT=1" -d "TRANSMISSION_BENEFIT=1" /data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim
+		"""
+
+rule inf68:
+	input:
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim",
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf64_H100_on_inf_day_25_on_overall_day_373.ts"
+	output:
+		temporary("/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf68_H105_on_inf_day_26_on_overall_day_399.ts")
+	shell:
+		"""
+			/home/shyamag/.conda/envs/slim-env/bin/slim -l 0 -seed 30603 -d "INF_ID='inf68'" -d "INFILE='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf64_H100_on_inf_day_25_on_overall_day_373.ts'" -d "INPUT_HOST_ID='H105'" -d "OUTPUT_HOST_IDS='H113'" -d "TRANSMISSION_DAY=26" -d "OUTPUT_DIR='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/'" -d "N_FOUNDERS=20" -d "REPRODUCTION_BENEFIT=1" -d "TRANSMISSION_BENEFIT=1" /data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim
+		"""
+
+rule inf69:
+	input:
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim",
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf65_H101_on_inf_day_20_on_overall_day_365.ts"
+	output:
+		temporary("/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf69_H106_on_inf_day_20_on_overall_day_385.ts")
+	shell:
+		"""
+			/home/shyamag/.conda/envs/slim-env/bin/slim -l 0 -seed 27805 -d "INF_ID='inf69'" -d "INFILE='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf65_H101_on_inf_day_20_on_overall_day_365.ts'" -d "INPUT_HOST_ID='H106'" -d "OUTPUT_HOST_IDS='H114'" -d "TRANSMISSION_DAY=20" -d "OUTPUT_DIR='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/'" -d "N_FOUNDERS=20" -d "REPRODUCTION_BENEFIT=1" -d "TRANSMISSION_BENEFIT=1" /data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim
+		"""
+
+rule inf70:
+	input:
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim",
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf65_H101_on_inf_day_20_on_overall_day_365.ts"
+	output:
+		temporary("/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf70_H108_on_inf_day_19_on_overall_day_384.ts")
+	shell:
+		"""
+			/home/shyamag/.conda/envs/slim-env/bin/slim -l 0 -seed 33446 -d "INF_ID='inf70'" -d "INFILE='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf65_H101_on_inf_day_20_on_overall_day_365.ts'" -d "INPUT_HOST_ID='H108'" -d "OUTPUT_HOST_IDS='H115'" -d "TRANSMISSION_DAY=19" -d "OUTPUT_DIR='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/'" -d "N_FOUNDERS=20" -d "REPRODUCTION_BENEFIT=1" -d "TRANSMISSION_BENEFIT=1" /data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim
+		"""
+
+rule inf71:
+	input:
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim",
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf66_H102_on_inf_day_24_on_overall_day_360.ts"
+	output:
+		temporary("/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf71_H111_on_inf_day_24_on_overall_day_384.ts")
+	shell:
+		"""
+			/home/shyamag/.conda/envs/slim-env/bin/slim -l 0 -seed 90586 -d "INF_ID='inf71'" -d "INFILE='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf66_H102_on_inf_day_24_on_overall_day_360.ts'" -d "INPUT_HOST_ID='H111'" -d "OUTPUT_HOST_IDS='H116;H117'" -d "TRANSMISSION_DAY=24" -d "OUTPUT_DIR='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/'" -d "N_FOUNDERS=20" -d "REPRODUCTION_BENEFIT=1" -d "TRANSMISSION_BENEFIT=1" /data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim
+		"""
+
+rule inf72:
+	input:
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim",
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf67_H103_on_inf_day_21_on_overall_day_376.ts"
+	output:
+		temporary("/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf72_H112_on_inf_day_24_on_overall_day_400.ts")
+	shell:
+		"""
+			/home/shyamag/.conda/envs/slim-env/bin/slim -l 0 -seed 270 -d "INF_ID='inf72'" -d "INFILE='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf67_H103_on_inf_day_21_on_overall_day_376.ts'" -d "INPUT_HOST_ID='H112'" -d "OUTPUT_HOST_IDS='H118;H119'" -d "TRANSMISSION_DAY=24" -d "OUTPUT_DIR='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/'" -d "N_FOUNDERS=20" -d "REPRODUCTION_BENEFIT=1" -d "TRANSMISSION_BENEFIT=1" /data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim
+		"""
+
+rule inf73:
+	input:
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim",
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf68_H105_on_inf_day_26_on_overall_day_399.ts"
+	output:
+		temporary("/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf73_H113_on_inf_day_28_on_overall_day_427.ts")
+	shell:
+		"""
+			/home/shyamag/.conda/envs/slim-env/bin/slim -l 0 -seed 26245 -d "INF_ID='inf73'" -d "INFILE='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf68_H105_on_inf_day_26_on_overall_day_399.ts'" -d "INPUT_HOST_ID='H113'" -d "OUTPUT_HOST_IDS='H120'" -d "TRANSMISSION_DAY=28" -d "OUTPUT_DIR='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/'" -d "N_FOUNDERS=20" -d "REPRODUCTION_BENEFIT=1" -d "TRANSMISSION_BENEFIT=1" /data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim
+		"""
+
+rule inf74:
+	input:
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim",
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf71_H111_on_inf_day_24_on_overall_day_384.ts"
+	output:
+		temporary("/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf74_H116_on_inf_day_21_on_overall_day_405.ts")
+	shell:
+		"""
+			/home/shyamag/.conda/envs/slim-env/bin/slim -l 0 -seed 43619 -d "INF_ID='inf74'" -d "INFILE='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf71_H111_on_inf_day_24_on_overall_day_384.ts'" -d "INPUT_HOST_ID='H116'" -d "OUTPUT_HOST_IDS='H121'" -d "TRANSMISSION_DAY=21" -d "OUTPUT_DIR='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/'" -d "N_FOUNDERS=20" -d "REPRODUCTION_BENEFIT=1" -d "TRANSMISSION_BENEFIT=1" /data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim
+		"""
+
+rule inf75:
+	input:
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim",
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf71_H111_on_inf_day_24_on_overall_day_384.ts"
+	output:
+		temporary("/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf75_H117_on_inf_day_16_on_overall_day_400.ts")
+	shell:
+		"""
+			/home/shyamag/.conda/envs/slim-env/bin/slim -l 0 -seed 43206 -d "INF_ID='inf75'" -d "INFILE='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf71_H111_on_inf_day_24_on_overall_day_384.ts'" -d "INPUT_HOST_ID='H117'" -d "OUTPUT_HOST_IDS='H122'" -d "TRANSMISSION_DAY=16" -d "OUTPUT_DIR='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/'" -d "N_FOUNDERS=20" -d "REPRODUCTION_BENEFIT=1" -d "TRANSMISSION_BENEFIT=1" /data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim
+		"""
+
+rule inf76:
+	input:
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim",
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf72_H112_on_inf_day_24_on_overall_day_400.ts"
+	output:
+		temporary("/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf76_H119_on_inf_day_22_on_overall_day_422.ts")
+	shell:
+		"""
+			/home/shyamag/.conda/envs/slim-env/bin/slim -l 0 -seed 39208 -d "INF_ID='inf76'" -d "INFILE='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf72_H112_on_inf_day_24_on_overall_day_400.ts'" -d "INPUT_HOST_ID='H119'" -d "OUTPUT_HOST_IDS='H123;H124'" -d "TRANSMISSION_DAY=22" -d "OUTPUT_DIR='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/'" -d "N_FOUNDERS=20" -d "REPRODUCTION_BENEFIT=1" -d "TRANSMISSION_BENEFIT=1" /data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim
+		"""
+
+rule inf77:
+	input:
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim",
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf73_H113_on_inf_day_28_on_overall_day_427.ts"
+	output:
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf77_H120_on_inf_day_18_on_overall_day_445.ts"
+	shell:
+		"""
+			/home/shyamag/.conda/envs/slim-env/bin/slim -l 0 -seed 2443 -d "INF_ID='inf77'" -d "INFILE='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf73_H113_on_inf_day_28_on_overall_day_427.ts'" -d "INPUT_HOST_ID='H120'" -d "OUTPUT_HOST_IDS='H125;H126'" -d "TRANSMISSION_DAY=18" -d "OUTPUT_DIR='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/'" -d "N_FOUNDERS=20" -d "REPRODUCTION_BENEFIT=1" -d "TRANSMISSION_BENEFIT=1" /data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim
+		"""
+
+rule inf78:
+	input:
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim",
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf74_H116_on_inf_day_21_on_overall_day_405.ts"
+	output:
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf78_H121_on_inf_day_12_on_overall_day_417.ts"
+	shell:
+		"""
+			/home/shyamag/.conda/envs/slim-env/bin/slim -l 0 -seed 29970 -d "INF_ID='inf78'" -d "INFILE='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf74_H116_on_inf_day_21_on_overall_day_405.ts'" -d "INPUT_HOST_ID='H121'" -d "OUTPUT_HOST_IDS='H127;H128;H129'" -d "TRANSMISSION_DAY=12" -d "OUTPUT_DIR='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/'" -d "N_FOUNDERS=20" -d "REPRODUCTION_BENEFIT=1" -d "TRANSMISSION_BENEFIT=1" /data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim
+		"""
+
+rule inf79:
+	input:
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim",
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf75_H117_on_inf_day_16_on_overall_day_400.ts"
+	output:
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf79_H122_on_inf_day_26_on_overall_day_426.ts"
+	shell:
+		"""
+			/home/shyamag/.conda/envs/slim-env/bin/slim -l 0 -seed 90605 -d "INF_ID='inf79'" -d "INFILE='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf75_H117_on_inf_day_16_on_overall_day_400.ts'" -d "INPUT_HOST_ID='H122'" -d "OUTPUT_HOST_IDS='H130'" -d "TRANSMISSION_DAY=26" -d "OUTPUT_DIR='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/'" -d "N_FOUNDERS=20" -d "REPRODUCTION_BENEFIT=1" -d "TRANSMISSION_BENEFIT=1" /data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim
+		"""
+
+rule inf80:
+	input:
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim",
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf76_H119_on_inf_day_22_on_overall_day_422.ts"
+	output:
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf80_H123_on_inf_day_29_on_overall_day_451.ts"
+	shell:
+		"""
+			/home/shyamag/.conda/envs/slim-env/bin/slim -l 0 -seed 91571 -d "INF_ID='inf80'" -d "INFILE='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf76_H119_on_inf_day_22_on_overall_day_422.ts'" -d "INPUT_HOST_ID='H123'" -d "OUTPUT_HOST_IDS='H131;H132;H133'" -d "TRANSMISSION_DAY=29" -d "OUTPUT_DIR='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/'" -d "N_FOUNDERS=20" -d "REPRODUCTION_BENEFIT=1" -d "TRANSMISSION_BENEFIT=1" /data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim
+		"""
+
+rule inf81:
+	input:
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim",
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf76_H119_on_inf_day_22_on_overall_day_422.ts"
+	output:
+		"/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf81_H124_on_inf_day_23_on_overall_day_445.ts"
+	shell:
+		"""
+			/home/shyamag/.conda/envs/slim-env/bin/slim -l 0 -seed 5393 -d "INF_ID='inf81'" -d "INFILE='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/inf76_H119_on_inf_day_22_on_overall_day_422.ts'" -d "INPUT_HOST_ID='H124'" -d "OUTPUT_HOST_IDS='H134;H135'" -d "TRANSMISSION_DAY=23" -d "OUTPUT_DIR='/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/sim1/'" -d "N_FOUNDERS=20" -d "REPRODUCTION_BENEFIT=1" -d "TRANSMISSION_BENEFIT=1" /data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim
+		"""
+

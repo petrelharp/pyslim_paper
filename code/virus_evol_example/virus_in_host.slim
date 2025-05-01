@@ -1,0 +1,136 @@
+// -------------------
+// WITHIN-HOST MODEL
+// -------------------
+
+// INITIALIZE
+initialize() {
+	initializeSLiMModelType("nonWF");
+	initializeSLiMOptions(keepPedigrees = T);
+	initializeTreeSeq(retainCoalescentOnly = F);
+	// set up a single haploid chromosome
+	defineConstant("GENOME_LENGTH", 1e6);
+	initializeChromosome(1, GENOME_LENGTH, "H");
+	// set up recombination and mutation parameters
+	initializeRecombinationRate(0);
+	initializeMutationRate(1e-6);
+	// phenotype-causing mutation - technically neutral, but will be used to determine reproduction/transmission probabilities
+	initializeMutationType("m1", 0, "f", 0);
+	// back-mutation - reverts back to ancestral state by overwriting the m1 mutation; m1 mutations are what matter/are counted
+	initializeMutationType("m2", 0, "f", 0);
+	c(m1,m2).convertToSubstitution = F;
+	// enforce mutually exclusive replacement for derived/ancestral mutations
+	c(m1,m2).mutationStackGroup = 1;
+	c(m1,m2).mutationStackPolicy = 'l';
+	// specify overall genome structure - large neutral region with a selected locus (1 bp) in the middle
+	initializeGenomicElementType("g0", m0, 1);
+	initializeGenomicElementType("g1", c(m1, m2), c(1, 1));
+	defineConstant("MUT_POS", 659148);
+	initializeGenomicElement(c(g0, g1, g0), c(0, MUT_POS, MUT_POS+1), c(MUT_POS-1, MUT_POS, GENOME_LENGTH-1));
+
+	// fixed demographic parameters
+	defineConstant("POP_GROWTH_RATE", 0.01);
+	defineConstant("K", 1e6); // carrying capacity of virus population within the host
+
+	// print start message
+	catn("\n\nWITHIN-HOST PARAMETER SUMMARY:\n");
+	seed_sim = T;
+	if (!isNULL(INFILE)) { // to be recognized as a seed simulation, INFILE can either be explicitly set to 'NULL' OR left unspecified
+		if (INFILE != "NULL") {
+			seed_sim = F;
+			catn("* Trees to be loaded from " + INFILE);
+		}
+	}
+	defineConstant("SEED_SIM", seed_sim);
+}
+
+// Pathogens infect host
+1 first() {
+	if (!exists("p0")) {
+		// start seed simulation or load an input file
+		if (SEED_SIM) {
+			catn("\nSTARTING SEED SIMULATION\n");
+			// infections are started with X pathogens, on average, where X = N_founders / (1 − exp(−N_founders))
+			sim.addSubpop("p0", rztpois(1, N_FOUNDERS));
+			// set up tag to track phenotype
+			p0.individuals.tag = 0;
+			// start a fresh log file
+			writeFile(OUTPUT_DIR + "/counts.csv", paste("sim_day", "inf_id", "host_id", "pop_size", "carrier_count", sep=","), append = F);
+		} else {
+			catn("\nSTARTING SIMULATION\n");
+			// load input file
+			sim.readFromPopulationFile(INFILE);
+			// load metadata, which stores information about which individuals are needed to seed this infection
+			metadata = treeSeqMetadata(INFILE, userData = T);
+			// determine which individuals to keep
+			inds_to_keep = metadata.getValue(INPUT_HOST_ID);
+			// kill everyone else - mark individuals to be transmitted with a unique tag
+			p0.individuals.tagL0 = T;
+			sim.individualsWithPedigreeIDs(inds_to_keep).tagL0 = F;
+			sim.killIndividuals(p0.subsetIndividuals(tagL0 = T));
+			// set up tag to track phenotype
+			p0.individuals.tag = p0.individuals.countOfMutationsOfType(m1);
+		}
+		// track simulation start day
+		defineConstant("SIM_START", sim.cycle);		
+		// calculate the overall transmission day
+		defineConstant("TRANSMISSION_DAY0", SIM_START + asInteger(TRANSMISSION_DAY));
+	}
+}
+
+// Pathogens are transmitted to next host
+TRANSMISSION_DAY0 first() {
+	// parse 'output_host_id' to figure out which hosts to transmit to
+	hosts_to_infect = strsplit(OUTPUT_HOST_IDS, sep = ";");
+	// determine how many pathogens are needed to infect all hosts
+	N_pathogens = rztpois(length(hosts_to_infect), N_FOUNDERS);
+	// determine mutational status of all pathogens
+	mut_status = p0.individuals.countOfMutationsOfType(m1);
+	weights = 1 + (mut_status * TRANSMISSION_BENEFIT); // carrying the mutation confers X% higher probability of being transmitted
+	transmitted_inds = sample(p0.individuals, size = sum(N_pathogens), replace = F, weights=weights);
+	sim.treeSeqRememberIndividuals(transmitted_inds); // permanently remember these individuals in subsequent parallel infection steps
+	// kill everyone else - mark individuals to be transmitted with a unique tag
+	p0.individuals.tagL0 = T;
+	transmitted_inds.tagL0 = F;
+	sim.killIndividuals(p0.subsetIndividuals(tagL0 = T));
+	// construct dictionary of infected hosts and viral genomes to be transmitted to each
+	transmission_metadata = Dictionary();
+	for (host in hosts_to_infect, count in N_pathogens, range_end in cumSum(N_pathogens)) {
+		sampled_inds = transmitted_inds[(range_end-count):(range_end-1)];
+		transmission_metadata.setValue(host, sampled_inds.pedigreeID);
+	}
+	// transmit - write out a tree sequence containing the information needed for all subsequent infections
+	sim.treeSeqOutput(path = OUTPUT_DIR + INF_ID + "_" + INPUT_HOST_ID + "_on_inf_day_" + asString(sim.cycle - SIM_START) + "_on_overall_day_" + asString(sim.cycle - 1) + ".ts", simplify=T, includeModel=F, metadata=transmission_metadata);
+	sim.simulationFinished();
+}
+
+// Pathogens replicate within the host
+SIM_START:TRANSMISSION_DAY0 reproduction() {
+	// choose the target population size based on the specified population growth rate
+	target_pop_size = rztpois(1, p0.individualCount * (1 + POP_GROWTH_RATE));
+	mut_status = p0.individuals.tag;
+	sum_mut_status = sum(mut_status);
+	if (sum_mut_status > 0) {
+		weights = 1 + (mut_status * REPRODUCTION_BENEFIT); // carrying the mutation confers X% higher probability of reproducing
+	} else {
+		weights = NULL;
+	}
+	// choose individuals to replicate themselves with replacement
+	parents = sample(p0.individuals, size = target_pop_size, replace = T, weights=weights);
+	for (i in parents) {
+		offspring = p0.addCloned(i);
+		offspring.tag = offspring.countOfMutationsOfType(m1); // value of tag tracks phenotype, which is based on genotype at causal locus
+	}
+	self.active = 0;
+}
+
+// Individuals have their fitness scaled according to the overall population size (logistic growth)
+early() {
+	p0.fitnessScaling = K / p0.individualCount;
+}
+
+late() {
+	// log summary statistics from the simulation
+	if (sim.cycle != TRANSMISSION_DAY0) {
+		writeFile(OUTPUT_DIR + "/counts.csv", paste(sim.cycle, INF_ID, INPUT_HOST_ID, p0.individualCount, sum(p0.individuals.tag), sep=","), append = T);
+	}
+}

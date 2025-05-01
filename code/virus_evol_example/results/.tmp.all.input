@@ -1,0 +1,14 @@
+rule all:
+	input:
+		"/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/virus_evol_example/results//inf77_H120_to_H125_on_inf_day_18_on_overall_day_445.ts",
+		"/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/virus_evol_example/results//inf77_H120_to_H126_on_inf_day_18_on_overall_day_445.ts",
+		"/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/virus_evol_example/results//inf78_H121_to_H127_on_inf_day_12_on_overall_day_417.ts",
+		"/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/virus_evol_example/results//inf78_H121_to_H128_on_inf_day_12_on_overall_day_417.ts",
+		"/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/virus_evol_example/results//inf78_H121_to_H129_on_inf_day_12_on_overall_day_417.ts",
+		"/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/virus_evol_example/results//inf79_H122_to_H130_on_inf_day_26_on_overall_day_426.ts",
+		"/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/virus_evol_example/results//inf80_H123_to_H131_on_inf_day_29_on_overall_day_451.ts",
+		"/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/virus_evol_example/results//inf80_H123_to_H132_on_inf_day_29_on_overall_day_451.ts",
+		"/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/virus_evol_example/results//inf80_H123_to_H133_on_inf_day_29_on_overall_day_451.ts",
+		"/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/virus_evol_example/results//inf81_H124_to_H134_on_inf_day_23_on_overall_day_445.ts",
+		"/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/virus_evol_example/results//inf81_H124_to_H135_on_inf_day_23_on_overall_day_445.ts"
+
