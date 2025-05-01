@@ -1,6 +1,11 @@
+.PHONY : figures
+
 all : pyslim_chapter.pdf
 
-pyslim_chapter.pdf: pyslim_chapter.tex references.bib
+pyslim_chapter.pdf : pyslim_chapter.tex references.bib figures
+
+figures :
+	$(MAKE) -C figures
 
 clean:
 	rm -f *.pdf *.aux *.bbl *.log
