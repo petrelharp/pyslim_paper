@@ -1,22 +1,5 @@
 \usepackage{listings}
-\usepackage{mdframed,tikz}
-\usepackage{makecell}
-\usepackage{newfloat}
-
-% see https://tex.stackexchange.com/questions/95631/defining-a-new-type-of-floating-environment
-\DeclareFloatingEnvironment[fileext=frm,placement={!ht},name=SLiMbox]{slimboxfloat}
-% Modified from the mdframed documentation:
-% \newmdenv[linewidth=2pt,roundcorner=5pt]{slimbox}
-\newcounter{slimbox}
-\newenvironment{slimbox}[1][]{%
-\refstepcounter{slimbox}%
-\begin{slimboxfloat}%
-\mdfsetup{frametitle={\tikz[baseline=(current bounding box.east),outer sep=0pt]
-\node[anchor=east,rectangle,fill=blue!20]
-{\strut Box~\theslimbox:~#1};}}%
-\mdfsetup{innertopmargin=10pt,linecolor=blue!20,linewidth=2pt,topline=true,
-frametitleaboveskip=\dimexpr-\ht\strutbox\relax,nobreak}
-\begin{mdframed}[]\relax}{\end{mdframed}\end{slimboxfloat}}
+\usepackage{xcolor}
 
 % see listings documentation
 \lstdefinelanguage{slim}{

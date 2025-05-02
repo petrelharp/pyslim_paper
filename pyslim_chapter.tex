@@ -203,6 +203,226 @@ by default, we also remove historical nodes that are only ``on the line to'' a s
 do not represent a branching point (i.e. coalescent event) on the tree.
 
 
+\section*{Post-processing: recapitation and mutation}
+
+Perhaps the most common pyslim operations involve \textit{recapitation} (CITE)
+and/or adding neutral mutations.
+Below we illustrate these in the context of running a ``hybrid'' simulation, combining
+both forwards and backwards (coalescent) methods. This hybrid approach is a popular
+application of pyslim because coalescent algorithms, although more limited in the degree
+of biological realism they can attain, can be much faster than the forwards algorithms
+implemented in SLiM.
+
+A typical use-case is to take an existing SLiM simulation and endow
+it with a history derived from a coalescent simulation: this is known as \textit{recapitation}.
+For instance, suppose we have a SLiM simulation of a population of 100,000 individuals
+that we have run for 10,000 generations without neutral mutations. Now, we wish to
+extract whole-genome genotype data for only 1,000 individuals. Here's one way to do it:
+
+\begin{enumerate}
+    \item `.recapitate` :
+       The simulation has likely not reached demographic equilibrium - it has not
+        \textit{coalesced} entirely; recapitation uses coalescent simulation to provide
+       a "prior history" for the initial generation of the simulation.
+
+    \item `simplify()` : For efficiency, subset the tree
+       sequence to only the information relevant for those 1,000 individuals
+        we wish to sample. (TODO REMOVE?)
+
+    \item `sim\_mutations` : Add neutral mutations to the tree sequence.
+\end{enumerate}
+
+These steps are described below. First, to get something to work with,
+you can run this simple SLiM script of a single population of sexual organisms,
+fluctuating around 1000 individuals, for 1000 generations: ADD LINK?
+
+
+\subsection*{Recapitation}
+
+
+Although we can initialize a SLiM simulation with the results of a coalescent simulation,
+if during the simulation we don't actually use the genotypes for anything, it
+can be much more efficient to do this afterwards, hence only doing a coalescent
+simulation for the portions of the first-generation ancestors that have
+not yet coalesced. (See the SLiM manual for more explanation.)
+This is depicted in Figure~\ref{fig:indivs}D.
+imagine that at some sites, some of the samples
+don't share a common ancestor within the SLiMulated portion of history (shown in blue).
+Recapitation starts at the \textit{top} of the genealogies,
+and runs a coalescent simulation back through time
+to fill out the rest of genealogical history relevant to the samples.
+The green chromosomes are new ancestral nodes that have been added to the tree sequence.
+This is important - if we did not do this,
+then effectively we are assuming the initial population would be genetically homogeneous,
+and so our simulation would have less genetic variation than it should have
+(since the component of variation from the initial population would be omitted).
+
+Doing this is as simple as:
+
+\begin{lstlisting}{language=slim}
+orig_ts = tskit.load("example_sim.trees")
+rts = pyslim.recapitate(orig_ts,
+            recombination_rate=1e-8,
+            ancestral_Ne=200, random_seed=5)
+\end{lstlisting}
+The warning is harmless; it is reminding us to think about generation time
+when recapitating a nonWF simulation (a topic we'll deal with later).
+
+We can check that this worked as expected, by verifying that after recapitation
+all trees have only one root:
+\begin{lstlisting}{language=slim}
+orig_max_roots = max(t.num_roots for t in orig_ts.trees())
+recap_max_roots = max(t.num_roots for t in rts.trees())
+print(f"Maximum number of roots before recapitation: {orig_max_roots}\n"
+      f"After recapitation: {recap_max_roots}")
+\end{lstlisting}
+
+The `.recapitate` method
+is just a thin wrapper around `msprime.sim\_ancestry`,
+and you need to set up demography explicitly - for instance, in the example above
+we've simulated from an ancestral population of ``Ne=200`` diploids.
+If you have more than one population,
+you must set migration rates or else coalescence will never happen.
+% (see [](sec_recapitate_with_migration) for an example, and {func}`.recapitate` for more).
+
+(TODO: mention about how to recapitate with a nonuniform map, as in the docs?)
+
+
+\subsection*{Simplification}
+
+\begin{figure}
+\centering
+    \includegraphics{figures/pedigree_recapitate}
+    \includegraphics{figures/pedigree_simplify}
+\caption{
+    \textbf{(A)} Recapitation adds the green nodes by coalescent simulation.
+    \textbf{(B)} Simplification.
+}
+\label{fig:recap_simp}
+\end{figure}
+
+
+Probably, your simulations have produced many more fictitious genomes
+than you will be lucky enough to have in real life,
+so at some point you may want to reduce your dataset to a realistic sample size.
+We can get rid of unneeded samples and any extra information from them by using
+an operation called *simplification* (this is the same basic approach that SLiM
+implements under the hood when outputting a tree sequence).
+
+Depicted in Figure~\ref{fig:recap_simp}B is the result of applying an explicit call to
+simplify to our example tree sequence.
+In the call we asked to keep only 4
+genomes (contained in 2 of the individuals in the current generation). This has
+substantially simplified the tree sequence, because only information relevant to the
+genealogies of the 4 sample nodes has been kept. (Precisely, simplification retains only
+nodes of the tree sequence that are branching points of some marginal genealogy -- see
+CITE % [Kelleher et al 2018](https://doi.org/10.1371/journal.pcbi.1006581) for details.)
+While simplification sounds very appealing - it makes things simpler after all -
+it is often not necessary in practice, because tree sequences are very compact,
+and many operations with them are quite fast.
+(It will, however, speed up many operations, so if you plan to do a large number of simulations,
+your workflow could benefit from early simplification.)
+So, you should probably not make simplification a standard step in your workflow,
+only using it if necessary.
+
+It is important that simplification - if it happens at all -
+either (a) comes after recapitation, or (b) is done with the
+``keep\_input\_roots=True`` option.
+This is because simplification removes some of the
+ancestral genomes in the first generation,
+which are necessary for recapitation,
+unless it is asked to "keep the input roots".
+If we simplify without this option before recapitating,
+some of the first-generation blue chromosomes in the figure on the right
+would not be present, so the coalescent simulation would start from a more recent point in time
+than it really should.
+As an extreme example, suppose our SLiM simulation has a single diploid who has reproduced
+by clonal reproduction for 1,000 generations,
+so that the final tree sequence is just two vertical lines of descent going back
+to the two chromosomes in the initial individual alive 1,000 generations ago.
+Recapitation would produce a shared history for these two chromosomes,
+that would coalesce some time longer ago than 1,000 generations.
+However, if we simplified first, then those two branches going back 1,000 generations would be removed,
+since they don't convey any information about the shape of the tree;
+and so recapitation might produce a common ancestor more recently than 1,000 generations,
+which would be inconsistent with the SLiM simulation.
+
+After recapitation,
+simplification to the history of 100 individuals alive today
+can be done with the {meth}`tskit.TreeSequence.simplify` method:
+\begin{lstlisting}{language=slim}
+import numpy as np
+rng = np.random.default_rng(seed=3)
+alive_inds = pyslim.individuals_alive_at(rts, 0)
+keep_indivs = rng.choice(alive_inds, 100, replace=False)
+keep_nodes = []
+for i in keep_indivs:
+  keep_nodes.extend(rts.individual(i).nodes)
+
+sts = rts.simplify(keep_nodes, keep_input_roots=True)
+\end{lstlisting}
+
+Note that you must pass simplify a list of \textit{node IDs}, not individual IDs.
+Here, we used the `.individuals\_alive\_at` method to obtain the list
+of individuals alive today.
+Also note that there are *still* more than 100 individuals remaining - 15 non-sample individuals
+have not been simplified away,
+because they have nodes that are required to describe the genealogies of the samples.
+(Since this is a non-Wright-Fisher simulation,
+parents and children can be both alive at the same time in the final generation.)
+
+
+
+\subsection*{Adding neutral mutations to a SLiM simulation}
+
+% ```{figure} _static/pedigree_mutate.png
+
+If you have recorded a tree sequence in SLiM, likely you have not included any neutral mutations,
+since it is much more efficient to simply add these on afterwards.
+To add these (in a completely equivalent way to having included them during the simulation),
+you can use the `msprime.sim\_mutations` function, which returns a new tree sequence with additional mutations.
+Continuing with the cartoons from above, these are added to each branch of the tree sequence
+at the rate per unit time that you request.
+We'll add these using the {class}`msprime.SLiMMutationModel`, so that the file can be read back into SLiM,
+but any of the other mutation models in msprime could be used.
+This works as follows:
+\begin{lstlisting}{language=slim}
+next_id = pyslim.next_slim_mutation_id(sts)
+ts = msprime.sim_mutations(
+           sts,
+           rate=1e-8,
+           model=msprime.SLiMMutationModel(type=0, next_id=next_id),
+           keep=True,
+)
+\end{lstlisting}
+
+
+What's going on here? Let's step through the code.
+
+\begin{enumerate}
+    \item The mutation ``rate = 1e-8``, which adds mutations at a rate of $10^{-8}$ per bp.
+    Unlike previous versions of msprime, this adds mutations using a discrete-sites model,
+    i.e., only at integer locations (like SLiM).
+
+\item We're passing ``type=0`` to the mutation model.
+    This is because SLiM mutations need a "mutation type",
+    and it makes the most sense if we add a type that was unused in the simulation.
+    In this example we don't have any existing mutation types, so we can safely use ``type=0``.
+
+\item We also add ``keep = True``, to keep any existing mutations.
+    In this example there aren't any, so this isn't strictly necessary,
+    but this is a good default.
+
+\item If there are existing SLiM mutations on the tree sequence we need to
+    make sure any newly added mutations have distinct SLiM IDs,
+    so we use `.next\_slim\_mutation\_id` to figure out
+    what the next available ID is, and pass it in.
+
+\end{enumerate}
+
+TODO: writing out to VCF
+
+
 \section*{Parallelizing forward-in-time simulations of multiple species}
 
 Any two branches stemming from the same node in a species tree are independent from each other and
