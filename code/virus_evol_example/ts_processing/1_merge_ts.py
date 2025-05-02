@@ -172,25 +172,18 @@ def add_missing_edges(merged_tree_seq, tree_seq, verbose = False):
 	return merged_tree_updated
 
 # Merge two trees
-def merge_ts(tree_seq1, tree_seq2, reroot_nodes = True, verbose = False):
-	# generate SLiM-to-node maps
-	tree1_slim_id_map = SLiM_to_node_dict(tree_seq1)
-	tree2_slim_id_map = SLiM_to_node_dict(tree_seq2)
-	# determine which nodes are common to both tree sequences
-	common_nodes = set(tree1_slim_id_map.keys()) & set(tree2_slim_id_map.keys())
-	# create null node map
-	node_map = np.full(tree_seq1.num_nodes, tskit.NULL)
+def merge_ts(tree_seq1, tree_seq2, split_time, reroot_nodes = True, verbose = False):
+	# create dataframes to store tree_seq1 and tree_seq2 information
+	ts1_dat = pd.DataFrame({'ts1_idx': range(tree_seq1.num_nodes), 'slim_id': [x.metadata['slim_id'] for x in tree_seq1.nodes()], 'time': tree_seq1.nodes_time})
+	ts2_dat = pd.DataFrame({'ts2_idx': range(tree_seq2.num_nodes), 'slim_id': [x.metadata['slim_id'] for x in tree_seq2.nodes()], 'time': tree_seq2.nodes_time})
+	common_node_dat = pd.merge(ts1_dat, ts2_dat, on=['slim_id', 'time'])
+	common_node_dat = common_node_dat[common_node_dat['time'] >= split_time]
 	# if there are shared nodes, fill in node map
-	if len(common_nodes) > 0:
-		# match nodes
-		tree1_match_idx = [tree1_slim_id_map[x] for x in common_nodes]
-		tree2_match_idx = [tree2_slim_id_map[x] for x in common_nodes]
-		# fill in node_map
-		node_map[tree1_match_idx] = tree2_match_idx
-		# node ages should be identical
-		age_mismatches = np.array([i for i in range(tree_seq1.num_nodes) if node_map[i] != -1 and tree_seq1.node(i).time != tree_seq2.node(node_map[i]).time])
-		if len(age_mismatches) > 0:
-			raise RuntimeError(str(len(age_mismatches)) + ' age mismatches found across these two trees')
+	if len(common_node_dat) > 0:
+		# create null node map
+		node_map = np.full(tree_seq1.num_nodes, tskit.NULL)
+		# fill in null node map
+		node_map[common_node_dat.ts1_idx] = common_node_dat.ts2_idx
 	# merge trees
 	merged_ts = tree_seq2.union(tree_seq1, node_map, check_shared_equality = False, add_populations = False, record_provenance = False)
 	if reroot_nodes:
@@ -238,95 +231,98 @@ def main(args):
 			print(' * tree sequence file matching ' + file_name + ' could not be found - are you sure it was created?', flush = True)
 			n_failed_samples += + 1
 
-	## Adjust tree ages ---
-	print('Adjusting tree ages...', flush = True)
-	# Find sample tree with oldest ancestry
-	tree_ages = {key: tree.metadata['SLiM']['tick'] for key, tree in sample_ts.items()}
-	max_age = max(tree_ages.values())
-	# Adjust node ages to match up across all trees
-	adjusted_sample_ts = {}
-	for ts in sample_ts.keys():
-		tree_age = tree_ages[ts]
-		t_to_add = max_age - tree_age
-		if t_to_add > 0:
-			adjusted_sample_ts[ts] = update_tree_ages(sample_ts[ts], t_to_add = t_to_add)
-		else:
-			adjusted_sample_ts[ts] = sample_ts[ts]
+	if len(sample_ts) > 1:
+		## Adjust tree ages ---
+		print('Adjusting tree ages...', flush = True)
+		# Find sample tree with oldest ancestry
+		tree_ages = {key: tree.metadata['SLiM']['tick'] for key, tree in sample_ts.items()}
+		max_age = max(tree_ages.values())
+		# Adjust node ages to match up across all trees
+		adjusted_sample_ts = {}
+		for ts in sample_ts.keys():
+			tree_age = tree_ages[ts]
+			t_to_add = max_age - tree_age
+			if t_to_add > 0:
+				adjusted_sample_ts[ts] = update_tree_ages(sample_ts[ts], t_to_add = t_to_add)
+			else:
+				adjusted_sample_ts[ts] = sample_ts[ts]
 
-	# Identify ancestors of all sample infections ----
-	ancestor_list0 = {}
-	print('Finding sample ancestors...', flush = True)
-	for i in sampled_infs:
-		ancestor_list0[i] = list_ancestors(i, inf_sequence)
-	ancestor_list = ancestor_list0.copy()
+		# Identify ancestors of all sample infections ----
+		ancestor_list0 = {}
+		print('Finding sample ancestors...', flush = True)
+		for i in sampled_infs:
+			ancestor_list0[i] = list_ancestors(i, inf_sequence)
+		ancestor_list = ancestor_list0.copy()
 
-	# Determine most recent common ancestor between all pairs of infections
-	print('Calculating pairwise relatedness metrics...', flush = True)
-	pairwise_sample_relatedness0 = calc_pairwise_relatedness(sampled_infs, ancestor_list)
-	pairwise_sample_relatedness = pairwise_sample_relatedness0.copy()
+		# Determine most recent common ancestor between all pairs of infections
+		print('Calculating pairwise relatedness metrics...', flush = True)
+		pairwise_sample_relatedness0 = calc_pairwise_relatedness(sampled_infs, ancestor_list)
+		pairwise_sample_relatedness = pairwise_sample_relatedness0.copy()
 
-	# Determine merge order
-	print('Determining merge order...', flush = True)
-	sampled_infs1 = sampled_infs.copy()
-	n_sampled_infs = len(sampled_infs1)
-	samples_added = 1
-	pairwise_sample_relatedness['sister_pair'] = list(zip(pairwise_sample_relatedness.sample_1, pairwise_sample_relatedness.sample_2))
-	while samples_added > 0:
-		# determine closest shared ancestors among all pairwise relationships
-		while not pairwise_sample_relatedness.empty:
-			mrca = pairwise_sample_relatedness.iloc[0]['mrca']
-			sister_samples = {pairwise_sample_relatedness.iloc[0]['sample_1'], pairwise_sample_relatedness.iloc[0]['sample_2']}
+		# Determine merge order - resolve groups of nodes from tips to root in order of MRCA age
+		print('Determining merge order...', flush = True)
+		sampled_infs1 = sampled_infs.copy()
+		n_sampled_infs = len(sampled_infs1)
+		samples_added = 1
+		pairwise_sample_relatedness['sister_pair'] = list(zip(pairwise_sample_relatedness.sample_1, pairwise_sample_relatedness.sample_2))
+		while samples_added > 0:
+			# determine closest shared ancestors among all pairwise relationships
+			while not pairwise_sample_relatedness.empty:
+				mrca = pairwise_sample_relatedness.iloc[0]['mrca']
+				sister_samples = {pairwise_sample_relatedness.iloc[0]['sample_1'], pairwise_sample_relatedness.iloc[0]['sample_2']}
+				# of all other samples that share this mrca, is it the most recent shared ancestor for them too?
+				other_samples_df = pairwise_sample_relatedness[pairwise_sample_relatedness['mrca'] == mrca]
+				other_samples = set(other_samples_df.sample_1.tolist() + other_samples_df.sample_2.tolist()) - sister_samples
+				if len(other_samples) > 0:
+					for i in other_samples:
+						all_mrcas = set(pairwise_sample_relatedness.mrca[(pairwise_sample_relatedness.sample_1 == i) | (pairwise_sample_relatedness.sample_2 == i)])
+						# if yes for any, add those samples to sister_samples group
+						if str(max(map(int, all_mrcas))) == mrca:
+							sister_samples.add(i)
+				# add mrca to sample list if it's not already present
+				if mrca not in sampled_infs1:
+					sampled_infs1.append(mrca)
+					ancestor_list[mrca] = list_ancestors(mrca, inf_sequence)
+				# exclude all sister samples from further consideration
+				pairwise_sample_relatedness = pairwise_sample_relatedness[~pairwise_sample_relatedness.index.isin(
+					pairwise_sample_relatedness.index[pairwise_sample_relatedness.sample_1.isin(sister_samples) | 
+					pairwise_sample_relatedness.sample_2.isin(sister_samples)])].reset_index(drop=True)
+			samples_added = len(sampled_infs1) - n_sampled_infs
+			n_sampled_infs = len(sampled_infs1)
+			pairwise_sample_relatedness = calc_pairwise_relatedness(list(sampled_infs1), ancestor_list)
+		tmp = pairwise_sample_relatedness.copy()
+		# final pass
+		merge_order = pd.DataFrame(columns = tmp.columns)
+		while not tmp.empty:
+			mrca = tmp.iloc[0]['mrca']
+			sister_samples = {tmp.iloc[0]['sample_1'], tmp.iloc[0]['sample_2']}
+			idx = [0]
 			# of all other samples that share this mrca, is it the most recent shared ancestor for them too?
-			other_samples_df = pairwise_sample_relatedness[pairwise_sample_relatedness['mrca'] == mrca]
-			other_samples = set(other_samples_df.sample_1.tolist() + other_samples_df.sample_2.tolist()) - sister_samples
-			if len(other_samples) > 0:
+			other_samples_idx = [x for x in tmp.index[tmp.mrca == mrca].tolist() if x not in [0, '0']]
+			if other_samples_idx:
+				other_samples = set(tmp.loc[other_samples_idx, 'sample_1'].tolist() + tmp.loc[other_samples_idx, 'sample_2'].tolist()) - sister_samples
 				for i in other_samples:
-					all_mrcas = set(pairwise_sample_relatedness.mrca[(pairwise_sample_relatedness.sample_1 == i) | (pairwise_sample_relatedness.sample_2 == i)])
+					all_mrcas = set(tmp.loc[(tmp['sample_1'] == i) | (tmp['sample_2'] == i), 'mrca'].tolist())
 					# if yes for any, add those samples to sister_samples group
 					if str(max(map(int, all_mrcas))) == mrca:
 						sister_samples.add(i)
-			# add mrca to sample list if it's not already present
-			if mrca not in sampled_infs1:
-				sampled_infs1.append(mrca)
-				ancestor_list[mrca] = list_ancestors(mrca, inf_sequence)
+						idx.append(other_samples_idx[next(index for index, value in enumerate(other_samples_idx) if tmp.iloc[value]['sample_1'] == i or tmp.iloc[value]['sample_2'] == i)])
 			# exclude all sister samples from further consideration
-			pairwise_sample_relatedness = pairwise_sample_relatedness[~pairwise_sample_relatedness.index.isin(
-				pairwise_sample_relatedness.index[pairwise_sample_relatedness.sample_1.isin(sister_samples) | 
-				pairwise_sample_relatedness.sample_2.isin(sister_samples)])].reset_index(drop=True)
-		samples_added = len(samples1) - n_samples
-		n_samples = len(samples1)
-		pairwise_sample_relatedness = calc_pairwise_relatedness(list(samples1), ancestor_list)
-	tmp = pairwise_sample_relatedness.copy()
-	# final pass
-	merge_order = pd.DataFrame(columns = tmp.columns)
-	while not tmp.empty:
-		mrca = tmp.iloc[0]['mrca']
-		sister_samples = {tmp.iloc[0]['sample_1'], tmp.iloc[0]['sample_2']}
-		idx = [0]
-		# of all other samples that share this mrca, is it the most recent shared ancestor for them too?
-		other_samples_idx = [x for x in tmp.index[tmp.mrca == mrca].tolist() if x not in [0, '0']]
-		if other_samples_idx:
-			other_samples = set(tmp.loc[other_samples_idx, 'sample_1'].tolist() + tmp.loc[other_samples_idx, 'sample_2'].tolist()) - sister_samples
-			for i in other_samples:
-				all_mrcas = set(tmp.loc[(tmp['sample_1'] == i) | (tmp['sample_2'] == i), 'mrca'].tolist())
-				# if yes for any, add those samples to sister_samples group
-				if str(max(map(int, all_mrcas))) == mrca:
-					sister_samples.add(i)
-					idx.append(other_samples_idx[next(index for index, value in enumerate(other_samples_idx) if tmp.iloc[value]['sample_1'] == i or tmp.iloc[value]'sample_2'] == i)])
-		# exclude all sister samples from further consideration
-		merge_order = pd.concat([merge_order, tmp.iloc[idx]]).reset_index(drop = True)
-		tmp = tmp[~tmp.index.isin(tmp.index[(tmp['sample_1'].isin(sister_samples)) | (tmp['sample_2'].isin(sister_samples))])].reset_index(drop=True)
-	del tmp
+			merge_order = pd.concat([merge_order, tmp.iloc[idx]]).reset_index(drop = True)
+			tmp = tmp[~tmp.index.isin(tmp.index[(tmp['sample_1'].isin(sister_samples)) | (tmp['sample_2'].isin(sister_samples))])].reset_index(drop=True)
+		del tmp
+		inf_day_map = inf_sequence.set_index('inf_id')['overall_day'].to_dict()
+		merge_order["split_day"] = merge_order["mrca"].map(inf_day_map)
 
 		# Merge
 		unique_mrcas = merge_order.mrca.unique()
-		print('Merging a total of ' + str(len(samples)) + ' sample trees in ' + str(len(unique_mrcas)) +  ' merging steps', flush = True)
+		print('Merging a total of ' + str(len(sampled_infs)) + ' sample trees in ' + str(len(unique_mrcas)) +  ' merging steps', flush = True)
 		for i in unique_mrcas:
-			print('Resolving infection ' + i + ' (' + str(1 + np.where(unique_mrcas == i)[0][0]) + ' of ' + str(len(unique_mrcas)) + ')' , flush = True)
+			print('Resolving infection ' + str(i) + ' (' + str(1 + np.where(unique_mrcas == i)[0][0]) + ' of ' + str(len(unique_mrcas)) + ')' , flush = True)
 			dat = merge_order[merge_order.mrca == i].reset_index(drop = True)
 			focal_samples = set(dat['sample_1']).union(dat['sample_2'])
 			samples_added = set()
-			# merge samples
+			# merge samples pairwise
 			while len(focal_samples) > 0:
 				if len(samples_added) == 0:
 					inf1 = list(focal_samples)[0]
@@ -334,39 +330,27 @@ def main(args):
 				else:
 					inf1 = i
 					inf2 = list(focal_samples)[0]
-				ts1, ts2 = relabelled_sample_ts[inf1], relabelled_sample_ts[inf2]
-				relabelled_sample_ts[i] = merge_ts(ts1, ts2, check_shared_equality=False, reroot_nodes=True, verbose=False)
+				ts1, ts2 = adjusted_sample_ts[inf1], adjusted_sample_ts[inf2]
+				adjusted_sample_ts[i] = merge_ts(ts1, ts2, split_time=max_age-dat.split_day[0]-1, reroot_nodes=False, verbose=False)
 				for x in [inf1, inf2]:
 					if x in focal_samples:
 						focal_samples.discard(x)
 					if x != i:
 						samples_added.add(x)
-		merged_ts = relabelled_sample_ts.get(i)
+			merged_ts = adjusted_sample_ts.get(i)
 	else:
 		print('Only 1 sample tree was found and processed', flush = True)
 		merged_ts = sample_ts[list(sample_ts.keys())[0]]
 
 	# Simplify, removing seed nodes, and write out merged tree
 	print('Simplifying and writing out final tree...', flush = True)
-	# simplify tree and update top level metadata
+	# simplify tree
 	simple_ts = merged_ts.simplify(keep_input_roots = True)
-	ts_tables = simple_ts.dump_tables()
-	metadata_schema = simple_ts.metadata_schema.schema.copy()
-	ts_tables.metadata_schema = tskit.MetadataSchema(metadata_schema)
-	top_level_meta = simple_ts.metadata
-	SLiM_RM_map = top_level_meta['SLiM']['user_metadata']['SLiM_RM_map']
-	SLiM_to_node_map = SLiM_to_node_dict(simple_ts)
-	new_SLiM_RM_map = {}
-	for key in SLiM_RM_map:
-		if int(key) in SLiM_to_node_map:
-			new_SLiM_RM_map[key] = SLiM_RM_map[key]
-	top_level_meta['SLiM']['user_metadata']['SLiM_RM_map'] = new_SLiM_RM_map
-	ts_tables.metadata = top_level_meta
-	simple_ts = ts_tables.tree_sequence()
-	# remove seed phase from tree
-	output_ts = remove_seed_phase(simple_ts)
 	# write out
 	tszip.compress(output_ts, args.output + '.tsz')
+
+	with open("/Users/shyamag/Desktop/tree_output.txt", "w") as f:
+		f.write(simple_ts.draw_text())
 
 if __name__ == '__main__':
 	sys.exit(main(sys.argv[1:]))
