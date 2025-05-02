@@ -15,6 +15,11 @@
 \usepackage{placeins}
 \usepackage{flafter}
 \usepackage{floatrow}
+\usepackage{minted} 
+\usepackage{caption}
+\usepackage{float}
+\usepackage{csvsimple}
+\usepackage{booktabs}
 
 % local definitions
 \newcommand{\msprime}[0]{\texttt{msprime}\xspace}
@@ -102,11 +107,11 @@ To do so, we will:
 \begin{enumerate}
     \item Run a coalescent simulation with msprime.
 
-    \item Add SLiM metadata to the nodes, individuals, and populations.
+    \item Add \slim metadata to the nodes, individuals, and populations.
 
-    \item Add SLiM mutations with msprime, and edit the mutation metadata to assign selection coefficients.
+    \item Add \slim mutations with msprime, and edit the mutation metadata to assign selection coefficients.
 
-    \item Run the SLiM portion of the simulation.
+    \item Run the \slim portion of the simulation.
 
     \item Do some descriptive analysis of the results of selection.
 
@@ -117,8 +122,58 @@ To do so, we will:
 
 \section*{Parallelizing forward-in-time simulations of multiple species}
 
-Any two branches stemming from the same node in a species tree are independent from each other and thus can be simulated in parallel (assuming no migration between the species).
-For example, in the phylogeny depicted in CITE, branches of the same color can be simulated in parallel.
-To do so, we will need to (i) simulate the history of each branch and (ii) join the resulting simulations together onto one multi-species history.
+Any two branches stemming from the same node in a species tree are independent from each other and
+thus can be simulated in parallel (assuming no migration between the species).
+For example, in the phylogeny depicted in Figure~\ref{fig:phylo},
+branches of the same color can be simulated in parallel.
+To do so, we will need to
+(i) simulate the history of each branch and
+(ii) join the resulting simulations together onto one multi-species history.
+
+ \begin{figure}[h!]
+ \centering
+  \includegraphics[width=0.5\textwidth]{./code/parallelizing_phylogeny/phylo.pdf}
+  \caption{Example of phylogeny we might want to simulate. Note how branches with the same color can be simulated in parallel when there is no migration.}
+  \label{fig:phylo}
+ \end{figure}
+
+\subsection{Parallel simulation of branches}
+
+First, we need to write a \slim script that will be used for simulating the history of each branch in our phylogeny.
+We will perform a simple simulation,
+in which each branch can have a different (but fixed) population size and length (number of ticks).
+Also, we will allow deleterious mutations to happen across the entire chromosome at a fixed rate.
+See the code below (Listing~\ref{lst:slim-example}).
+
+\begin{listing}[H]
+  \inputminted[fontsize=\small, linenos, bgcolor=gray!10]{javascript}{./code/parallelizing_phylogeny/simulate_branch.slim}
+  \caption{Simple \slim script to simulate a constant size population that can be started from an existing tree sequence.}
+  \label{lst:slim-example}
+\end{listing}
+
+For each branch, the presence or absence of \verb|infile| tells \slim whether a previous branch exists or not.
+If so, \slim will read the previous tree sequence and change the population size accordingly.
+Note that when you read a tree sequence into \slim,
+the tick counter will be updated with the time encoded in the tree sequence,
+so we need to set the end of the simulation as the length of the branch (\verb|num_gens|)
+plus the current “time” at the end of the loaded tree sequence.
+At the end of the simulation, we call \verb|sim.treeSeqRememberIndividuals| right before saving the resulting tree sequence.
+This is necessary because we need to ensure the individuals in the final generation are never dropped
+from the tree sequence in future runs of \slim which are started from the output of the simulation,
+as they will later be used to glue the tree sequences together.
+
+The example phylogeny we will simulate is encoded in the table below (Table~\ref{tab:phylo}).
+
+\begin{table}[H]
+  \centering
+  \caption{Parameters of the phylogeny that will be simulated.}
+  \label{tab:phylo}
+    \begin{tabular}{llll}
+      \bfseries Child & \bfseries Parent & \bfseries Population size & \bfseries Edge length \\
+      \hline
+      \csvreader[head to column names]{./code/parallelizing_phylogeny/phylo.csv}{}%
+        {\child & \parent & \popsize & \edgelen\\}
+    \end{tabular}
+\end{table}
 
 \end{document}

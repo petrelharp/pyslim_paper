@@ -6,10 +6,10 @@ clean:
 	rm -f *.pdf *.aux *.bbl *.log
 
 %.pdf : %.tex %.bbl
-	while ( pdflatex $<;  grep -q "Rerun to get" $*.log ) do true ; done
+	while ( pdflatex --shell-escape $<;  grep -q "Rerun to get" $*.log ) do true ; done
 
 %.aux : %.tex
-	-pdflatex $<
+	-pdflatex --shell-escape $<
 
 %.bbl : %.aux
 	-bibtex $<
