@@ -13,6 +13,7 @@ initialize() {
 	// set up recombination and mutation parameters
 	initializeRecombinationRate(0);
 	initializeMutationRate(1e-6);
+	initializeMutationType("m0", 0, "f", 0); // 'true' neutral mutation
 	// phenotype-causing mutation - technically neutral, but will be used to determine reproduction/transmission probabilities
 	initializeMutationType("m1", 0, "f", 0);
 	// back-mutation - reverts back to ancestral state by overwriting the m1 mutation; m1 mutations are what matter/are counted
@@ -99,7 +100,7 @@ TRANSMISSION_DAY0 first() {
 		transmission_metadata.setValue(host, sampled_inds.pedigreeID);
 	}
 	// transmit - write out a tree sequence containing the information needed for all subsequent infections
-	sim.treeSeqOutput(path = OUTPUT_DIR + INF_ID + "_" + INPUT_HOST_ID + "_on_inf_day_" + asString(sim.cycle - SIM_START) + "_on_overall_day_" + asString(sim.cycle - 1) + ".ts", simplify=T, includeModel=F, metadata=transmission_metadata);
+	sim.treeSeqOutput(path = OUTPUT_DIR + INF_ID + "_" + INPUT_HOST_ID + "_on_inf_day_" + asString(sim.cycle - SIM_START) + "_on_overall_day_" + asString(sim.cycle - 1) + ".trees", simplify=T, includeModel=F, metadata=transmission_metadata);
 	sim.simulationFinished();
 }
 

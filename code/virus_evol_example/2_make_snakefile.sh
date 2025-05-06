@@ -4,7 +4,7 @@
 # SET-UP
 param_file="/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/sim_parameters.csv"
 results_dir="/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/"
-which_slim="/home/shyamag/.conda/envs/slim-env/bin/slim"
+which_slim="/Users/shyamag/miniconda3/envs/slim-env/bin/slim"
 SLiM_model="/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim"
 SLiM_seq=${results_dir}inf_sequence.csv
 runs_to_launch=($(seq 10))
