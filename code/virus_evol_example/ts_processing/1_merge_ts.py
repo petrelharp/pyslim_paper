@@ -185,12 +185,6 @@ def main(args):
 			print(' * tree sequence file matching ' + file_name + ' could not be found - are you sure it was created?', flush = True)
 			n_failed_samples += + 1
 
-	#####
-	#for i in sample_ts.keys():
-	#	with open("/Users/shyamag/Desktop/tree_output_" + str(i) + ".txt", "w") as f:
-	#		f.write(sample_ts[i].draw_text())
-	######
-
 	if len(sample_ts) > 1:
 		## Adjust tree ages and remove vacant nodes ---
 		print('Adjusting tree ages...', flush = True)
@@ -315,10 +309,3 @@ def main(args):
 
 if __name__ == '__main__':
 	sys.exit(main(sys.argv[1:]))
-
-ts_files = [x for x in os.listdir("/Users/shyamag/Desktop/") if ".ts" in x]
-for ts_file in ts_files:
-	ts = tskit.load("/Users/shyamag/Desktop/" + ts_file)
-	with open("/Users/shyamag/Desktop/tree_output_" + ts_file.split('_')[0] + ".txt", "w") as f:
-		#f.write(ts.draw_text(node_labels={x.id: str(x.metadata['slim_id']) for x in ts.nodes()}))
-		f.write(remove_vacant(ts).draw_text())
