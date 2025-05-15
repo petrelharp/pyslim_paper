@@ -4,7 +4,7 @@
 # SET-UP
 param_file="/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/sim_parameters.csv"
 results_dir="/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/results/"
-which_slim="/Users/shyamag/miniconda3/envs/slim-env/bin/slim"
+which_slim="/home/shyamag/.conda/envs/slim-env/bin/slim"
 SLiM_model="/data2/gopalan_lab/shyamag/hybrid_sims_chapter/virus_evol_example/virus_in_host.slim"
 SLiM_seq=${results_dir}inf_sequence.csv
 runs_to_launch=($(seq 10))
@@ -67,7 +67,7 @@ for task in ${runs_to_launch[@]};do
 				IFS="," read -a source_line <<< "$(sed -n ${n}p ${SLiM_seq})"
 				source_transmission_day=${source_line[5]}
 				source_overall_day=${source_line[6]}
-				infile=$(echo ${outpath}inf${infection_source}_${source_line[3]}_on_inf_day_${source_transmission_day}_on_overall_day_${source_overall_day}.ts)
+				infile=$(echo ${outpath}inf${infection_source}_${source_line[3]}_on_inf_day_${source_transmission_day}_on_overall_day_${source_overall_day}.trees)
 				printf "\t\t\"${infile}\"\n" >> ${outpath}.tmp.snakefile
 			else
 				# Remove the trailing comma from the last line of the temporary snakefile - syntax depends on OS
@@ -82,7 +82,7 @@ for task in ${runs_to_launch[@]};do
 	
 			# Add expected output
 			printf "\toutput:\n" >> ${outpath}.tmp.snakefile
-			outfile[${x}]=$(echo ${outpath}${target}_${infector_id}_on_inf_day_${transmission_day}_on_overall_day_${overall_day}.ts)
+			outfile[${x}]=$(echo ${outpath}${target}_${infector_id}_on_inf_day_${transmission_day}_on_overall_day_${overall_day}.trees)
 			if [[ ${inf_step} -lt ${max_inf_step} ]];then # if we are NOT in the last time step of the simulation, mark output file as temporary
 				printf "\t\ttemporary(\"${outfile}\")\n" >> ${outpath}.tmp.snakefile
 			else # if we ARE in the last time step, also add this file to 'rule all'

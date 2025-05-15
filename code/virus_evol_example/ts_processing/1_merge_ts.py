@@ -1,13 +1,13 @@
-## SCRIPT: merge_ts.py
+## SCRIPT: 1_merge_ts.py
 ## AUTHOR: Shyamalika Gopalan
-## OVERVIEW: Merges a set of tree sequences that are phylogenetically related to each other. Conceptually similar to: https://tskit.dev/pyslim/docs/stable/vignette_parallel_phylo.html
+## OVERVIEW: Merges a set of tree sequences that are phylogenetically related to each other. Similar to: https://tskit.dev/pyslim/docs/stable/vignette_parallel_phylo.html
 ## REQUIRED ARGUMENTS:
 ##		   -i, --input_dir (path to directory containing tree sequences to be merged)
 ##		   -I, --inf_sequence (path to infection sequence file in .csv format)
 ##		   -o, --output (desired file path for output tree sequence)
 ##
 ## USAGE EXAMPLE:
-## $ python merge_ts.py --input_dir ~/test/run/results/ --inf_sequence inf_sequence.csv --output ~/test/run/output/output
+## $ python 1_merge_ts.py --input_dir ~/test/run/results/ --inf_sequence inf_sequence.csv --output ~/test/run/output/output
 
 # Import necessary libraries
 import argparse as ap
@@ -20,25 +20,6 @@ import os
 
 ## SUB-FUNCTIONS ----
 ## ------------------
-# Create SLiM id to node id dictionary
-def SLiM_to_node_dict(tree_seq):
-	id_map = {}
-	for node in tree_seq.nodes():
-		slim_id = node.metadata['slim_id']
-		assert slim_id not in id_map
-		id_map[slim_id] = node.id
-	return id_map
-
-# Create node id to SLiM id dictionary
-def node_to_SLiM_dict(tree_seq, as_string=False):
-	id_map = {}
-	for node in tree_seq.nodes():
-		slim_id = node.metadata['slim_id']
-		if as_string:
-			slim_id = str(slim_id)
-		id_map[node.id] = slim_id
-	return id_map
-
 # Update tree ages
 def update_tree_ages(tree_seq, t_to_add):
 	ts_tables = tree_seq.dump_tables()
@@ -66,6 +47,26 @@ def update_tree_ages(tree_seq, t_to_add):
 	new_tree_seq = ts_tables.tree_sequence()
 	return new_tree_seq
 
+# Remove vacant nodes
+def remove_vacant_nodes(tree_seq):
+	ts_tables = tree_seq.dump_tables()
+	is_vacant = np.full(tree_seq.num_nodes, False)
+	for node in tree_seq.nodes():
+		is_vacant[node.id] = node.metadata is not None and node.metadata['is_vacant'][0] != 0
+	if np.any(is_vacant):
+		node_table = ts_tables.nodes
+		flags = node_table.flags
+		flags[is_vacant] &= np.uint32(~np.uint32(tskit.NODE_IS_SAMPLE))
+		node_table.set_columns(flags=flags, \
+							   time=node_table.time, \
+							   population=node_table.population, \
+							   individual=node_table.individual, \
+							   metadata=node_table.metadata, \
+							   metadata_offset=node_table.metadata_offset)
+		ts_tables.nodes.replace_with(node_table)
+	return ts_tables.tree_sequence()
+
+# List all sample ancestors
 def list_ancestors(inf, inf_sequence):
 	get_inf_source = inf_sequence.set_index('inf_id')['inf_source'].to_dict()
 	if inf not in [0, '0']:
@@ -98,25 +99,6 @@ def calc_pairwise_relatedness(samples, ancestor_list):
 	pairwise_relatedness_info = pairwise_relatedness_info.sort_values(by='mrca', key=lambda x: x.astype(int), ascending=False).reset_index(drop = True)
 	return(pairwise_relatedness_info)
 
-# Remove vacant nodes
-def remove_vacant_nodes(tree_seq):
-	ts_tables = tree_seq.dump_tables()
-	is_vacant = np.full(tree_seq.num_nodes, False)
-	for node in tree_seq.nodes():
-		is_vacant[node.id] = node.metadata is not None and node.metadata['is_vacant'][0] != 0
-	if np.any(is_vacant):
-		node_table = ts_tables.nodes
-		flags = node_table.flags
-		flags[is_vacant] &= np.uint32(~tskit.NODE_IS_SAMPLE)
-		node_table.set_columns(flags=flags, \
-							   time=node_table.time, \
-							   population=node_table.population, \
-							   individual=node_table.individual, \
-							   metadata=node_table.metadata, \
-							   metadata_offset=node_table.metadata_offset)
-		ts_tables.nodes.replace_with(node_table)
-	return ts_tables.tree_sequence()
-
 # Merge two trees
 def merge_ts(tree_seq1, tree_seq2, split_time, reroot_nodes = True, verbose = False):
 	# create dataframes to store tree_seq1 and tree_seq2 information
@@ -124,14 +106,6 @@ def merge_ts(tree_seq1, tree_seq2, split_time, reroot_nodes = True, verbose = Fa
 	ts2_dat = pd.DataFrame({'ts2_idx': range(tree_seq2.num_nodes), 'slim_id': [x.metadata['slim_id'] for x in tree_seq2.nodes()], 'time': tree_seq2.nodes_time})
 	common_node_dat = pd.merge(ts1_dat, ts2_dat, on=['slim_id', 'time'])
 	common_node_dat = common_node_dat[common_node_dat['time'] >= split_time]
-	#####
-	print('split time is ' + str(split_time))
-	for x in range(len(common_node_dat)):
-		DAT = common_node_dat.iloc[x,]
-		if len(np.where(tree_seq2.edges_child==DAT.ts2_idx)[0]) > 0:
-			if tree_seq2.node(tree_seq2.edge(np.where(tree_seq2.edges_child==DAT.ts2_idx)[0][0]).parent).metadata['slim_id'] != tree_seq1.node(tree_seq1.edge(np.where(tree_seq1.edges_child==DAT.ts1_idx)[0][0]).parent).metadata['slim_id']:
-				print(DAT.time)
-	#####
 	# if there are shared nodes, fill in node map
 	if len(common_node_dat) > 0:
 		# create null node map
@@ -140,10 +114,6 @@ def merge_ts(tree_seq1, tree_seq2, split_time, reroot_nodes = True, verbose = Fa
 		node_map[common_node_dat.ts1_idx] = common_node_dat.ts2_idx
 	# merge trees
 	merged_ts = tree_seq2.union(tree_seq1, node_map, check_shared_equality = False, add_populations = False, record_provenance = False)
-	if reroot_nodes:
-		if verbose:
-			print("Rerooting nodes", flush = True)
-		merged_ts = add_missing_edges(merged_ts, tree_seq1, verbose=verbose)
 	return merged_ts
 
 ## MAIN FUNCTION ----
@@ -162,6 +132,7 @@ def main(args):
 		sampled_infs = list(inf_sequence.loc[inf_sequence['inf_step'] == max(inf_sequence['inf_step'])]['inf_id'])
 	except FileNotFoundError:
 		print('Infection sequence file not found', flush = True)
+		sys.exit(1)
 
 	# Load all sample trees
 	input_dir_files = os.listdir(args.input_dir)
@@ -170,7 +141,7 @@ def main(args):
 	print('Loading sample trees...', flush = True)
 	for i in sampled_infs:
 		dat = inf_sequence[inf_sequence.inf_id==i].iloc[0]
-		file_name = f"inf{i}_{dat.host_id}_on_inf_day_{dat.transmission_day}_on_overall_day_{dat.overall_day}.ts"
+		file_name = f"inf{i}_{dat.host_id}_on_inf_day_{dat.transmission_day}_on_overall_day_{dat.overall_day}.trees"
 		tree_exists = False
 		for file in input_dir_files:
 			if file_name in file:

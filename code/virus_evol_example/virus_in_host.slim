@@ -12,8 +12,8 @@ initialize() {
 	initializeChromosome(1, GENOME_LENGTH, "H");
 	// set up recombination and mutation parameters
 	initializeRecombinationRate(0);
-	initializeMutationRate(1e-6);
-	initializeMutationType("m0", 0, "f", 0); // 'true' neutral mutation
+	initializeMutationRate(1e-4);
+	//initializeMutationType("m0", 0, "f", 0); // 'true' neutral mutation
 	// phenotype-causing mutation - technically neutral, but will be used to determine reproduction/transmission probabilities
 	initializeMutationType("m1", 0, "f", 0);
 	// back-mutation - reverts back to ancestral state by overwriting the m1 mutation; m1 mutations are what matter/are counted
@@ -23,10 +23,11 @@ initialize() {
 	c(m1,m2).mutationStackGroup = 1;
 	c(m1,m2).mutationStackPolicy = 'l';
 	// specify overall genome structure - large neutral region with a selected locus (1 bp) in the middle
-	initializeGenomicElementType("g0", m0, 1);
+	//initializeGenomicElementType("g0", m0, 1);
 	initializeGenomicElementType("g1", c(m1, m2), c(1, 1));
 	defineConstant("MUT_POS", 659148);
-	initializeGenomicElement(c(g0, g1, g0), c(0, MUT_POS, MUT_POS+1), c(MUT_POS-1, MUT_POS, GENOME_LENGTH-1));
+	//initializeGenomicElement(c(g0, g1, g0), c(0, MUT_POS, MUT_POS+1), c(MUT_POS-1, MUT_POS, GENOME_LENGTH-1));
+	initializeGenomicElement(g1, MUT_POS, MUT_POS);
 
 	// fixed demographic parameters
 	defineConstant("POP_GROWTH_RATE", 0.01);
