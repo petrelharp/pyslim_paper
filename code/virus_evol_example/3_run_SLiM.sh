@@ -1,5 +1,6 @@
 #!/bin/bash
 #SBATCH --time=1:00:00
+#SBATCH --mem=8G
 #SBATCH --array=1-10
 
 # SET-UP

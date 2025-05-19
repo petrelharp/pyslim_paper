@@ -1,13 +1,13 @@
-## SCRIPT: merge_ts.py
+## SCRIPT: 1_merge_ts.py
 ## AUTHOR: Shyamalika Gopalan
-## OVERVIEW: Merges a set of tree sequences that are phylogenetically related to each other. Conceptually similar to: https://tskit.dev/pyslim/docs/stable/vignette_parallel_phylo.html
+## OVERVIEW: Merges a set of tree sequences that are phylogenetically related to each other. Similar to: https://tskit.dev/pyslim/docs/stable/vignette_parallel_phylo.html
 ## REQUIRED ARGUMENTS:
 ##		   -i, --input_dir (path to directory containing tree sequences to be merged)
 ##		   -I, --inf_sequence (path to infection sequence file in .csv format)
 ##		   -o, --output (desired file path for output tree sequence)
 ##
 ## USAGE EXAMPLE:
-## $ python merge_ts.py --input_dir ~/test/run/results/ --inf_sequence inf_sequence.csv --output ~/test/run/output/output
+## $ python 1_merge_ts.py --input_dir ~/test/run/results/ --inf_sequence inf_sequence.csv --output ~/test/run/output/output
 
 # Import necessary libraries
 import argparse as ap
@@ -20,25 +20,6 @@ import os
 
 ## SUB-FUNCTIONS ----
 ## ------------------
-# Create SLiM id to node id dictionary
-def SLiM_to_node_dict(tree_seq):
-	id_map = {}
-	for node in tree_seq.nodes():
-		slim_id = node.metadata['slim_id']
-		assert slim_id not in id_map
-		id_map[slim_id] = node.id
-	return id_map
-
-# Create node id to SLiM id dictionary
-def node_to_SLiM_dict(tree_seq, as_string=False):
-	id_map = {}
-	for node in tree_seq.nodes():
-		slim_id = node.metadata['slim_id']
-		if as_string:
-			slim_id = str(slim_id)
-		id_map[node.id] = slim_id
-	return id_map
-
 # Update tree ages
 def update_tree_ages(tree_seq, t_to_add):
 	ts_tables = tree_seq.dump_tables()
@@ -66,6 +47,26 @@ def update_tree_ages(tree_seq, t_to_add):
 	new_tree_seq = ts_tables.tree_sequence()
 	return new_tree_seq
 
+# Remove vacant nodes
+def remove_vacant_nodes(tree_seq):
+	ts_tables = tree_seq.dump_tables()
+	is_vacant = np.full(tree_seq.num_nodes, False)
+	for node in tree_seq.nodes():
+		is_vacant[node.id] = node.metadata is not None and node.metadata['is_vacant'][0] != 0
+	if np.any(is_vacant):
+		node_table = ts_tables.nodes
+		flags = node_table.flags
+		flags[is_vacant] &= np.uint32(~np.uint32(tskit.NODE_IS_SAMPLE))
+		node_table.set_columns(flags=flags, \
+							   time=node_table.time, \
+							   population=node_table.population, \
+							   individual=node_table.individual, \
+							   metadata=node_table.metadata, \
+							   metadata_offset=node_table.metadata_offset)
+		ts_tables.nodes.replace_with(node_table)
+	return ts_tables.tree_sequence()
+
+# List all sample ancestors
 def list_ancestors(inf, inf_sequence):
 	get_inf_source = inf_sequence.set_index('inf_id')['inf_source'].to_dict()
 	if inf not in [0, '0']:
@@ -98,79 +99,6 @@ def calc_pairwise_relatedness(samples, ancestor_list):
 	pairwise_relatedness_info = pairwise_relatedness_info.sort_values(by='mrca', key=lambda x: x.astype(int), ascending=False).reset_index(drop = True)
 	return(pairwise_relatedness_info)
 
-# Add missing edges to merged tree
-def add_missing_edges(merged_tree_seq, tree_seq, verbose = False):
-	# make slim <> node id maps
-	merged_tree_slim_to_node_map = SLiM_to_node_dict(merged_tree_seq)
-	merged_tree_node_to_slim_map = node_to_SLiM_dict(merged_tree_seq)
-	tree_slim_to_node_map = SLiM_to_node_dict(tree_seq)
-	tree_node_to_slim_map = node_to_SLiM_dict(tree_seq)
-
-	# determine what the ultimate roots are
-	ultimate_roots = set([tree_node_to_slim_map[x] for x in np.where(tree_seq.nodes_time == tree_seq.max_root_time)[0]] + [merged_tree_node_to_slim_map[x] for x in np.where(merged_tree_seq.nodes_time == merged_tree_seq.max_root_time)[0]])
-	# determine which 'false' roots exist in the merged tree
-	non_roots = set([merged_tree_node_to_slim_map[i] for t in merged_tree_seq.trees() for i in t.roots]) - ultimate_roots
-
-	# remove false roots that cannot be rooted with the information in this tree_seq
-	unrootable = non_roots - set(tree_slim_to_node_map.keys())
-	non_roots = non_roots - unrootable
-
-	# add missing edges and iterate until no more non_roots are left
-	merged_tree_updated = merged_tree_seq
-	OLD_non_root_intervals = None
-	OLD_n_non_roots = None
-	if len(non_roots) != OLD_n_non_roots and verbose:
-		if len(non_roots) == 1:
-			print("1 node to root", flush = True)
-		else:
-			print(str(len(non_roots)), "nodes to root", flush = True)
-	while len(non_roots) > 0:
-		focal_slim = next(iter(non_roots))
-		# for each non_root, determine intervals where merged_tree_seq needs to be rooted
-		non_root_intervals = []
-		node_id = merged_tree_slim_to_node_map[focal_slim]
-		merged_simp = merged_tree_seq.simplify(samples=[node_id], keep_unary = True, keep_input_roots = True, filter_nodes = False)
-		for tree in merged_simp.trees():
-			if node_id in tree.roots:
-				non_root_intervals.append(tree.interval)
-		# simplify tree_seq on this node and trim to relevant intervals
-		if non_root_intervals != OLD_non_root_intervals:
-			tree_trimmed = tree_seq.keep_intervals([[i.left, i.right] for i in non_root_intervals], simplify=False)
-		tree_simp = tree_trimmed.simplify(samples=[tree_slim_to_node_map[focal_slim]], keep_unary = True, keep_input_roots = True, filter_nodes = False)
-		# add edges where the false root is a child in tree_seq
-		edges_to_add = [i for i in tree_simp.edges() if i.child == tree_slim_to_node_map[focal_slim]]
-		# if there are no relevant edges, count this node as 'unrootable' and move on
-		if len(edges_to_add) == 0:
-			unrootable.add(focal_slim)
-			non_roots.remove(focal_slim)
-			continue
-		# add edges from tree_seq to merged_tree_seq
-		merged_tables = merged_tree_updated.dump_tables()
-		for i in edges_to_add:
-			parent_slim = tree_node_to_slim_map[i.parent]
-			merged_tables.edges.add_row(left = i.left, \
-										right = i.right, \
-										parent = merged_tree_slim_to_node_map[parent_slim], \
-										child = merged_tree_slim_to_node_map[focal_slim], \
-										metadata = i.metadata)
-		# is there some where to keep going without doing this? ##
-		merged_tables.sort()
-		try:
-			merged_tree_updated = merged_tables.tree_sequence()
-		except:
-			unrootable.add(focal_slim)
-		# re-compute non_roots
-		OLD_n_non_roots = len(non_roots)
-		non_roots = set([merged_tree_node_to_slim_map[i] for t in merged_tree_updated.trees() for i in t.roots]) - ultimate_roots - unrootable
-		n_non_roots = len(non_roots)
-		OLD_non_root_intervals = non_root_intervals
-		if n_non_roots != OLD_n_non_roots and verbose:
-			if len(non_roots) == 1:
-				print("1 node to root", flush = True)
-			else:
-				print(str(len(non_roots)), "nodes to root", flush = True)
-	return merged_tree_updated
-
 # Merge two trees
 def merge_ts(tree_seq1, tree_seq2, split_time, reroot_nodes = True, verbose = False):
 	# create dataframes to store tree_seq1 and tree_seq2 information
@@ -186,10 +114,6 @@ def merge_ts(tree_seq1, tree_seq2, split_time, reroot_nodes = True, verbose = Fa
 		node_map[common_node_dat.ts1_idx] = common_node_dat.ts2_idx
 	# merge trees
 	merged_ts = tree_seq2.union(tree_seq1, node_map, check_shared_equality = False, add_populations = False, record_provenance = False)
-	if reroot_nodes:
-		if verbose:
-			print("Rerooting nodes", flush = True)
-		merged_ts = add_missing_edges(merged_ts, tree_seq1, verbose=verbose)
 	return merged_ts
 
 ## MAIN FUNCTION ----
@@ -208,6 +132,7 @@ def main(args):
 		sampled_infs = list(inf_sequence.loc[inf_sequence['inf_step'] == max(inf_sequence['inf_step'])]['inf_id'])
 	except FileNotFoundError:
 		print('Infection sequence file not found', flush = True)
+		sys.exit(1)
 
 	# Load all sample trees
 	input_dir_files = os.listdir(args.input_dir)
@@ -216,7 +141,7 @@ def main(args):
 	print('Loading sample trees...', flush = True)
 	for i in sampled_infs:
 		dat = inf_sequence[inf_sequence.inf_id==i].iloc[0]
-		file_name = f"inf{i}_{dat.host_id}_on_inf_day_{dat.transmission_day}_on_overall_day_{dat.overall_day}.ts"
+		file_name = f"inf{i}_{dat.host_id}_on_inf_day_{dat.transmission_day}_on_overall_day_{dat.overall_day}.trees"
 		tree_exists = False
 		for file in input_dir_files:
 			if file_name in file:
@@ -232,7 +157,7 @@ def main(args):
 			n_failed_samples += + 1
 
 	if len(sample_ts) > 1:
-		## Adjust tree ages ---
+		## Adjust tree ages and remove vacant nodes ---
 		print('Adjusting tree ages...', flush = True)
 		# Find sample tree with oldest ancestry
 		tree_ages = {key: tree.metadata['SLiM']['tick'] for key, tree in sample_ts.items()}
@@ -246,6 +171,10 @@ def main(args):
 				adjusted_sample_ts[ts] = update_tree_ages(sample_ts[ts], t_to_add = t_to_add)
 			else:
 				adjusted_sample_ts[ts] = sample_ts[ts]
+		# Remove vacant nodes from all trees
+		no_vacant_nodes_sample_ts = {}
+		for ts in sample_ts.keys():
+			no_vacant_nodes_sample_ts[ts] = remove_vacant_nodes(adjusted_sample_ts[ts])
 
 		# Identify ancestors of all sample infections ----
 		ancestor_list0 = {}
@@ -253,18 +182,18 @@ def main(args):
 		for i in sampled_infs:
 			ancestor_list0[i] = list_ancestors(i, inf_sequence)
 		ancestor_list = ancestor_list0.copy()
-
 		# Determine most recent common ancestor between all pairs of infections
 		print('Calculating pairwise relatedness metrics...', flush = True)
 		pairwise_sample_relatedness0 = calc_pairwise_relatedness(sampled_infs, ancestor_list)
 		pairwise_sample_relatedness = pairwise_sample_relatedness0.copy()
 
-		# Determine merge order - resolve groups of nodes from tips to root in order of MRCA age
+		# Determine merge order ---
 		print('Determining merge order...', flush = True)
 		sampled_infs1 = sampled_infs.copy()
 		n_sampled_infs = len(sampled_infs1)
 		samples_added = 1
 		pairwise_sample_relatedness['sister_pair'] = list(zip(pairwise_sample_relatedness.sample_1, pairwise_sample_relatedness.sample_2))
+		# Resolve groups of nodes from tips to root in order of MRCA age
 		while samples_added > 0:
 			# determine closest shared ancestors among all pairwise relationships
 			while not pairwise_sample_relatedness.empty:
@@ -291,7 +220,7 @@ def main(args):
 			n_sampled_infs = len(sampled_infs1)
 			pairwise_sample_relatedness = calc_pairwise_relatedness(list(sampled_infs1), ancestor_list)
 		tmp = pairwise_sample_relatedness.copy()
-		# final pass
+		# Take a final pass
 		merge_order = pd.DataFrame(columns = tmp.columns)
 		while not tmp.empty:
 			mrca = tmp.iloc[0]['mrca']
@@ -314,7 +243,7 @@ def main(args):
 		inf_day_map = inf_sequence.set_index('inf_id')['overall_day'].to_dict()
 		merge_order["split_day"] = merge_order["mrca"].map(inf_day_map)
 
-		# Merge
+		# Merge ----
 		unique_mrcas = merge_order.mrca.unique()
 		print('Merging a total of ' + str(len(sampled_infs)) + ' sample trees in ' + str(len(unique_mrcas)) +  ' merging steps', flush = True)
 		for i in unique_mrcas:
@@ -330,14 +259,14 @@ def main(args):
 				else:
 					inf1 = i
 					inf2 = list(focal_samples)[0]
-				ts1, ts2 = adjusted_sample_ts[inf1], adjusted_sample_ts[inf2]
-				adjusted_sample_ts[i] = merge_ts(ts1, ts2, split_time=max_age-dat.split_day[0]-1, reroot_nodes=False, verbose=False)
+				ts1, ts2 = no_vacant_nodes_sample_ts[inf1], no_vacant_nodes_sample_ts[inf2]
+				no_vacant_nodes_sample_ts[i] = merge_ts(ts1, ts2, split_time=max_age-dat.split_day[0]-1, reroot_nodes=False, verbose=False)
 				for x in [inf1, inf2]:
 					if x in focal_samples:
 						focal_samples.discard(x)
 					if x != i:
 						samples_added.add(x)
-			merged_ts = adjusted_sample_ts.get(i)
+			merged_ts = no_vacant_nodes_sample_ts.get(i)
 	else:
 		print('Only 1 sample tree was found and processed', flush = True)
 		merged_ts = sample_ts[list(sample_ts.keys())[0]]
@@ -347,10 +276,7 @@ def main(args):
 	# simplify tree
 	simple_ts = merged_ts.simplify(keep_input_roots = True)
 	# write out
-	tszip.compress(output_ts, args.output + '.tsz')
-
-	with open("/Users/shyamag/Desktop/tree_output.txt", "w") as f:
-		f.write(simple_ts.draw_text())
+	tszip.compress(simple_ts, args.output + '.tsz')
 
 if __name__ == '__main__':
 	sys.exit(main(sys.argv[1:]))

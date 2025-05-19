@@ -23,7 +23,7 @@ def main(args):
 	argp = ap.ArgumentParser(description='Adds mutations to a recapitated tree, ensuring that no new mutations are added after the coalescent portion')
 	argp.add_argument('-i', '--input_tree_seq', type=str, help='Name of zipped tree sequence file to add mutations to')
 	argp.add_argument('-m', '--mu', type=float, help='Per base pair mutation rate')
-	argp.add_argument('-s', '--seed', type=int, help='Per base pair mutation rate')
+	argp.add_argument('-s', '--seed', type=int, help='Optional seed')
 	argp.add_argument('-o', '--output', type=str, help='Desired output file path and name')
 	args = argp.parse_args(args)
 
