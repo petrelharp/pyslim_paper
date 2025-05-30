@@ -22,9 +22,6 @@
 \usepackage{booktabs}
 \usepackage{siunitx}
 
-
-\input{slim_highlighting.tex}
-
 % local definitions
 \newcommand{\msprime}[0]{\texttt{msprime}\xspace}
 \newcommand{\tskit}[0]{\texttt{tskit}\xspace}
@@ -33,7 +30,12 @@
 \newcommand{\allel}[0]{\texttt{scikit-allel}\xspace}
 \newcommand*{\eg}{e.g.\xcomma}
 \newcommand*{\ie}{i.e.\xcomma}
-\newminted{pycon}{bgcolor=bg, linenos=true, tabsize=4}
+\newcommand{\comment}[1]{\textit{\color{green} #1}}
+
+% syntax highlighting
+\input{slim_highlighting.tex}
+\definecolor{bg}{rgb}{0.95,0.95,0.98}
+\newminted[pycon]{pycon}{bgcolor=bg, linenos=true, tabsize=4}
 
 %\linenumbers
 
@@ -140,18 +142,19 @@ Then, to ensure the total mutation rate along the genome is constant, we will ad
 
  First, we will use \msprime to simulate the evolutionary history of 1,000 diploid samples from a population of size 50,000.
 
- \begin{listing}[H]
-  \begin{minted}[fontsize=\small, linenos, bgcolor=gray!10]{python}
-demog_model = msprime.Demography()
-demog_model.add_population(initial_size=50_000)
-ots = msprime.sim_ancestry(
-    samples=1_000,
-    demography=demog_model,
-    random_seed=5,
-    recombination_rate=1e-8,
-    sequence_length = 9_000_000)
-  \end{minted}
-\end{listing}
+\comment{(commented-out code block that wasn't compiling)}
+%  \begin{listing}[H]
+%   \begin{minted}[fontsize=\small, linenos, bgcolor=gray!10]{python}
+% demog_model = msprime.Demography()
+% demog_model.add_population(initial_size=50_000)
+% ots = msprime.sim_ancestry(
+%     samples=1_000,
+%     demography=demog_model,
+%     random_seed=5,
+%     recombination_rate=1e-8,
+%     sequence_length = 9_000_000)
+%   \end{minted}
+% \end{listing}
 
 \subsection*{Annotating tree sequence with SLiM metadata}
 
@@ -293,7 +296,7 @@ and the tick that gets passed to SLiM sets what that “end time” is, in SLiM�
 However, if you change this, the \verb|slim_time| attributes in mutation metadata will not be accurate.
 This is harmless, unless you do something with mutations’ times yourself.
 
-The model_type is already Wright-Fisher,
+The model type is already Wright-Fisher,
 but just to demonstrate how to edit the metadata,
 and then we’ll write the tree sequence to a file.
 
@@ -313,9 +316,10 @@ We need to make sure that the genome lengths match, so we provide that as a cons
 To facilitate later analysis, we’ll also “Remember” the individuals present at the start of the simulation,
 so that they will remain in the tree sequence.
 
-\begin{listing}[H]
-    \inputminted[fontsize=\small, linenos, bgcolor=gray!10]{python}{./code/generating_diversity/generating.ipynb}
-\end{listing}
+\comment{(attempt to input a ipynb here)}
+% \begin{listing}[H]
+%     \inputminted[fontsize=\small, linenos, bgcolor=gray!10]{python}{./code/generating_diversity/generating.ipynb}
+% \end{listing}
 
 Note that the simulation only has selected mutations (of type \verb|m2|),
 but as we will add in type \verb|m1| mutations later,
@@ -324,7 +328,7 @@ we have declared them in the recipe as a placeholder.
 We could run this on the command line as \verb|slim -d L=100000000 reload_annotated.slim|,
 but this time we will stay within python, and obtain the sequence length programatically:
 
-\begin{listing}[H]
+\begin{pycon}
     // Initial random seed:
     5
     
@@ -348,23 +352,24 @@ but this time we will stay within python, and obtain the sequence length program
 
 First, let’s look at what mutations are present.
 
-\begin{listing}[H]
-    \begin{minted}[fontsize=\small, linenos, bgcolor=gray!10]{python}
-ts = tskit.load("vignette_annotated.trees")
-num_stacked = np.array([len(m.metadata["mutation_list"]) for m in ts.mutations()])
-init_time = ts.metadata['SLiM']['tick']
-old_mut = np.array([m.time > init_time - 1 - 1e-12 for m in ts.mutations()])
-assert sum(old_mut) == ots.num_mutations
-print(f"There are {ts.num_mutations} present at {ts.num_sites} distinct sites.")
-print(f"Of these, {np.sum(num_stacked > 1)} have more than one stacked mutation,")
-print(f"and {np.sum(old_mut)} were produced by msprime.")
-    \end{minted}
-\end{listing}
-\begin{pycon}
-There are 318 present at 318 distinct sites.
-Of these, 0 have more than one stacked mutation,
-and 309 were produced by msprime.
-\end{pycon}
+\comment{(commented-out code block that wasn't compiling)}
+% \begin{listing}[H]
+%     \begin{minted}[fontsize=\small, linenos, bgcolor=gray!10]{python}
+% ts = tskit.load("vignette_annotated.trees")
+% num_stacked = np.array([len(m.metadata["mutation_list"]) for m in ts.mutations()])
+% init_time = ts.metadata['SLiM']['tick']
+% old_mut = np.array([m.time > init_time - 1 - 1e-12 for m in ts.mutations()])
+% assert sum(old_mut) == ots.num_mutations
+% print(f"There are {ts.num_mutations} present at {ts.num_sites} distinct sites.")
+% print(f"Of these, {np.sum(num_stacked > 1)} have more than one stacked mutation,")
+% print(f"and {np.sum(old_mut)} were produced by msprime.")
+%     \end{minted}
+% \end{listing}
+% \begin{pycon}
+% There are 318 present at 318 distinct sites.
+% Of these, 0 have more than one stacked mutation,
+% and 309 were produced by msprime.
+% \end{pycon}
 
 Most of the mutations were present as initial diversity,
 but a few were added during the course of the simulation.
@@ -545,7 +550,7 @@ The result is that, from the point of view of SLiM, neutral (“m1”) mutations
 This “stacking policy” is not actually exactly implementable in SLiM,
 but given that our newly added mutations are meant to be entirely neutral,
 seems like a reasonable policy.
-If you wanted some other arrangement (e.g., to have \m1 stack on top of \m2),
+If you wanted some other arrangement (e.g., to have m1 stack on top of m2),
 you could go through and modify derived states and metadata appropriately.
 
 Let’s check there are any sites with stacked mutations of different types in the simulation. There is indeed one such site:

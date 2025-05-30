@@ -1,11 +1,22 @@
 #!/usr/bin/env python
 
-import tskit, pyslim
+import sys
+import tskit, pyslim, tszip
 import xml.dom.minidom # to fix tskit#3144
 
-ts = tskit.load("out.trees")
+assert len(sys.argv) == 3, f"Usage: {sys.argv[0]} (trees file) (focal position)"
 
-focal_pos = 0
+fname = sys.argv[1]
+focal_pos = int(sys.argv[2])
+# fname = "out.trees"
+# focal_pos = 0
+
+outfile = ".".join(fname.split(".")[:-1] + ["muts", "svg"])
+try:
+    ts = tskit.load(fname)
+except tskit.FileFormatError:
+    ts = tszip.decompress(fname)
+
 focal_site = ts.site(position=focal_pos)
 tsk_to_slim = {-1 : ''}
 slim_to_type = {'' : -1}
@@ -45,7 +56,7 @@ for mid in nonmuts + [m.id for m in ts.mutations() if m.site != focal_site.id]:
 css_string = " ".join([f"#myUID {s}" for s in styles])
 
 svg_size = (600, 500)
-svg_string = t.draw_svg(path="tree.svg",
+svg_string = t.draw_svg(path=outfile,
     size=svg_size,
     y_axis=True, y_label=" ", y_ticks=[1, 10, 100],
     x_axis=False,

@@ -8,7 +8,7 @@ figures :
 	$(MAKE) -C figures
 
 clean:
-	rm -f *.pdf *.aux *.bbl *.log
+	rm -rf *.pdf *.aux *.bbl *.log _minted
 
 %.pdf : %.tex %.bbl
 	while ( pdflatex --shell-escape $<;  grep -q "Rerun to get" $*.log ) do true ; done
