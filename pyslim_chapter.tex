@@ -21,6 +21,7 @@
 \usepackage{csvsimple}
 \usepackage{booktabs}
 \usepackage{siunitx}
+\usepackage{natbib}
 
 % local definitions
 \newcommand{\msprime}[0]{\texttt{msprime}\xspace}
@@ -31,6 +32,7 @@
 \newcommand*{\eg}{e.g.\xcomma}
 \newcommand*{\ie}{i.e.\xcomma}
 \newcommand{\comment}[1]{\textit{\color{green} #1}}
+\newcommand{\p}[1]{\texttt{p#1}}
 
 % syntax highlighting
 \input{slim_highlighting.tex}
@@ -60,69 +62,328 @@ Lorem ipsum
 }
 \date{}
 
+Outline:
+
+\begin{enumerate}
+    \item   intro: what's pyslim generally do;
+        what are some use cases for it; follow on from SLiM chapter (murillo)
+    \item   what's SLiM record in the tree sequence
+        (from \url{https://tskit.dev/pyslim/docs/latest/introduction.html}) (peter)
+    \item   recapitation:
+        \url{https://tskit.dev/pyslim/docs/latest/tutorial.html#recapitation-with-migration-between-more-than-one-population}  (peter)
+    \item   generating initial diversity with msprime:
+        \url{https://tskit.dev/pyslim/docs/latest/vignette_coalescent_diversity.html} (murillo)
+        - remember to link in to Ben's SLiM chapter
+    \item   parallelizing across branches:
+        \url{https://tskit.dev/pyslim/docs/latest/vignette_parallel_phylo.html} (murillo)
+    \item   alternating life cycle (something short from Shyamalika?) (shyamalika)
+    \item   conclusion, looking forwards to the future (e.g., (6) could be a lot easier; better tools for annotation) (later, all?)
+\end{enumerate}
+
 \section*{Introduction}
 % The importance of simulations in popgen and flavors of simulations
 Simulations have been an invaluable tool in population genetics for the past six decades.
 %because of the difficulty in obtaining analytical solutions to complex evolutionary scenarios.
+In this paper, we review the use of the Ancestral Recombination Graph (ARG)
+in simulation pipelines using SLiM;
+since SLiM uses the ``tree sequence'' format for storing ARGs,
+this is called ``tree sequence recording''.
+An ARG describing the results of a simulation
+provides a great deal of information about how the simulation progressed,
+that can be helpful in connecting the results of a simulation
+to the processes that produced it.
+Furthermore, using ARGs as a data structure allows a number of simulation techniques
+that can make simulation much faster and more efficient.
+
 The two main strategies for population genetic simulation differ in the direction of the process: forward or backward-in-time.
-The coalescent process models the ancestry of sampled genomes back in time until they coalesce into one most common recent ancestor (MRCA).
-It is perhaps the most common framework for population genetic simulation because of its efficiency:
-it bypasses the need to represent entire populations in memory and the sampling of gametes every generation.
+The coalescent process models the ancestry of sampled genomes back in time until they coalesce into one most common recent ancestor. % (MRCA).
+It is particularly efficient because
+it only simulates the portions of history directly ancestral to the sampled genome,
+thus bypassing the need to represent entire populations in memory and the sampling of gametes every generation.
 Despite its efficiency, the coalescent has strict assumptions (\eg neutrality) which limits applicability.
 Forward-in-time simulations starts with actual individuals and applies evolutionary rules (\eg mutation, recombination, selection) over generations until a certain criterion is met.
 Thus, forward-in-time simulations are much more flexible, but they come with a high computational cost.
 
 % The tree sequence and its utility in bridging forward-in-time and coalescent simulations
-Recent advancements both in computational power and software development have made simulations much more accessible and popular.
+Recent advances both in computational power and software development have made simulations much more accessible and popular.
 A key development that has decreased the computational cost of simulations is the tree sequence,
 a data structure that concisely encodes correlated genealogies along the genome.
 In the context of forward-in-time simulations,
 the recording of tree sequences increases efficiency because it allows for
 (i) the omission of neutral mutations during the simulation process, and
-(ii) the use of fast coalescent as a neutral "burn-in" phase,
+(ii) the use of fast coalescent as a neutral ``burn-in'' phase,
 such that the forward simulation can begin with an equilibrium level of genetic diversity.
 Further, using tree sequences it is possible to bridge forward and backwards methods, 
-for example by using the coalescent to ensure all lineages coalesce into a single common ancestor (a process called \"recapitation\").
+for example by using the coalescent to ensure all lineages coalesce into a single common ancestor (a process called ``recapitation'').
 
 % The pyslim package and overview of the chapter
-Here, we present \pyslim, a Python package for reading and modifying \tskit tree sequences produced by
+Here, we describe uses of \pyslim, a Python package for reading and modifying \tskit tree sequences produced by
 the popular coalescent and forward-in-time simulation tools such as \slim and \msprime.
-\pyslim provides a way to perform \"hybrid\" simulations, combining both forwards and backwards (coalescent) methods.
-We will describe the main uses of \pyslim: (i) recapitation, which is the process of filling in the history of the first-generation individuals which have not coalesced, (ii) generation of initial diversity for forward-in-time simulations, (iii) parallelization of multi-species simulations, and (iv) complex simulation of alternating life cycles.
+\pyslim provides a way to perform ``hybrid'' simulations, combining both forwards and backwards (coalescent) methods.
+First, we review how SLiM uses the tree sequence:
+what information is recorded there and how to access it in python.
+Next, we describe the main uses of \pyslim:
+(i) recapitation, which is the process of filling in the history of the first-generation individuals which have not coalesced,
+(ii) generation of initial diversity for forward-in-time simulations,
+(iii) parallelization of multi-species simulations, and (iv) complex simulation of alternating life cycles.
+Some of the text has been adapted from \pyslim's documentate
+(\url{https://tskit.dev/pyslim/docs/latest}).
 
-\section*{Starting with diversity generated by coalescent simulation}
+%%%%%%%%%%%%%%%%%%%%%
+\section{Tree sequences and SLiM}
+
+Roughly speaking, SLiM simply writes down
+how all the genomes in a simulation are related to each other,
+and returns the result as an ancestral recombination graph, or ARG.
+First, we should undertsand exactly \emph{what} and \emph{how} is written down,
+and how to access it.
+
+As described in \citet{wong},
+the term ``ancestral recombination graph'' (ARG) can be used to describe ancestry and inheritance
+in various ways,
+and the \emph{tree sequence} format of \tskit
+provides a general-purpose way to store all types of ARG.
+In this paper we specifically discuss how to work with the ARGs that are produced by SLiM
+and stored as tree sequences.
+Since our focus is on working with tree sequences
+and we use the associated terminology \citet{XXX},
+we use the term ``tree sequence'',
+although ``ARG'' would usually be equally accurate.
+
+\paragraph{Terminology:}
+Each \textit{node} of a tree sequence represents a single (haploid) genome;
+inheritance relationships between these are recorded as \textit{edges},
+and genetic variation is represented by \textit{mutations} at associated \textit{sites}.
+In a tree sequence there are
+a set of ``focal'' nodes called \textit{sample nodes} or simply \textit{samples}.
+Many operations on tree sequences act on the sample nodes by default.
+A good way to think about these is that the samples are those genomes
+for which we have full genetic information,
+while other nodes represent ancestral genomes.
+So, the tree sequence describes the genealogy of the
+entire genome of all the samples, at at least over the simulated time period,
+while we might only have partial information about other nodes.
+SLiM simulates diploid organisms, so each \textit{individual} usually has two nodes;
+many operations you might want to do involve first finding the individuals you want,
+and then looking at their nodes.
+
+The terminology about \textbf{time} can be confusing:
+SLiM is a forwards simulator, so records time in units of time steps (``ticks'')
+since the start of the simulation;
+we call this \textit{SLiM time}.
+However, the natural point of reference for an ARG is the samples,
+so time in the tree sequence is measured in units of \textit{time ago},
+i.e., amount of time before the end of the simulation.
+
+\begin{figure}
+\centering
+    \includegraphics{figures/pedigree0}
+    % \includegraphics{figures/pedigree1}
+    \includegraphics{figures/pedigree2}
+\caption{
+    \textbf{(A)} All relationships in a small simulation
+    (three diploids over five generations).
+    \textbf{(B)} Those relationships left at the end of the simulation.
+    \comment{TODO: align the two figures and add "B" to the second.}
+}
+\label{fig:indivs}
+\end{figure}
+
+\paragraph{Who is and isn't in the tree sequence:}
+Suppose we've run a very small simulation with SLiM.
+The genetic relationships between
+the various diploid individuals who were alive over the course of the simulation might
+look something like Figure~\ref{fig:indivs}A.
+Individuals (circles) are diploid,
+so each contains two chromosomes, one per node (shaded rectangles).
+Since the edges of the tree sequence record
+which specific parts of the chromosome are inherted,
+relationships are between the nodes, not the individuals.
+
+At the end of the simulation we are typically only interested in the genetic
+relationships between the nodes in those individuals which are still alive;
+other parts of the genealogy are irrelevant.
+To save having to store this unnecessary genealogical information,
+SLiM \textit{simplifies} the tree sequence as it goes along, retaining
+only certain parts of the genetic genealogy \citep{kelleher}.
+So, in the output tree sequence the result looks something like Figure~\ref{fig:indivs}B,
+in which many of the nodes and individuals have been removed.
+Individuals who are alive at the end of the simulation
+have their nodes marked as \textit{samples},
+and so we have their full genetic ancestry.
+(The tree sequence also records \emph{which segments} of chromosome are inherited
+along each edge in the figure, but we don't attempt to depict that here.)
+
+In contrast to the individuals containing sample nodes,
+in Figure~\ref{fig:indivs}B
+all other historical (i.e., dead) individuals have vanished,
+although some of their nodes remain.
+By default, only individuals with sample nodes are recorded in the tree sequence
+(but see below for ways to retain them).
+
+As well as the historical individuals, many historical \textit{nodes} have been removed too,
+along with with their genealogical relationships.
+The deleted nodes are simply those that are
+not needed to reconstruct the relationships between the sample nodes.
+For example, we remove nodes leading to a dead end
+(\eg in individuals who had no offspring),
+and more generally nodes with no genetic contribution to the final generation.
+Finally, the tree sequence keeps only information necessary
+to reconstruct relationships between samples --
+so, nodes are only retained if they
+represents the genetic \textit{most recent common ancestor} (MRCA) of at least two samples.
+So we also remove historical nodes that are only ``on the line to'' a sample,
+but do not represent a branching point (\ie coalescent event) on the tree.
+
+\comment{TODO: should we introduce remembering individuals here?}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%
+\section{Recapitation: tying up loose ends}
+
+\begin{figure}
+\centering
+    \includegraphics{figures/pedigree_recapitate}
+    \includegraphics{figures/pedigree_simplify}
+\caption{
+    \textbf{(A)} Recapitation adds the green nodes 
+    to the simulation of Figure~\ref{fig:indivs} by coalescent simulation.
+    \textbf{(B)} The result of \emph{simplifying} the tree sequence in (A)
+    down to the four sample nodes shown.
+}
+\label{fig:recap_simp}
+\end{figure}
+
+By default, a \slim simulation begins with all individuals identical.
+This is clearly undesireable; the usual way to avoid after-effects of this
+is to include a long ``burn-in'' period to generate genetic diversity.
+However, this period needs to be quite long ($5--15N$ generations),
+so an attractive alternative is to initialize the simulation
+with genetic diversity from a coalescent simulation.
+This is what ``recapitation'' is --
+except, if during the simulation we don't actually use the genotypes for anything,
+it is simpler and more efficient to simply add this bit on afterwards,
+only doing a coalescent simulation for those portions of the first-generation ancestors
+that have not yet coalesced.
+This is discussed in more detail in \citet{kelleher} and \citet{slim_manual}.
+This is depicted in Figure~\ref{fig:recap_simp}A:
+imagine that at some sites, some of the samples
+don't share a common ancestor within the SLiMulated portion of history (shown in blue).
+Recapitation starts at the \textit{top} of the genealogies,
+and runs a coalescent simulation back through time
+to fill out the rest of genealogical history relevant to the samples.
+The green chromosomes are new ancestral nodes that have been added to the tree sequence.
+If we did not do this,
+then effectively we are assuming the initial population was genetically homogeneous,
+and so our simulation would have less genetic variation than it should have
+(since the component of variation from the initial population would be omitted).
+
+Recapitation within a single randomly-mating population of a given size
+can be done by a simple call to
+pyslim.recapitate(ts, ancestral\_size=N). % TODO format
+However, pyslim.recapitate is a wrapper around
+msprime.sim\_ancestry, so recapitation can be done using any model simulatable by \msprime
+\citep{baumdicker} --
+for instance, a nonuniform genetic map --
+by passing in the relevant arguments for msprime.sim\_ancestry.
+
+We'll demonstrate recapitation with a two-population model,
+since setting up an \msprime demographic model that is consistent with the SLiM simulation
+requires understanding some of the details.
+Recapitation happens by passing the tree sequence to the
+\texttt{initial\_state} argument of \texttt{msprime.sim\_ancestry},
+along with a demographic model.
+The root of each uncoalesced lineage in the tree sequence is a node
+that exists at a particular time and in a particular population;
+these two things situate the linear within the demographic model,
+so \msprime can continue following the lineages back through time.
+Suppose that we've used \slim to simulate two populations, \ie with the following block:
+\begin{lstlisting}{language=slim}
+1 early() {
+   sim.addSubpop("p1", K);
+   sim.addSubpop("p2", K);
+}
+\end{lstlisting}
+\comment{TODO provide link to or name of full slim recipe}
+If the resulting tree sequence is stored in the file \texttt{migrants.trees},
+then examining the populations using the shell, we see:
+\begin{lstlisting}{language=bash}
+> tskit populations migrants.trees
+id	metadata
+0	None
+1	{'name': 'p1', 'slim_id': 1}
+2	{'name': 'p2', 'slim_id': 2}
+\end{lstlisting}
+There are \emph{three} populations, but the first one is unused,
+because \slim stores population \texttt{pX} as population \texttt{X}.
+So, the \msprime demographic model needs to have three populations as well,
+but the first population will remain unused (unless we set up migration to it).
+\msprime provides a simple way to get an appropriate set-up;
+\begin{lstlisting}{language=py}
+demography = msprime.Demography.from_tree_sequence(ts, initial_size=100)
+\end{lstlisting}
+If we recapitated with this demography,
+\msprime would run forever,
+because there is no way for linages in one population
+to coalesce with those in the other.
+Suppose we wanted one-directional migration from \p1 to \p2
+(so that lineages in \p2 moved back into \p1)
+starting 100 generations before the start of the SLiM simulation.
+To add this, then recapitate and add mutations:
+\begin{lstlisting}{language=py}
+demography.add_migration_rate_change(
+    time=ts.metadata['SLiM']['tick'] + 100,
+    rate=0.1, source="p2", dest="p1",
+)
+rts = pyslim.recapitate(ts, demography=demography,
+            recombination_rate=1e-8)
+\end{lstlisting}
+
+The final step is likely adding neutral mutations,
+again with \msprime -- see the pyslim manual.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%
+\section{Using \msprime-generated diversity in \slim}
 
 Simulations of large populations with selection can be costly,
-especially because we might need to run a lengthy “burn-in” period to get the genetic variation for selection to act on.
-Because the precise form of the burn-in may not be important, 
-a neutral burn-in can be efficiently run with coalescent simulator such as \msprime.
-In this section, we will demonstrate how to perform such a hybrid simulation using \pyslim, \msprime and \slim.
+especially because we might need to run a lengthy ``burn-in'' period
+to get the genetic variation for selection to act on,
+and because we actually need the genetic variation within \slim,
+we can't add it on after the fact as in the previous section.
+However, because the precise form of the burn-in may not be important, 
+one strategy is to run a neutral burn-in with \msprime,
+and then have selection start acting on this diversity in \slim.
+This is of course not the same thing as running a burn-in with selection,
+but all approaches are approximations
+(for instance, the burn-in-with-selection would be started with no diversity),
+and it seems to us to be in most cases a reasonable one.
 
-Imagine the scenario where we perform a lab experiment in which
-we take high-diversity organisms from the wild and subject them to selection for a few dozen generations.
+A concrete scenario is as follows:
+imagine we perform a lab experiment in which
+we take high-diversity organisms from the wild
+and subject them to selection for a few dozen generations.
 Although genetic diversity in the wild is most likely not neutral,
-we do not know precisely what it does look like and a coalescent simulation would be an acceptable starting point.
-The key attribute of reality we would like to approximate is the joint distribution of allele frequencies and effect sizes.
+we do not know precisely what it does look like
+and a coalescent simulation would be an acceptable starting point.
+The key attribute of reality we would like to approximate
+is the joint distribution of allele frequencies and effect sizes.
 If the alleles affect a trait under stabilizing selection,
 we would expect a negative correlation between the two.
 On the other hand, there would be no relationship between allele frequencies and effect sizes
 if the trait we are selecting on in the lab is not under strong selection in the wild.
-We will simulate the scenario where the trait we put under selection in the lab is not under stabilizing selection in the wild.
+We will simulate the scenario where the trait we put under selection in the lab
+is not under stabilizing selection in the wild.
 To do so, we will:
-
 \begin{enumerate}
     \item Run a coalescent simulation with msprime.
-
     \item Add \slim metadata to the nodes, individuals, and populations.
-
-    \item Add \slim mutations with msprime, and edit the mutation metadata to assign selection coefficients.
-
+    \item Add \slim mutations with msprime,
+        and edit the mutation metadata to assign selection coefficients.
     \item Run the \slim portion of the simulation.
-
     \item Do some descriptive analysis of the results of selection.
-
     \item Add neutral mutations to the tree sequence.
-
     \item Do some descriptive analysis of genetic diversity along the genome.
 \end{enumerate}
 
@@ -142,19 +403,18 @@ Then, to ensure the total mutation rate along the genome is constant, we will ad
 
  First, we will use \msprime to simulate the evolutionary history of 1,000 diploid samples from a population of size 50,000.
 
-\comment{(commented-out code block that wasn't compiling)}
-%  \begin{listing}[H]
+\begin{lstlisting}{language=py}
 %   \begin{minted}[fontsize=\small, linenos, bgcolor=gray!10]{python}
-% demog_model = msprime.Demography()
-% demog_model.add_population(initial_size=50_000)
-% ots = msprime.sim_ancestry(
-%     samples=1_000,
-%     demography=demog_model,
-%     random_seed=5,
-%     recombination_rate=1e-8,
-%     sequence_length = 9_000_000)
+demog_model = msprime.Demography()
+demog_model.add_population(initial_size=50_000)
+ots = msprime.sim_ancestry(
+    samples=1_000,
+    demography=demog_model,
+    random_seed=5,
+    recombination_rate=1e-8,
+    sequence_length = 9_000_000)
 %   \end{minted}
-% \end{listing}
+\end{lstlisting}
 
 \subsection*{Annotating tree sequence with SLiM metadata}
 
@@ -315,11 +575,33 @@ The population size is determined by the number of individuals that were read in
 We need to make sure that the genome lengths match, so we provide that as a constant \verb|L|, that will be provided at run time.
 To facilitate later analysis, we’ll also “Remember” the individuals present at the start of the simulation,
 so that they will remain in the tree sequence.
+\begin{lstlisting}[language=slim]
+initialize()
+{
+    // must define L
+    initializeSLiMModelType("WF");
+    initializeTreeSeq();
+    initializeMutationRate(c(0.03e-8, 0.003e-8, 0.03e-8),
+                           c(3000000, 6000000, 9000000) - 1);
+    initializeMutationType("m1", 0.5, "f", 0.0);
+    initializeMutationType("m2", 0.5, "e", 0.01);
+    initializeGenomicElementType("g1", m2, 1.0);
+    initializeGenomicElement(g1, 0, L-1);
+    initializeRecombinationRate(1e-8);
+}
 
-\comment{(attempt to input a ipynb here)}
-% \begin{listing}[H]
-%     \inputminted[fontsize=\small, linenos, bgcolor=gray!10]{python}{./code/generating_diversity/generating.ipynb}
-% \end{listing}
+1 late() { 
+    sim.readFromPopulationFile("vignette_annotated.init.trees");
+    sim.treeSeqRememberIndividuals(p0.individuals);
+}
+
+100 late() {
+    catn("Done.");
+    sim.treeSeqOutput("vignette_annotated.trees");
+    sim.simulationFinished();
+}
+
+\end{lstlisting}
 
 Note that the simulation only has selected mutations (of type \verb|m2|),
 but as we will add in type \verb|m1| mutations later,
@@ -351,25 +633,21 @@ but this time we will stay within python, and obtain the sequence length program
 \subsection*{Analyzing the resulting tree sequence}
 
 First, let’s look at what mutations are present.
-
-\comment{(commented-out code block that wasn't compiling)}
-% \begin{listing}[H]
-%     \begin{minted}[fontsize=\small, linenos, bgcolor=gray!10]{python}
-% ts = tskit.load("vignette_annotated.trees")
-% num_stacked = np.array([len(m.metadata["mutation_list"]) for m in ts.mutations()])
-% init_time = ts.metadata['SLiM']['tick']
-% old_mut = np.array([m.time > init_time - 1 - 1e-12 for m in ts.mutations()])
-% assert sum(old_mut) == ots.num_mutations
-% print(f"There are {ts.num_mutations} present at {ts.num_sites} distinct sites.")
-% print(f"Of these, {np.sum(num_stacked > 1)} have more than one stacked mutation,")
-% print(f"and {np.sum(old_mut)} were produced by msprime.")
-%     \end{minted}
-% \end{listing}
-% \begin{pycon}
-% There are 318 present at 318 distinct sites.
-% Of these, 0 have more than one stacked mutation,
-% and 309 were produced by msprime.
-% \end{pycon}
+\begin{lstlisting}
+ts = tskit.load("vignette_annotated.trees")
+num_stacked = np.array([len(m.metadata["mutation_list"]) for m in ts.mutations()])
+init_time = ts.metadata['SLiM']['tick']
+old_mut = np.array([m.time > init_time - 1 - 1e-12 for m in ts.mutations()])
+assert sum(old_mut) == ots.num_mutations
+print(f"There are {ts.num_mutations} present at {ts.num_sites} distinct sites.")
+print(f"Of these, {np.sum(num_stacked > 1)} have more than one stacked mutation,")
+print(f"and {np.sum(old_mut)} were produced by msprime.")
+\end{lstlisting}
+\begin{pycon}
+There are 318 present at 318 distinct sites.
+Of these, 0 have more than one stacked mutation,
+and 309 were produced by msprime.
+\end{pycon}
 
 Most of the mutations were present as initial diversity,
 but a few were added during the course of the simulation.
@@ -574,87 +852,9 @@ Here, a neutral mutation has been put down on top of a selected mutation, but st
 so that any samples inheriting either of these mutations carries the selected mutation.
 For more discussion of how this works, see  the documentation of \verb|msprime.SLiMMutationModel|.
 
-\section*{What information is stored in the tree sequence}
-
-A tree sequence is a way of storing both the full genetic history and the genotypes
-of a bunch of genomes.
-See CITE
-for more description of the tree sequence and underlying data structure,
-and definitions of the important terms.
-Each (haploid) genome is associated with a \textit{node},
-and the ``focal'' nodes are called \textit{sample nodes} or simply \textit{samples}.
-Many operations on tree sequences act on the sample nodes by default,
-and the tree sequence always describes the genealogy of the
-entire genome of all the samples, at at least over the simulated time period.
-(Other nodes in the tree sequence represent ancestral genomes
-about which we might have only partial information).
-SLiM simulates diploid organisms, so each \textit{individual} usually has two nodes;
-many operations you might want to do involve first finding the individuals you want,
-and then looking at their nodes.
-
-\begin{figure}
-\centering
-    \includegraphics{figures/pedigree0}
-    \includegraphics{figures/pedigree1}
-    \includegraphics{figures/pedigree2}
-\caption{
-    \textbf{(A)} What happens in SLiM.
-    \textbf{(B)} What we end up with at the end.
-    \textbf{(C)} Labeled.
-}
-\label{fig:indivs}
-\end{figure}
 
 
-
-\paragraph{What does SLiM record in the tree sequence?}
-Suppose we've run a very small simulation with SLiM. The genetic relationships between
-the various diploid individuals who were alive over the course of the simulation might
-look something like Figure~\ref{fig:indivs}A.
-Note that individuals (circles) are
-diploid, so that each contains two chromosomes or *nodes* (shaded rectangles),
-and that relationships are between the *nodes*, not the individuals.
-
-At the end of the simulation we are typically only interested in the genetic
-relationships between the nodes in those individuals which are still alive;
-other parts of the genealogy are irrelevant. To save having to store this unnecessary
-genealogical information, SLiM *simplifies* the tree sequence as it goes along, retaining
-only certain parts of the genetic genealogy. When the tree sequence is output, the result
-then looks something like the situation in [the figure below](pedigree01), in which many of the nodes and
-individuals have been removed.
-
-\paragraph{Who and what is in the tree sequence?}
-
-OK, who and what exactly *is* left in the tree sequence after the unnecessary
-information has been removed?
-Figure~\ref{fig:indivs}C depicts the terminology.
-In the recorded tree sequence the individuals who are alive at the end of the simulation
-have their nodes marked as \textit{samples},
-and so we have their full genetic ancestry.
-The sample nodes,
-and the individuals containing them, are always present in the tree sequence.
-
-In contrast to the individuals containing sample nodes, you can see that all the other
-circles, representing historical (i.e., dead) individuals, have vanished, although
-sometimes their nodes remain. By default, only individuals with sample nodes are recorded
-in the tree sequence; that means the other, remaining, nodes lose any information about
-which individuals they were in (TODO see below for ways to retain this information.
-
-As well as the historical individuals, many historical \textit{nodes}  have been removed too,
-along with with their genealogical relationships (i.e. the lines, which in
-tree-sequence-speak are known as ``edges''). The deleted nodes are simply those that are
-not needed to reconstruct the relationships between the sample nodes. For example, we
-remove nodes leading to a dead end (e.g. in individuals who had no offspring). Similarly,
-as time goes on, recombination events in conjunction with genetic drift can gradually
-reduce the genetic contribution of parts of older genomes to the current generation.
-The generated tree sequence therefore need not contain historical nodes whose genetic
-contribution to the samples has been whittled down to zero. Finally, to
-reconstruct relationships between samples, strictly we only need to keep a node if it
-represents the genetic \textit{most recent common ancestor} (MRCA) of at least two samples. So
-by default, we also remove historical nodes that are only ``on the line to'' a sample, but
-do not represent a branching point (i.e. coalescent event) on the tree.
-
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{Post-processing: recapitation and mutation}
 
 Perhaps the most common pyslim operations involve \textit{recapitation} (CITE)
@@ -689,25 +889,70 @@ you can run this simple SLiM script of a single population of sexual organisms,
 fluctuating around 1000 individuals, for 1000 generations: ADD LINK?
 
 
+\section*{Parallelizing forward-in-time simulations of multiple species}
+
+Any two branches stemming from the same node in a species tree are independent from each other and
+thus can be simulated in parallel (assuming no migration between the species).
+For example, in the phylogeny depicted in Figure~\ref{fig:phylo},
+branches of the same color can be simulated in parallel.
+To do so, we will need to
+(i) simulate the history of each branch and
+(ii) join the resulting simulations together onto one multi-species history.
+
+ \begin{figure}[h!]
+ \centering
+  \includegraphics[width=0.5\textwidth]{./code/parallelizing_phylogeny/phylo.pdf}
+  \caption{Example of phylogeny we might want to simulate. Note how branches with the same color can be simulated in parallel when there is no migration.}
+  \label{fig:phylo}
+ \end{figure}
+
+\subsection{Parallel simulation of branches}
+
+First, we need to write a \slim script that will be used for simulating the history of each branch in our phylogeny.
+We will perform a simple simulation,
+in which each branch can have a different (but fixed) population size and length (number of ticks).
+Also, we will allow deleterious mutations to happen across the entire chromosome at a fixed rate.
+See the code below (Listing~\ref{lst:slim-example}).
+
+\begin{listing}[H]
+  \inputminted[fontsize=\small, linenos, bgcolor=gray!10]{javascript}{./code/parallelizing_phylogeny/simulate_branch.slim}
+  \caption{Simple \slim script to simulate a constant size population that can be started from an existing tree sequence.}
+  \label{lst:slim-example}
+\end{listing}
+
+For each branch, the presence or absence of \verb|infile| tells \slim whether a previous branch exists or not.
+If so, \slim will read the previous tree sequence and change the population size accordingly.
+Note that when you read a tree sequence into \slim,
+the tick counter will be updated with the time encoded in the tree sequence,
+so we need to set the end of the simulation as the length of the branch (\verb|num_gens|)
+plus the current “time” at the end of the loaded tree sequence.
+At the end of the simulation, we call \verb|sim.treeSeqRememberIndividuals| right before saving the resulting tree sequence.
+This is necessary because we need to ensure the individuals in the final generation are never dropped
+from the tree sequence in future runs of \slim which are started from the output of the simulation,
+as they will later be used to glue the tree sequences together.
+
+The example phylogeny we will simulate is encoded in the table below (Table~\ref{tab:phylo}).
+
+\begin{table}[H]
+  \centering
+  \caption{Parameters of the phylogeny that will be simulated.}
+  \label{tab:phylo}
+    \begin{tabular}{llll}
+      \bfseries Child & \bfseries Parent & \bfseries Population size & \bfseries Edge length \\
+      \hline
+      \csvreader[head to column names]{./code/parallelizing_phylogeny/phylo.csv}{}%
+        {\child & \parent & \popsize & \edgelen\\}
+    \end{tabular}
+\end{table}
+
+%%%%%%%%%%%%%%
+\appendix
+
+\comment{STUFF WE MAYBE DON'T WANT: moved here from above:}
+
+
 \subsection*{Recapitation}
 
-
-Although we can initialize a SLiM simulation with the results of a coalescent simulation,
-if during the simulation we don't actually use the genotypes for anything, it
-can be much more efficient to do this afterwards, hence only doing a coalescent
-simulation for the portions of the first-generation ancestors that have
-not yet coalesced. (See the SLiM manual for more explanation.)
-This is depicted in Figure~\ref{fig:indivs}D.
-imagine that at some sites, some of the samples
-don't share a common ancestor within the SLiMulated portion of history (shown in blue).
-Recapitation starts at the \textit{top} of the genealogies,
-and runs a coalescent simulation back through time
-to fill out the rest of genealogical history relevant to the samples.
-The green chromosomes are new ancestral nodes that have been added to the tree sequence.
-This is important - if we did not do this,
-then effectively we are assuming the initial population would be genetically homogeneous,
-and so our simulation would have less genetic variation than it should have
-(since the component of variation from the initial population would be omitted).
 
 Doing this is as simple as:
 
@@ -741,17 +986,6 @@ you must set migration rates or else coalescence will never happen.
 
 
 \subsection*{Simplification}
-
-\begin{figure}
-\centering
-    \includegraphics{figures/pedigree_recapitate}
-    \includegraphics{figures/pedigree_simplify}
-\caption{
-    \textbf{(A)} Recapitation adds the green nodes by coalescent simulation.
-    \textbf{(B)} Simplification.
-}
-\label{fig:recap_simp}
-\end{figure}
 
 
 Probably, your simulations have produced many more fictitious genomes
@@ -875,60 +1109,5 @@ What's going on here? Let's step through the code.
 TODO: writing out to VCF
 
 
-\section*{Parallelizing forward-in-time simulations of multiple species}
-
-Any two branches stemming from the same node in a species tree are independent from each other and
-thus can be simulated in parallel (assuming no migration between the species).
-For example, in the phylogeny depicted in Figure~\ref{fig:phylo},
-branches of the same color can be simulated in parallel.
-To do so, we will need to
-(i) simulate the history of each branch and
-(ii) join the resulting simulations together onto one multi-species history.
-
- \begin{figure}[h!]
- \centering
-  \includegraphics[width=0.5\textwidth]{./code/parallelizing_phylogeny/phylo.pdf}
-  \caption{Example of phylogeny we might want to simulate. Note how branches with the same color can be simulated in parallel when there is no migration.}
-  \label{fig:phylo}
- \end{figure}
-
-\subsection{Parallel simulation of branches}
-
-First, we need to write a \slim script that will be used for simulating the history of each branch in our phylogeny.
-We will perform a simple simulation,
-in which each branch can have a different (but fixed) population size and length (number of ticks).
-Also, we will allow deleterious mutations to happen across the entire chromosome at a fixed rate.
-See the code below (Listing~\ref{lst:slim-example}).
-
-\begin{listing}[H]
-  \inputminted[fontsize=\small, linenos, bgcolor=gray!10]{javascript}{./code/parallelizing_phylogeny/simulate_branch.slim}
-  \caption{Simple \slim script to simulate a constant size population that can be started from an existing tree sequence.}
-  \label{lst:slim-example}
-\end{listing}
-
-For each branch, the presence or absence of \verb|infile| tells \slim whether a previous branch exists or not.
-If so, \slim will read the previous tree sequence and change the population size accordingly.
-Note that when you read a tree sequence into \slim,
-the tick counter will be updated with the time encoded in the tree sequence,
-so we need to set the end of the simulation as the length of the branch (\verb|num_gens|)
-plus the current “time” at the end of the loaded tree sequence.
-At the end of the simulation, we call \verb|sim.treeSeqRememberIndividuals| right before saving the resulting tree sequence.
-This is necessary because we need to ensure the individuals in the final generation are never dropped
-from the tree sequence in future runs of \slim which are started from the output of the simulation,
-as they will later be used to glue the tree sequences together.
-
-The example phylogeny we will simulate is encoded in the table below (Table~\ref{tab:phylo}).
-
-\begin{table}[H]
-  \centering
-  \caption{Parameters of the phylogeny that will be simulated.}
-  \label{tab:phylo}
-    \begin{tabular}{llll}
-      \bfseries Child & \bfseries Parent & \bfseries Population size & \bfseries Edge length \\
-      \hline
-      \csvreader[head to column names]{./code/parallelizing_phylogeny/phylo.csv}{}%
-        {\child & \parent & \popsize & \edgelen\\}
-    \end{tabular}
-\end{table}
 
 \end{document}
