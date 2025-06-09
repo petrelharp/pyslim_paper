@@ -173,18 +173,21 @@ since the start of the simulation;
 we call this \textit{SLiM time}.
 However, the natural point of reference for an ARG is the samples,
 so time in the tree sequence is measured in units of \textit{time ago},
-i.e., amount of time before the end of the simulation.
+\ie amount of time before the end of the simulation.
 
 \begin{figure}
 \centering
     \includegraphics{figures/pedigree0}
     % \includegraphics{figures/pedigree1}
     \includegraphics{figures/pedigree2}
+    \includegraphics{figures/pedigree_remember}
 \caption{
     \textbf{(A)} All relationships in a small simulation
     (three diploids over five generations).
     \textbf{(B)} Those relationships left at the end of the simulation.
-    \comment{TODO: align the two figures and add "B" to the second.}
+    \textbf{(C)} Additional individuals may be ``remembered'' (purple)
+        or ``retained'' (dotted).
+    \comment{TODO: align the figures and add "B" and "C".}
 }
 \label{fig:indivs}
 \end{figure}
@@ -200,8 +203,8 @@ Since the edges of the tree sequence record
 which specific parts of the chromosome are inherted,
 relationships are between the nodes, not the individuals.
 
-At the end of the simulation we are typically only interested in the genetic
-relationships between the nodes in those individuals which are still alive;
+At the end of the simulation we are often only interested in the genetic
+relationships between those individuals who alive at the end;
 other parts of the genealogy are irrelevant.
 To save having to store this unnecessary genealogical information,
 SLiM \textit{simplifies} the tree sequence as it goes along, retaining
@@ -216,7 +219,7 @@ along each edge in the figure, but we don't attempt to depict that here.)
 
 In contrast to the individuals containing sample nodes,
 in Figure~\ref{fig:indivs}B
-all other historical (i.e., dead) individuals have vanished,
+all other historical (\ie dead) individuals have vanished,
 although some of their nodes remain.
 By default, only individuals with sample nodes are recorded in the tree sequence
 (but see below for ways to retain them).
@@ -235,8 +238,78 @@ represents the genetic \textit{most recent common ancestor} (MRCA) of at least t
 So we also remove historical nodes that are only ``on the line to'' a sample,
 but do not represent a branching point (\ie coalescent event) on the tree.
 
-\comment{TODO: should we introduce remembering individuals here?}
+%%%%%%%% %%%%%%%%%%%%%%
+\section*{Historical individuals}
 
+Sometimes we need more information about historical nodes or individuals.
+For example, there may be individuals who are not alive any more,
+but whose complete ancestry you would like to know.
+Or perhaps you’d like to know how the final generation relates to particular individuals in the past.
+Or it may be that you want to access the spatial location of historical genomes
+at particular times.
+The solution is to ``remember'' an individual during the simulation,
+using the SLiM function \verb|treeSeqRememberIndividuals()|.
+
+\paragraph{Permanently remembering individuals}
+By default, a call to \verb|treeSeqRememberIndividuals()|
+will permanently remember one or more individuals,
+the simulated equivalent of ancient DNA dug out of permafrost.
+This means any tree sequence subsequently recorded will always contain this individual,
+its nodes (now marked as samples), and its full ancestry.
+The result of remembering an individual in the introductory example is pictured
+in Figure~\ref{fig:indivs}C.
+For instance, to be able to access allele frequencies and spatial locations
+at a particular time in the past,
+one can Remember all individuals alive at that time.
+
+\paragraph{Retaining individuals}
+Alternatively, you may want to only
+retain historical individuals and their genomes
+as long as they are still relevant to reconstructing the genetic ancestry of the sample nodes.
+This is less burdensome than remembering everyone alive,
+as nodes and individuals be removed once they are no longer ancestral.
+You can \emph{retain} individuals in this way by using
+\verb|treeSeqRememberIndividuals(..., permanent=F)|.
+Since a retained individual’s nodes are not marked as samples,
+they are subject to the normal removal process,
+and it is possible to end up with an individual containing only one genome, as shown in the diagram.
+However, as soon as both nodes of a retained individual have been lost,
+the individual itself is deleted too.
+
+By default, nodes are only kept if they mark a coalescent point (MRCA or branch point)
+at some point along the genome sequence.
+This can be changed by initialising tree sequence recording in SLiM using
+\verb|treeSeqInitialize(retainCoalescentOnly=F)|.
+SLiM will then preserve all retained individuals while they remain in the genealogy,
+even if their nodes are not coalescent points in a tree.
+Similarly, if you later decide to reduce the number of samples via simplification,
+retained individuals will be kept only if they are still MRCAs
+in the ancestry of the selected samples.
+To preserve them even if their nodes are not coalescent points,
+you can specify
+\verb|ts.simplify(selected_samples, keep_unary_in_individuals=True)|.
+
+For instance, if we need to know where in geographic space
+the bits of genome inherited by today's individuals were at some point in the past,
+we would initialize with \verb|retainCoalescentOnly=F|,
+and then Retain everyone alive at the time.
+
+\paragraph{Remembering everyone}
+\comment{probably remove this}
+Although not needed to reconstruct full genomic history,
+it is perfectly possible to apply \verb|treeSeqRememberIndividuals()| to every individual
+in every generation of a simulation (everyone who has ever lived).
+If you simply mark everyone for temporary retention,
+it should not increase the memory burden of your simulation much:
+most individuals will be removed as the simulation progresses,
+since they will not contain coalescent nodes.
+However, if you use \verb|treeSeqInitialize(retainCoalescentOnly=F)|,
+the number of individuals in the resulting tree sequence is likely to become very large,
+and the efficiencies provided by tree sequence recording will be substantially reduced.
+Indeed in this case,
+retaining will be much the same as permanently remembering everyone who has ever lived.
+Nevertheless, if you are willing to sacrifice enough computer memory,
+either of these is (perhaps surprisingly) possible, even for medium-sized simulations.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%
@@ -258,7 +331,7 @@ but do not represent a branching point (\ie coalescent event) on the tree.
 By default, a \slim simulation begins with all individuals identical.
 This is clearly undesireable; the usual way to avoid after-effects of this
 is to include a long ``burn-in'' period to generate genetic diversity.
-However, this period needs to be quite long ($5--15N$ generations),
+However, this period needs to be quite long (5--15N generations),
 so an attractive alternative is to initialize the simulation
 with genetic diversity from a coalescent simulation.
 This is what ``recapitation'' is --
@@ -373,8 +446,9 @@ If the alleles affect a trait under stabilizing selection,
 we would expect a negative correlation between the two.
 On the other hand, there would be no relationship between allele frequencies and effect sizes
 if the trait we are selecting on in the lab is not under strong selection in the wild.
-We will simulate the scenario where the trait we put under selection in the lab
-is not under stabilizing selection in the wild.
+The precise scenario we simulate is where the trait
+is not under stabilizing selection in the wild,
+but we put it under selection in the lab.
 To do so, we will:
 \begin{enumerate}
     \item Run a coalescent simulation with msprime.
@@ -382,116 +456,99 @@ To do so, we will:
     \item Add \slim mutations with msprime,
         and edit the mutation metadata to assign selection coefficients.
     \item Run the \slim portion of the simulation.
-    \item Do some descriptive analysis of the results of selection.
-    \item Add neutral mutations to the tree sequence.
-    \item Do some descriptive analysis of genetic diversity along the genome.
+    % \item Do some descriptive analysis of the results of selection.
+    % \item Add neutral mutations to the tree sequence.
+    % \item Do some descriptive analysis of genetic diversity along the genome.
 \end{enumerate}
 
-\subsection*{Variable mutation rate map}
+Concretely, we'll simulate XXX OVERVIEW OF mutation rates etc
 
-\comment{don't have a variable rate map}
-In this model, we will also demonstrate how to modulate the mutation rate along the genome.
-We will partition the 9Mbp genome in three equally-sized domains.
-The total mutation rate along the genome will be constant (\num{3e-8} per generation per bp).
-In the first and last third of the genome, 1\% of mutations are beneficial with a selection coefficient drawn from an Exponential distribution.
-In the middle third, only 0.1\% of mutations are beneficial (but with the same distribution of selection coefficients).
-This implies that the mutation rate of beneficial mutations on the ends is \num{3e-10} per generation per bp, and in the middle is \num{3e-11} per generation per bp.
-First, we will simulate the beneficial mutations under these different mutation rates.
-Then, to ensure the total mutation rate along the genome is constant, we will add neutral mutations at rates \num{2.97e-8} the ends, and \num{2.997e-8} in the middle.
-
-
- \subsection*{The coalescent simulation}
-
- First, we will use \msprime to simulate the evolutionary history of 1,000 diploid samples from a population of size 50,000.
-
-\begin{lstlisting}{language=py}
-%   \begin{minted}[fontsize=\small, linenos, bgcolor=gray!10]{python}
-demog_model = msprime.Demography()
-demog_model.add_population(initial_size=50_000)
-ots = msprime.sim_ancestry(
-    samples=1_000,
-    demography=demog_model,
-    random_seed=5,
-    recombination_rate=1e-8,
-    sequence_length = 9_000_000)
-%   \end{minted}
-\end{lstlisting}
 
 \subsection*{Annotating tree sequence with SLiM metadata}
 
-At this point, we have genealogical information: individuals, nodes (chromosomes), and relationships between them,
-but no genetic diversity; no mutations. 
-First, we will add SLiM metadata to all of these things, a procedure we call “annotating”.
+We suppose that the coalescent simulation has already been done,
+producing the tree sequence \verb|ots|.
+This tree sequence has genealogical information:
+individuals, nodes (chromosomes), and relationships between them,
+but no SLiM-specific information and no genetic diversity.
+First, we will add SLiM metadata to all of these things, a procedure we call ``annotating''.
 \begin{listing}[H]
   \begin{minted}[fontsize=\small, linenos, bgcolor=gray!10]{python}
 ots = pyslim.annotate(ots, model_type="WF", tick=1, stage="late")
   \end{minted}
 \end{listing}
-
 This \pyslim method adds default metadata to everything that needs it:
-in this case, all individuals, all nodes that are part of alive individuals, and all populations referenced by nodes.
-These default values are returned by \verb|slim_default_metadata()| (e.g., all individuals are hermaphrodite, all chromosomes are autosomal).
+in this case, all individuals, all nodes that are part of alive individuals,
+and all populations referenced by nodes.
+These default values are returned by \verb|slim_default_metadata()|
+(\eg all individuals are hermaphrodite, all chromosomes are autosomal).
+We demonstrate how to modify this metadata by adding selection coefficients to mutations below,
+but other changes (\eg assigning sexes) is similar.
 
 \subsection*{Adding mutations with SLiM metadata}
 
 Next, we will use the \verb|msprime.SLiMMutationModel| to add mutations to the tree sequence.
-These will carry SLiM metadata, but this metadata will say that the mutations are neutral.
-So, we will later need to modify their metadata after the fact to have selection coefficients drawn from some distribution.
-Remember, our motivation here is that we are using \msprime to obtain a plausible level of functional standing genetic variation on which selection can act:
-imagine that the mutations were (nearly) neutral in the wild, but then became subject to strong selection in the lab, for some reason.
+These will all be neutral,
+so, we next modify their metadata to have selection coefficients drawn from some distribution.
 We will want this to be as if we'd done it in a burn-in script in \slim :
-
 \begin{lstlisting}{language=slim}
-    initialize() {
-        ...
         initializeMutationType("m2", 0.5, "e", 0.04);
         initializeMutationRate(3e-10);
-     }
-  
-     fitness(m2) {
-         return 1.0;
-     }
 \end{lstlisting}
+In other words, we would like to sample selection coefficients
+from an exponential distribution with mean 0.04.
+% (but, of course, this is a coalescent simulation,
+% so the dynamics of the mutations up until this point have been neutral).
+% Note that the dominance coefficient is not stored in the tree sequence:
+% it gets set in the SLiM recipe because it is a property of the mutation type,
+% not of individual mutations, in SLiM.
 
-In other words, we would like to pull selection coefficients from an exponential distribution with mean 0.04
-(but, of course, this is a coalescent simulation, so the dynamics of the mutations up until this point have been neutral).
-Note that the dominance coefficient is not stored in the tree sequence:
-it gets set in the SLiM recipe because it is a property of the mutation type, not of individual mutations, in SLiM.
 Here is how to add SLiM mutations with \msprime :
-
 \begin{listing}[H]
     \begin{minted}[fontsize=\small, linenos, bgcolor=gray!10]{python}
-mut_map = msprime.RateMap(
-           position=breaks,
-           rate=[0.03e-8, 0.003e-8, 0.03e-8])
 mut_model = msprime.SLiMMutationModel(type=2)
 ots = msprime.sim_mutations(
             ots,
-            rate=mut_map,
-            model=mut_model,
-            keep=True, 
-            random_seed=12)
+            rate=3e-8,
+            model=mut_model)
 print(f"The tree sequence now has {ots.num_mutations} mutations, at "
           f"{ots.num_sites} distinct sites.")
   \end{minted}
 \end{listing}
-
 \begin{pycon}
 The tree sequence now has 309 mutations, at 309 distinct sites.
 \end{pycon}
+The \verb|type=2| argument to \verb|msprime.SLiMMutationModel|
+means the mutations will be of type ``m2'' in SLiM
+(and, so you must initialize that mutation type in the SLiM recipe).
 
-Note the type=2 argument to \verb|msprime.SLiMMutationModel|:
-this means the mutations will be of type “m2” in SLiM
-(and, so you must initialize that mutation type in the recipe that loads this tree sequence in).
+\begin{listing}[H]
+    \begin{minted}[fontsize=\small, linenos, bgcolor=gray!10]{python}
+s = 0.001
+tables = ots.tables
+tables.mutations.clear()
+for m in ots.mutations():
+  md_list = m.metadata["mutation_list"]
+  for md in md_list:
+    md["selection_coeff"] = s
+  tables.mutations.append(
+          m.replace(metadata={"mutation_list": md_list})
+  )
+  \end{minted}
+\end{listing}
 
+
+\comment{OLD VERSION}
 Now, we will assign selection coefficients.
-Recall that to accomodate mutation stacking in SLiM,
+To accomodate mutation stacking in SLiM,
 a mutation metadata entry is in fact a list of metadata entries,
 one for each of the SLiM mutations that are stacked at this position.
-The SLiM IDs of these mutations are available (in the same order) as a comma-separated list of integers in the derived state of the mutation.
+The SLiM IDs of these mutations are available (in the same order)
+as a comma-separated list of integers in the derived state of the mutation.
 So, in case some SLiM mutations appear in more than one mutation in the tree sequence,
 we will build a map from SLiM ID to selection coefficient:
-\verb|mut_map[k]| will give the selection coefficient of the SLiM mutation with SLiM mutation ID \verb|k|.
+\verb|mut_map[k]| will give the selection coefficient of the SLiM mutation
+with SLiM mutation ID \verb|k|.
 \comment{simplify to use fixed $s$ (but show somewhere that derived states are comma-separated lists of IDs)}
 
 \begin{listing}[H]
