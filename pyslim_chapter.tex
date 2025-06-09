@@ -389,6 +389,7 @@ To do so, we will:
 
 \subsection*{Variable mutation rate map}
 
+\comment{don't have a variable rate map}
 In this model, we will also demonstrate how to modulate the mutation rate along the genome.
 We will partition the 9Mbp genome in three equally-sized domains.
 The total mutation rate along the genome will be constant (\num{3e-8} per generation per bp).
@@ -491,6 +492,7 @@ The SLiM IDs of these mutations are available (in the same order) as a comma-sep
 So, in case some SLiM mutations appear in more than one mutation in the tree sequence,
 we will build a map from SLiM ID to selection coefficient:
 \verb|mut_map[k]| will give the selection coefficient of the SLiM mutation with SLiM mutation ID \verb|k|.
+\comment{simplify to use fixed $s$ (but show somewhere that derived states are comma-separated lists of IDs)}
 
 \begin{listing}[H]
     \begin{minted}[fontsize=\small, linenos, bgcolor=gray!10]{python}
@@ -521,6 +523,7 @@ The selection coefficients range from 1.13e-10 to 3.70e-01.
 \end{pycon}
 
 \subsection*{Loading into SLiM}
+\comment{move this up with the annotate bit}
 Before loading the tree sequence into SLiM,
 we should check the top-level metadata.
 We can see this with \verb|tables.metadata|:
@@ -890,7 +893,7 @@ fluctuating around 1000 individuals, for 1000 generations: ADD LINK?
 
 
 \section*{Parallelizing forward-in-time simulations of multiple species}
-
+\comment{stitch together with the previous section: there was msp+slim, here is slim+slim}
 Any two branches stemming from the same node in a species tree are independent from each other and
 thus can be simulated in parallel (assuming no migration between the species).
 For example, in the phylogeny depicted in Figure~\ref{fig:phylo},
@@ -950,6 +953,7 @@ The example phylogeny we will simulate is encoded in the table below (Table~\ref
 
 \comment{STUFF WE MAYBE DON'T WANT: moved here from above:}
 
+\comment{Remove ILS thing and just add a paragraph citing Rodrigues et al and saying why this would be faster and would split the memory requirements across a bunch of processes.}
 
 \subsection*{Recapitation}
 
