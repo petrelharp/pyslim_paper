@@ -82,51 +82,39 @@ Outline:
 
 \section*{Introduction}
 % The importance of simulations in popgen and flavors of simulations
-Simulations have been an invaluable tool in population genetics for the past six decades.
+Simulations have become an invaluable tool in population genetics over the past six decades,
+allowing researchers to model increasingly complex evolutionary scenarios.
 %because of the difficulty in obtaining analytical solutions to complex evolutionary scenarios.
-In this paper, we review the use of the Ancestral Recombination Graph (ARG)
-in simulation pipelines using SLiM;
-since SLiM uses the ``tree sequence'' format for storing ARGs,
-this is called ``tree sequence recording''.
-An ARG describing the results of a simulation
-provides a great deal of information about how the simulation progressed,
-that can be helpful in connecting the results of a simulation
-to the processes that produced it.
-Furthermore, using ARGs as a data structure allows a number of simulation techniques
-that can make simulation much faster and more efficient.
-
-The two main strategies for population genetic simulation differ in the direction of the process: forward or backward-in-time.
-The coalescent process models the ancestry of sampled genomes back in time until they coalesce into one most common recent ancestor. % (MRCA).
-It is particularly efficient because
-it only simulates the portions of history directly ancestral to the sampled genome,
-thus bypassing the need to represent entire populations in memory and the sampling of gametes every generation.
-Despite its efficiency, the coalescent has strict assumptions (\eg neutrality) which limits applicability.
-Forward-in-time simulations starts with actual individuals and applies evolutionary rules (\eg mutation, recombination, selection) over generations until a certain criterion is met.
-Thus, forward-in-time simulations are much more flexible, but they come with a high computational cost.
-
-% The tree sequence and its utility in bridging forward-in-time and coalescent simulations
-Recent advances both in computational power and software development have made simulations much more accessible and popular.
-A key development that has decreased the computational cost of simulations is the tree sequence,
-a data structure that concisely encodes correlated genealogies along the genome.
-In the context of forward-in-time simulations,
-the recording of tree sequences increases efficiency because it allows for
-(i) the omission of neutral mutations during the simulation process, and
-(ii) the use of fast coalescent as a neutral ``burn-in'' phase,
-such that the forward simulation can begin with an equilibrium level of genetic diversity.
-Further, using tree sequences it is possible to bridge forward and backwards methods, 
-for example by using the coalescent to ensure all lineages coalesce into a single common ancestor (a process called ``recapitation'').
-
+A robust research community has grown around developing computational methods for conducting these
+simuations, as well as for representing and analyzing the data that they produce.
+% refer to other chapters here?
+In this chapter, we present \pyslim, a Python package that facilitates \emph{hybrid simulations}, which combine key
+features of the two main methods of population genetic simulation. These two methods differ primarily in the direction of the simulation
+process -- either forward- or backward-in-time. The coalescent process models the ancestry of sampled genomes
+backward-in-time until they coalesce into their most common recent ancestor. % (MRCA).
+This approach is extremely efficient because it only has to simulates the ancestors that directly contributed to the sampled genomes,
+thus avoiding the need to represent large swathes of the population tree. The downside of this approach is its strict assumptions
+(\eg neutrality), which limit applicability to more complex evolutionary questions. On the other hand, forward-in-time simulations
+start with the ancestral genomes and apply evolutionary rules (\eg mutation, recombination, selection) over generations.
+This affords forward-in-time simulations much more flexibilty in modelling non-neutral scenarios, but at a high computational cost.
+% refer to msprime and SLiM chapters explicitly here?
 % The pyslim package and overview of the chapter
-Here, we describe uses of \pyslim, a Python package for reading and modifying \tskit tree sequences produced by
-the popular coalescent and forward-in-time simulation tools such as \slim and \msprime.
-\pyslim provides a way to perform ``hybrid'' simulations, combining both forwards and backwards (coalescent) methods.
-First, we review how SLiM uses the tree sequence:
-what information is recorded there and how to access it in python.
-Next, we describe the main uses of \pyslim:
-(i) recapitation, which is the process of filling in the history of the first-generation individuals which have not coalesced,
-(ii) generation of initial diversity for forward-in-time simulations,
-(iii) parallelization of multi-species simulations, and (iv) complex simulation of alternating life cycles.
-Some of the text has been adapted from \pyslim's documentate
+Hybrid simulations have recently emerged as a strategy for leveraging the benefits of both forward-in-time and coalescent methods
+to efficiently model highly complex evolutionary scenarios. This general approach extends the frontiers of population genetic modelling to..
+(some examples? like multi-host life histories, etc).
+% something here to motivate the pathogen evolution scenario we present?
+One of the key innovations that has enabled the rise of hybrid simulations is the concept of the Ancestral Recombination Graph (ARG).
+Compared to genotype data encoding, the ARG represents a much richer source of information about the processes that gave rise
+to a given set of genomes. Importantly, both coalescent (\eg msprime) and forward-in-time (\eg SLiM) simulation software share a common format for
+encoding the ARG: the ``tree sequence'' data structure. This has made it possible for simulations started using either forward- or backward-in-time
+to be seamlessly (sort of) continued using the alternative approach.
+
+Here, we review how SLiM uses the tree sequence before describing the main uses of \pyslim in conducting hybrid simulations, specifically:
+(i) recapitation, the process of simulating the history of uncoalesed first-generation individuals,
+(ii) generation of initial diversity using the coalescent process for forward-in-time simulations,
+(iii) parallelization of multi-species simulations.
+Finally, we present a vignette of an organism evolving under a complex life history to illustrate the realism that can be achieved with a hybrid approach.
+Some of the text in this chapter has been adapted from \pyslim's documentation.
 (\url{https://tskit.dev/pyslim/docs/latest}).
 
 %%%%%%%%%%%%%%%%%%%%%
@@ -134,7 +122,7 @@ Some of the text has been adapted from \pyslim's documentate
 
 Roughly speaking, SLiM simply writes down
 how all the genomes in a simulation are related to each other,
-and returns the result as an ancestral recombination graph, or ARG.
+and returns the result as an ARG.
 First, we should undertsand exactly \emph{what} and \emph{how} is written down,
 and how to access it.
 
