@@ -109,59 +109,49 @@ to a given set of genomes. Importantly, both coalescent (\eg msprime) and forwar
 encoding the ARG: the ``tree sequence'' data structure. This has made it possible for simulations started using either forward- or backward-in-time
 to be seamlessly (sort of) continued using the alternative approach.
 
-Here, we review how SLiM uses the tree sequence before describing the main uses of \pyslim in conducting hybrid simulations, specifically:
+Here, we review how SLiM, a popular forward-in-tim simulation software, uses the tree sequence before describing
+the main uses of \pyslim in conducting hybrid simulations, specifically:
 (i) recapitation, the process of simulating the history of uncoalesed first-generation individuals,
 (ii) generation of initial diversity using the coalescent process for forward-in-time simulations,
 (iii) parallelization of multi-species simulations.
-Finally, we present a vignette of an organism evolving under a complex life history to illustrate the realism that can be achieved with a hybrid approach.
+Finally, to illustrate the realism that can be achieved with a hybrid approach, we present a vignette of an organism evolving under a complex life history.
 Some of the text in this chapter has been adapted from \pyslim's documentation.
 (\url{https://tskit.dev/pyslim/docs/latest}).
 
 %%%%%%%%%%%%%%%%%%%%%
 \section{Tree sequences and SLiM}
+As described in \citet{wong}, the term ``ancestral recombination graph'' (ARG)
+represents the paths of genealogical inheritance that have produced a given set of genomes,
+and the \emph{tree sequence} format of \tskit provides a general-purpose way to store ARGs.
+For this reason, we mostly use the term ``tree sequence'' in this chapter even where ``ARG'
+would be equally accurate, as well as other terminology associated with \slim and \tskit \citet{XXX}.
 
-Roughly speaking, SLiM simply writes down
-how all the genomes in a simulation are related to each other,
-and returns the result as an ARG.
-First, we should undertsand exactly \emph{what} and \emph{how} is written down,
-and how to access it.
-
-As described in \citet{wong},
-the term ``ancestral recombination graph'' (ARG) can be used to describe ancestry and inheritance
-in various ways,
-and the \emph{tree sequence} format of \tskit
-provides a general-purpose way to store all types of ARG.
-In this paper we specifically discuss how to work with the ARGs that are produced by SLiM
-and stored as tree sequences.
-Since our focus is on working with tree sequences
-and we use the associated terminology \citet{XXX},
-we use the term ``tree sequence'',
-although ``ARG'' would usually be equally accurate.
+As SLiM proceeds with simulating genomes evolving forward-in-time, it writes down
+how all the genomes are related to each other and returns the result as an ARG.
+First, we should understand exactly \emph{what} and \emph{how} it is written down, and how to access it.
 
 \paragraph{Terminology:}
 Each \textit{node} of a tree sequence represents a single (haploid) genome;
 inheritance relationships between these are recorded as \textit{edges},
 and genetic variation is represented by \textit{mutations} at associated \textit{sites}.
-In a tree sequence there are
-a set of ``focal'' nodes called \textit{sample nodes} or simply \textit{samples}.
+In a tree sequence there are a set of ``focal'' nodes called \textit{sample nodes} or simply \textit{samples}.
 Many operations on tree sequences act on the sample nodes by default.
 A good way to think about these is that the samples are those genomes
-for which we have full genetic information,
-while other nodes represent ancestral genomes.
-So, the tree sequence describes the genealogy of the
-entire genome of all the samples, at at least over the simulated time period,
-while we might only have partial information about other nodes.
-SLiM simulates diploid organisms, so each \textit{individual} usually has two nodes;
-many operations you might want to do involve first finding the individuals you want,
+for which we have complete genetic information, while other nodes represent ancestral genomes.
+So, the tree sequence describes the entire genealogy of the sampled nodes,
+at at least over the simulated time period,
+while for other nodes we might only have partial information.
+By default, SLiM simulates diploid organisms, so each \textit{individual} will usually have two nodes;
+many common operations involve first specifying the individuals you want,
 and then looking at their nodes.
 
-The terminology about \textbf{time} can be confusing:
-SLiM is a forwards simulator, so records time in units of time steps (``ticks'')
-since the start of the simulation;
-we call this \textit{SLiM time}.
-However, the natural point of reference for an ARG is the samples,
-so time in the tree sequence is measured in units of \textit{time ago},
-\ie amount of time before the end of the simulation.
+Since SLiM is a forwards simulator, it records time in units of time steps (``ticks'')
+since the start of the simulation, with 0 corresponding to the earliest time point.
+We call this \textit{SLiM time}.
+However, in many cases, a more natural point of reference might be in relation to samples, with
+time in the tree sequence measured in units of \textit{time ago}. This is the same way that time
+is represented in coalescent or backward-in-time approaches, with the 0th time point corresponding
+to the end of the simulation rather than the beginning.
 
 \begin{figure}
 \centering
@@ -181,61 +171,51 @@ so time in the tree sequence is measured in units of \textit{time ago},
 \end{figure}
 
 \paragraph{Who is and isn't in the tree sequence:}
-Suppose we've run a very small simulation with SLiM.
-The genetic relationships between
+Suppose we have run a very small simulation with SLiM. The genetic relationships between
 the various diploid individuals who were alive over the course of the simulation might
-look something like Figure~\ref{fig:indivs}A.
-Individuals (circles) are diploid,
-so each contains two chromosomes, one per node (shaded rectangles).
-Since the edges of the tree sequence record
-which specific parts of the chromosome are inherted,
-relationships are between the nodes, not the individuals.
+look something like Figure~\ref{fig:indivs}A. Since individuals (circles) are diploid, each contains
+two genomes, which are each represented by one node (shaded rectangles).
+\comment{SSG: suggest using 'genome' instead of 'chromosome' here to stay consistent with the terminology explanation above}
+The edges of the tree sequence record which specific parts of the genome are inherited,
+so the relationships recorded in the tree sequence are between the nodes and not the individuals directly.
 
-At the end of the simulation we are often only interested in the genetic
-relationships between those individuals who alive at the end;
-other parts of the genealogy are irrelevant.
-To save having to store this unnecessary genealogical information,
-SLiM \textit{simplifies} the tree sequence as it goes along, retaining
-only certain parts of the genetic genealogy \citep{kelleher}.
-So, in the output tree sequence the result looks something like Figure~\ref{fig:indivs}B,
-in which many of the nodes and individuals have been removed.
-Individuals who are alive at the end of the simulation
-have their nodes marked as \textit{samples},
-and so we have their full genetic ancestry.
-(The tree sequence also records \emph{which segments} of chromosome are inherited
-along each edge in the figure, but we don't attempt to depict that here.)
+In most cases, analyses will only focus on those nodes that are still alive in the final generation
+of the simulation, called \textit{samples}. This renders large portions of the tree sequence irrelevant, as they
+correspond to lineages that died out at some earlier point in the simulation (but see section below on
+'Historical Individuals' about how to model ancient samples in a SLiM/tree sequence framework). To avoid having to
+store this large quantity of unnecessary information, SLiM periodically \textit{simplifies} the tree sequence
+as the simulation goes along. By default, simplification will only keep the portions of the
+genetic genealogy that are required to represent the history of the current nodes
+\citep{kelleher}. Additionally, it defaults to removing any node that is not a genetic
+\textit{most recent common ancestor} (MRCA) of at least two daughter nodes. This removes historical
+nodes that are only ``on the line to'' a sample, but do not represent a branching point
+(\ie coalescent event) on the tree.
 
-In contrast to the individuals containing sample nodes,
-in Figure~\ref{fig:indivs}B
-all other historical (\ie dead) individuals have vanished,
-although some of their nodes remain.
-By default, only individuals with sample nodes are recorded in the tree sequence
-(but see below for ways to retain them).
-
-As well as the historical individuals, many historical \textit{nodes} have been removed too,
-along with with their genealogical relationships.
-The deleted nodes are simply those that are
-not needed to reconstruct the relationships between the sample nodes.
-For example, we remove nodes leading to a dead end
-(\eg in individuals who had no offspring),
-and more generally nodes with no genetic contribution to the final generation.
-Finally, the tree sequence keeps only information necessary
-to reconstruct relationships between samples --
-so, nodes are only retained if they
-represents the genetic \textit{most recent common ancestor} (MRCA) of at least two samples.
-So we also remove historical nodes that are only ``on the line to'' a sample,
-but do not represent a branching point (\ie coalescent event) on the tree.
+As a result of this process, the output tree sequence will look something like Figure~\ref{fig:indivs}B.
+%% SSG: could move the bit in between here to the caption?
+(The tree sequence also records \emph{which segments} of the genome are inherited
+along each edge in the figure, but we do not attempt to depict that here).
+%%
+Individuals who are alive at the end of the simulation automatically have their nodes marked as
+\textit{samples}, and thus their full genetic ancestry is retained. All other historical (\ie dead)
+individuals (depicted as circles) have vanished, although some of their nodes remain. These nodes
+have only been retained because they are required to accurately represent the
+ancestry of a sample node and/or the relationships among sample nodes. Put simply,
+simplification removes any nodes that have not made a genetic contribution to the sample set of nodes,
+along with any associated edges.
 
 %%%%%%%% %%%%%%%%%%%%%%
 \section*{Historical individuals}
-
-Sometimes we need more information about historical nodes or individuals.
-For example, there may be individuals who are not alive any more,
-but whose complete ancestry you would like to know.
-Or perhaps you’d like to know how the final generation relates to particular individuals in the past.
-Or it may be that you want to access the spatial location of historical genomes
-at particular times.
-The solution is to ``remember'' an individual during the simulation,
+By default, only the nodes associated with individuals alive in the final generation are part of the 'sample'.
+However, there are many cases where we might want to retain the complete ancestry, and other metadata, for
+historical nodes. For example, we might want to model the relationship between a modern population and
+one particular individual from the past.
+%% SSG - another example, can cut
+Or, if we are conducting simulations in parallel that share 
+a common ancestry, we may need to retain certain nodes that are critical for linking diverging
+tree sequences back together.
+%%
+The solution is to ``remember'' an individual during the course of the simulation,
 using the SLiM function \verb|treeSeqRememberIndividuals()|.
 
 \paragraph{Permanently remembering individuals}
@@ -246,41 +226,40 @@ This means any tree sequence subsequently recorded will always contain this indi
 its nodes (now marked as samples), and its full ancestry.
 The result of remembering an individual in the introductory example is pictured
 in Figure~\ref{fig:indivs}C.
-For instance, to be able to access allele frequencies and spatial locations
-at a particular time in the past,
-one can Remember all individuals alive at that time.
+This is useful to, for instance, access allele frequencies and spatial locations of individuals
+at a particular time in the past.
 
 \paragraph{Retaining individuals}
-Alternatively, you may want to only
-retain historical individuals and their genomes
-as long as they are still relevant to reconstructing the genetic ancestry of the sample nodes.
-This is less burdensome than remembering everyone alive,
-as nodes and individuals be removed once they are no longer ancestral.
+\comment{SSG: I think we might need to explain in a bit more detail the kind of info associated with 'individuals' in contrast to nodes in an earlier section. For example, individuals are associated with spatial positions, two parents (in diploid case), etc. while nodes are not. The reason for 'retaining' does not seem super clear otherwise (while the case for 'remembering' is clear)}
+Alternatively, you may want to only retain historical individuals as long as their nodes are still
+relevant to reconstructing the genetic ancestry of the sample nodes.
+This retains information that is specific to individuals as opposed to their nodes,
+such as, their two parents (in diploid simulations) and their location (in spatial simulations).
+This is less burdensome than remembering everyone alive, as individuals be still removed once their
+nodes (which are not marked as samples) are no longer ancestral.
 You can \emph{retain} individuals in this way by using
 \verb|treeSeqRememberIndividuals(..., permanent=F)|.
-Since a retained individual’s nodes are not marked as samples,
-they are subject to the normal removal process,
-and it is possible to end up with an individual containing only one genome, as shown in the diagram.
+Since a retained individual’s nodes are not considered samples,
+they are subject to the standard removal 'rules' of simplification.
+It is therefore possible to end up with an individual containing only one genome, as shown in the diagram.
 However, as soon as both nodes of a retained individual have been lost,
-the individual itself is deleted too.
+the individual is deleted too.
 
-By default, nodes are only kept if they mark a coalescent point (MRCA or branch point)
-at some point along the genome sequence.
+As previously discussed, simplification will, by default, only keep nodes if they are a coalescent point
+(\ie they are a MRCA or branch point) somewhere along the genome.
 This can be changed by initialising tree sequence recording in SLiM using
 \verb|treeSeqInitialize(retainCoalescentOnly=F)|.
-SLiM will then preserve all retained individuals while they remain in the genealogy,
-even if their nodes are not coalescent points in a tree.
-Similarly, if you later decide to reduce the number of samples via simplification,
-retained individuals will be kept only if they are still MRCAs
-in the ancestry of the selected samples.
+SLiM will then preserve all retained individuals while they remain in the genealogy of present-day individuals,
+even if their nodes are not coalescent points in a tree. These non-coalescent nodes are referred to as
+unary nodes.
+If you later decide to reduce the number
+of samples in the tree sequence, you can do so using the tskit function simplify(),
+which mirrors SLiM's version of the same procedure.
+In this case, individuals that are 'retained', rather than 'remembered', will be kept only
+if they are still MRCAs in the ancestry of the selected samples.
 To preserve them even if their nodes are not coalescent points,
 you can specify
 \verb|ts.simplify(selected_samples, keep_unary_in_individuals=True)|.
-
-For instance, if we need to know where in geographic space
-the bits of genome inherited by today's individuals were at some point in the past,
-we would initialize with \verb|retainCoalescentOnly=F|,
-and then Retain everyone alive at the time.
 
 \paragraph{Remembering everyone}
 \comment{probably remove this}
