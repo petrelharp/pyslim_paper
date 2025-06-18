@@ -433,12 +433,13 @@ Concretely, we'll simulate XXX OVERVIEW OF mutation rates etc
 
 \subsection*{Annotating tree sequence with SLiM metadata}
 
-We suppose that the coalescent simulation has already been done,
+Suppose that the coalescent simulation has already been done,
+but mutations have not been added,
 producing the tree sequence \verb|ots|.
 This tree sequence has genealogical information:
 individuals, nodes (chromosomes), and relationships between them,
 but no SLiM-specific information and no genetic diversity.
-First, we will add SLiM metadata to all of these things, a procedure we call ``annotating''.
+First, we add SLiM metadata to all of these things, a procedure we call ``annotating''.
 \begin{listing}[H]
   \begin{minted}[fontsize=\small, linenos, bgcolor=gray!10]{python}
 ots = pyslim.annotate(ots, model_type="WF", tick=1, stage="late")
@@ -451,107 +452,7 @@ These default values are returned by \verb|slim_default_metadata()|
 (\eg all individuals are hermaphrodite, all chromosomes are autosomal).
 We demonstrate how to modify this metadata by adding selection coefficients to mutations below,
 but other changes (\eg assigning sexes) is similar.
-
-\subsection*{Adding mutations with SLiM metadata}
-
-Next, we will use the \verb|msprime.SLiMMutationModel| to add mutations to the tree sequence.
-These will all be neutral,
-so, we next modify their metadata to have selection coefficients drawn from some distribution.
-We will want this to be as if we'd done it in a burn-in script in \slim :
-\begin{lstlisting}{language=slim}
-        initializeMutationType("m2", 0.5, "e", 0.04);
-        initializeMutationRate(3e-10);
-\end{lstlisting}
-In other words, we would like to sample selection coefficients
-from an exponential distribution with mean 0.04.
-% (but, of course, this is a coalescent simulation,
-% so the dynamics of the mutations up until this point have been neutral).
-% Note that the dominance coefficient is not stored in the tree sequence:
-% it gets set in the SLiM recipe because it is a property of the mutation type,
-% not of individual mutations, in SLiM.
-
-Here is how to add SLiM mutations with \msprime :
-\begin{listing}[H]
-    \begin{minted}[fontsize=\small, linenos, bgcolor=gray!10]{python}
-mut_model = msprime.SLiMMutationModel(type=2)
-ots = msprime.sim_mutations(
-            ots,
-            rate=3e-8,
-            model=mut_model)
-print(f"The tree sequence now has {ots.num_mutations} mutations, at "
-          f"{ots.num_sites} distinct sites.")
-  \end{minted}
-\end{listing}
-\begin{pycon}
-The tree sequence now has 309 mutations, at 309 distinct sites.
-\end{pycon}
-The \verb|type=2| argument to \verb|msprime.SLiMMutationModel|
-means the mutations will be of type ``m2'' in SLiM
-(and, so you must initialize that mutation type in the SLiM recipe).
-
-\begin{listing}[H]
-    \begin{minted}[fontsize=\small, linenos, bgcolor=gray!10]{python}
-s = 0.001
-tables = ots.tables
-tables.mutations.clear()
-for m in ots.mutations():
-  md_list = m.metadata["mutation_list"]
-  for md in md_list:
-    md["selection_coeff"] = s
-  tables.mutations.append(
-          m.replace(metadata={"mutation_list": md_list})
-  )
-  \end{minted}
-\end{listing}
-
-
-\comment{OLD VERSION}
-Now, we will assign selection coefficients.
-To accomodate mutation stacking in SLiM,
-a mutation metadata entry is in fact a list of metadata entries,
-one for each of the SLiM mutations that are stacked at this position.
-The SLiM IDs of these mutations are available (in the same order)
-as a comma-separated list of integers in the derived state of the mutation.
-So, in case some SLiM mutations appear in more than one mutation in the tree sequence,
-we will build a map from SLiM ID to selection coefficient:
-\verb|mut_map[k]| will give the selection coefficient of the SLiM mutation
-with SLiM mutation ID \verb|k|.
-\comment{simplify to use fixed $s$ (but show somewhere that derived states are comma-separated lists of IDs)}
-
-\begin{listing}[H]
-    \begin{minted}[fontsize=\small, linenos, bgcolor=gray!10]{python}
-rng = np.random.default_rng(seed=1234)
-tables = ots.tables
-tables.mutations.clear()
-mut_map = {}
-for m in ots.mutations():
-  md_list = m.metadata["mutation_list"]
-  slim_ids = m.derived_state.split(",")
-  assert len(slim_ids) == len(md_list)
-  for sid, md in zip(slim_ids, md_list):
-     if sid not in mut_map:
-        mut_map[sid] = rng.exponential(scale=0.04)
-     md["selection_coeff"] = mut_map[sid]
-  _ = tables.mutations.append(
-          m.replace(metadata={"mutation_list": md_list})
-  )
-
-# check we didn't mess anything up
-assert tables.mutations.num_rows == ots.num_mutations
-print(f"The selection coefficients range from {min(mut_map.values()):0.2e}")
-print(f"to {max(mut_map.values()):0.2e}.")
-  \end{minted}
-\end{listing}
-\begin{pycon}
-The selection coefficients range from 1.13e-10 to 3.70e-01.
-\end{pycon}
-
-\subsection*{Loading into SLiM}
-\comment{move this up with the annotate bit}
-Before loading the tree sequence into SLiM,
-we should check the top-level metadata.
-We can see this with \verb|tables.metadata|:
-
+For instance, top-level metadata now shows:
 \begin{listing}[H]
     \begin{minted}[fontsize=\small, linenos, bgcolor=gray!10]{python}
 tables.metadata
@@ -574,42 +475,125 @@ tables.metadata
         }
 }
 \end{pycon}
+This metadata needs to match our planned slimulation --
+particularly the \verb|model_type| (WF or nonWF) and the \verb|tick|
+(which tells SLiM what value to set the tick counter to once this tree sequence is loaded).
 
-We should edit this to match our planned slimulation particularly the \verb|model_type| (WF or nonWF) and the \verb|tick|.
-The \verb|tick| tells SLiM what value to set the tick counter to once this tree sequence is loaded.
-In principle, it can be set to anything, independently of the times in the tree sequence,
-because the times in the tree sequence are measured in units of “time before the end”;
-and the tick that gets passed to SLiM sets what that “end time” is, in SLiM’s time.
-However, if you change this, the \verb|slim_time| attributes in mutation metadata will not be accurate.
-This is harmless, unless you do something with mutations’ times yourself.
+\subsection*{Adding mutations with SLiM metadata}
 
-The model type is already Wright-Fisher,
-but just to demonstrate how to edit the metadata,
-and then we’ll write the tree sequence to a file.
-
+Next, we will use the \verb|msprime.SLiMMutationModel| to add mutations to the tree sequence.
+These will all be neutral,
+so, we next modify their metadata to have selection coefficients drawn from some distribution.
+We will want this to be as if we'd done it in a burn-in script in \slim:
+\begin{lstlisting}{language=slim}
+        initializeMutationType("m2", 0.5, "f", 0.001);
+        initializeMutationRate(3e-10);
+\end{lstlisting}
+In other words, we would like mutations to be of type \verb|m2|,
+and to assign selection coefficients to the fixed value 0.001.
+% (but, of course, this is a coalescent simulation,
+% so the dynamics of the mutations up until this point have been neutral).
+% Note that the dominance coefficient is not stored in the tree sequence:
+% it gets set in the SLiM recipe because it is a property of the mutation type,
+% not of individual mutations, in SLiM.
+To add SLiM mutations with \msprime, we use the built-in
+\verb|SLiMMutationModel|:
 \begin{listing}[H]
     \begin{minted}[fontsize=\small, linenos, bgcolor=gray!10]{python}
-ts_metadata["SLiM"]["model_type"] = "WF"
-tables.metadata = ts_metadata
-ots = tables.tree_sequence()
-ots.dump("vignette_annotated.init.trees")
+mut_model = msprime.SLiMMutationModel(type=2)
+ots = msprime.sim_mutations(ots, rate=3e-8, model=mut_model)
+  \end{minted}
+\end{listing}
+The \verb|type=2| argument to \verb|msprime.SLiMMutationModel|
+means the mutations will be of type ``m2'' in SLiM
+(and, so you must initialize that mutation type in the SLiM recipe).
+Those mutations have selection coefficient 0
+(as they should, since in this portion of history they've been neutral);
+but now we want to change that.
+Doing this follows a general pattern for editing a tree sequence:
+make a copy of the underlying \emph{tables};
+clear the relevant table;
+then write back in the information, modifying as desired.
+\begin{listing}[H]
+    \begin{minted}[fontsize=\small, linenos, bgcolor=gray!10]{python}
+tables = ots.dump_tables()
+tables.mutations.clear()
+for m in ots.mutations():
+  md_list = m.metadata["mutation_list"]
+  for md in md_list:
+    md["selection_coeff"] = 0.001
+  tables.mutations.append(
+      m.replace(metadata={"mutation_list": md_list})
+  )
+  \end{minted}
+\end{listing}
+We edit the \emph{tables} because a tree sequence is (for efficiency reasons) immutable.
+For a more complex example that draws coefficients randomly (and so requires more bookkeeping),
+see the pyslim documentation.
+\comment{Do we need this? I think so, sadly...}
+To understand this code we need to understand \slim's mutation model --
+\emph{warning:} fiddly, nitpicky details to follow.
+In \slim, each genome at each has a \emph{collection} of abstract ``mutations''.
+(In most cases, there will be zero or one mutation at a given position,
+but there can be more.)
+Mutations thus do not necessarily represent single-nucleotide changes.
+However, the mutation model in \tskit is different, requiring that each mutation
+\emph{replace} the previous allele with a new allele (rather than allowing stacking, like \slim).
+So, a single mutation in the tree sequence corresponds to a collection of \slim mutations,
+which we record in two ways.
+First, the \verb|derived_state| of the mutation is a comma-separated list of SLiM mutation IDs.
+Second, the mutation's metadata has one entry: \verb|"mutation_list"|,
+which is a list of metadata entries.
+For instance, here is a muutation as stored in the tree sequence
+that was the result of a (rare) double hit:
+\begin{listing}
+    \begin{minted}[fontsize=\small, linenos, bgcolor=gray!10]{python}
+Mutation(id=295, site=180, node=43931, derived_state='193,194',
+    parent=294, time=8.74,
+    metadata={'mutation_list': [
+        {'mutation_type': 2, 'selection_coeff': 0.001, 'subpopulation': -1, 'slim_time': -559, 'nucleotide': -1},
+        {'mutation_type': 2, 'selection_coeff': 0.001, 'subpopulation': -1, 'slim_time': -7, 'nucleotide': -1}
+    ]})
     \end{minted}
-\end{listing}   
+\end{listing}
+This mutation occurred
+above node 43931 at a position on the genome we could obtain by looking at site 180.
+Genomes that inherit this mutation carry at this site two \slim mutations with IDs 193 and 194;
+these mutations are labeled with \slim time -559 and -7 generations, respectively.
+Since the first of the two occurred longer ago (a larger negative \slim time),
+we can infer that the mutation with \slim ID 194 occurred on the background
+of the mutation with \slim ID 193.
+% We can confirm this by looking at the ``parent'' mutation whose ID is 294,
+% and has derived state simply 193.
+Sharp-eyed readers will note that the ``time'' of the mutation given by the tree sequence
+(8.74 generations ago) does not match the ``\slim time'' recorded in metadata
+(-7 generations in the future);
+in general this conversion is ``rounded and maybe off by one, depending on the model type''.
+For a detailed discussion of conversion between time in the tree sequence
+and time in the SLiM model, see the pyslim documentation.
 
-Now, we can move onto the SLiM recipe.
-This simply continues selected mutations as before (with mutation rate \num{1e-10} per bp per generation and the same distribution of fitness effects).
-The population size is determined by the number of individuals that were read in from the tree sequence.
-We need to make sure that the genome lengths match, so we provide that as a constant \verb|L|, that will be provided at run time.
-To facilitate later analysis, we’ll also “Remember” the individuals present at the start of the simulation,
+
+\subsection*{Loading into SLiM}
+
+Now, we can move onto the SLiM recipe
+that loads the edited tree sequence back in.
+This simply continues selected mutations as before
+(with mutation rate \num{3e-10} per bp per generation and the same distribution of fitness effects).
+The population size is determined by the number of individuals
+that were read in from the tree sequence.
+We need to make sure that the genome lengths match,
+so we provide that as a constant \verb|L|, that will be provided at run time.
+To facilitate later analysis,
+we’ll also ``Remember'' the individuals present at the start of the simulation,
 so that they will remain in the tree sequence.
+Supposing we've dumped the edited tree sequence as ``init.trees'':
 \begin{lstlisting}[language=slim]
 initialize()
 {
     // must define L
     initializeSLiMModelType("WF");
     initializeTreeSeq();
-    initializeMutationRate(c(0.03e-8, 0.003e-8, 0.03e-8),
-                           c(3000000, 6000000, 9000000) - 1);
+    initializeMutationRate(3e-10);
     initializeMutationType("m1", 0.5, "f", 0.0);
     initializeMutationType("m2", 0.5, "e", 0.01);
     initializeGenomicElementType("g1", m2, 1.0);
@@ -618,7 +602,7 @@ initialize()
 }
 
 1 late() { 
-    sim.readFromPopulationFile("vignette_annotated.init.trees");
+    sim.readFromPopulationFile("init.trees");
     sim.treeSeqRememberIndividuals(p0.individuals);
 }
 
@@ -627,129 +611,13 @@ initialize()
     sim.treeSeqOutput("vignette_annotated.trees");
     sim.simulationFinished();
 }
-
 \end{lstlisting}
 
 Note that the simulation only has selected mutations (of type \verb|m2|),
 but as we will add in type \verb|m1| mutations later,
 we have declared them in the recipe as a placeholder.
+We could run this on the command line as \verb|slim -d L=100000000 reload_annotated.slim|.
 
-We could run this on the command line as \verb|slim -d L=100000000 reload_annotated.slim|,
-but this time we will stay within python, and obtain the sequence length programatically:
-
-\begin{pycon}
-    // Initial random seed:
-    5
-    
-    // RunInitializeCallbacks():
-    initializeSLiMModelType(modelType = 'WF');
-    initializeTreeSeq();
-    initializeMutationRate(c(3e-11, 3e-12, 3e-11), c(2999999, 5999999, 8999999));
-    initializeMutationType(1, 0.5, "f", 0);
-    initializeMutationType(2, 0.5, "e", 0.1);
-    initializeGenomicElementType(1, m2, 1);
-    initializeGenomicElement(g1, 0, 8999998);
-    initializeRecombinationRate(1e-08);
-    
-    // Starting run at tick <start>:
-    1 
-    
-    Done.
-\end{pycon}
-
-\subsection*{Analyzing the resulting tree sequence}
-
-First, let’s look at what mutations are present.
-\begin{lstlisting}
-ts = tskit.load("vignette_annotated.trees")
-num_stacked = np.array([len(m.metadata["mutation_list"]) for m in ts.mutations()])
-init_time = ts.metadata['SLiM']['tick']
-old_mut = np.array([m.time > init_time - 1 - 1e-12 for m in ts.mutations()])
-assert sum(old_mut) == ots.num_mutations
-print(f"There are {ts.num_mutations} present at {ts.num_sites} distinct sites.")
-print(f"Of these, {np.sum(num_stacked > 1)} have more than one stacked mutation,")
-print(f"and {np.sum(old_mut)} were produced by msprime.")
-\end{lstlisting}
-\begin{pycon}
-There are 318 present at 318 distinct sites.
-Of these, 0 have more than one stacked mutation,
-and 309 were produced by msprime.
-\end{pycon}
-
-Most of the mutations were present as initial diversity,
-but a few were added during the course of the simulation.
-Along the way we did a consistency check,
-that the number of “old” mutations matches the number of mutations we had in the tree sequence we loaded into SLiM.
-Since we ran SLiM for 500 time steps,
-but loaded the tree sequence in during the \verb|late()| stage of time step 1,
-the “old” mutations are those from at least 499 units of time ago
-(and the \num{1e-12} is necessary for floating-point error).
-
-A simple thing to look at next is:
-how did the selected mutations change in frequency?
-We can do this thanks to our having Remembered the first generation.
-First, we will compute all allele frequencies among both the first generation and the final generation:
-
-\begin{listing}[H]
-    \begin{minted}[fontsize=\small, linenos, bgcolor=gray!10]{python}
-times = list(set(ts.individuals_time))
-times.sort()
-print("The times ago at which individuals in the tree sequence were born:", times)
-# The times ago at which individuals in the tree sequence were born: [0.0, 100.0]
-nodes_by_time = [ts.samples(time=t) for t in times]
-
-num_nodes = np.array([len(x) for x in nodes_by_time])
-p = ts.sample_count_stat(nodes_by_time, lambda x: x/num_nodes, 2, windows='sites',
-        strict=False, span_normalise=False, polarised=True)
-s = np.array([sum([sum([md["selection_coeff"] for md in m.metadata["mutation_list"]])
-                  for m in site.mutations]) for site in ts.sites()])
-    \end{minted}
-\end{listing}
-\begin{pycon}
-The times ago at which individuals in the tree sequence were born: [np.float64(0.0), np.float64(499.0)]
-\end{pycon}
-
-To do this, we used the \verb|time=t| argument to \verb|tskit.TreeSequence.samples()| to find the nodes alive at each of the two times (0 and 500 generations ago);
-then computed an array \verb|p| of allele frequencies, with one row per site,
-the first column giving the frequency among the initial generation,
-and the second giving the frequency at the end.
-We also pull out \verb|s|, the selection coefficients.
-This last bit is complex because each site can have more than one mutation,
-and each tree sequence mutation can represent more than one SLiM mutation.
-And, the way we have dealt with this is a bit of a hack, so let’s look at that site with multiple mutations:
-
-\begin{listing}[H]
-    \begin{minted}[fontsize=\small, linenos, bgcolor=gray!10]{python}
-for j, v in enumerate(ts.variants()):
-  if len(v.site.mutations) > 1:
-     print(f"Site {j} has {num_stacked[j]} stacked mutations, "
-           f"with total derived allele frequency {p[j]} "
-           f"and sum of selection coefficients {s[j]}.")
-     print(f"The allele frequencies are:")
-     for k, a in enumerate(v.alleles):
-        print(f"  '{a}': {sum(v.genotypes == k)}")
-     print(v.site)
-    \end{minted}
-\end{listing}
-
-There were two mutations at this site, both before the SLiM portion of the simulation started.
-One happened on the background of the other, and no genomes either today or in the initial generation carry the first allele in isolation.
-Their effects combine in SLiM, so treating this as a single allele is correct.
-
-Now, we will plot the initial and final allele frequencies, with point size and color determined by the selection coefficient:
-
-\begin{listing}[H]
-    \begin{minted}[fontsize=\small, linenos, bgcolor=gray!10]{python}
-fig, ax1 = plt.subplots(figsize=(5, 4))
-dp = ax1.scatter(p[:, 1], p[:,0], c=s, s=s*800, label='frequencies', norm=colors.LogNorm(vmin=s.min(), vmax=s.max()))
-ax1.set_xlabel("initial allele frequency")
-ax1.set_ylabel("final allele frequency")
-fig.colorbar(dp, ax=ax1, label='selection coefficient');
-    \end{minted}
-\end{listing}
-
-Unsurprisingly, mutations that had a large change in allele frequency seem to be biased towards ones with higher selection coefficients,
-and those that were initially present at moderate frequency but were lost are biased towards smaller selection coefficients.
 
 \subsection*{Overlaying neutral mutations}
 
@@ -759,163 +627,80 @@ and do not affect the course of the simulation in any way.
 For this reason, we can add them in after the fact,
 in a way that is exactly equivalent to having kept track of them as we went along.
 
-Recall that out of an overall mutation rate of 3e-8,
-we wanted 99\% of the mutations to be neutral on the ends of the chromosome,
-and 99.9\% to be neutral in the middle.
-So, we will now add mutations at these rates, using the same model of mutation as before.
-The code is nearly the same as before, with a few changes.
-We have changed the type of the mutations (so that neutral mutations will show up in SLiM as \verb|m1|,
-while selected mutations above were \verb|m2|),
+Recall that out of an overall mutation rate of \num{3e-8},
+we wanted 99\% of the mutations to be neutral.
+So, we will now add mutations at rate $0.99 \times 3 \times10^{-8}$.
+The code is nearly the same as before,
+except for setting the ``type'' to 1
+(so that neutral mutations would show up in SLiM as \verb|m1|),
 and we have asked these mutations to have SLiM mutation IDs beginning at the ID where the previous mutations left off.
 (This would be important were we to read this tree sequence back in to SLiM;
 mutation IDs must be unique.)
 And, importantly, we’ve added \verb|keep=True| so that existing mutations are not discarded.
-
 \begin{listing}[H]
     \begin{minted}[fontsize=\small, linenos, bgcolor=gray!10]{python}
-neutral_mut_map = msprime.RateMap(
-           position=breaks,
-           rate=[2.97e-8, 2.997e-8, 2.97e-8])
 next_id = pyslim.next_slim_mutation_id(ts)
-neutral_mut_model = msprime.SLiMMutationModel(
-                                type=1,
-                                next_id=next_id)
+neutral_mut_model = msprime.SLiMMutationModel(type=1, next_id=next_id)
 mts = msprime.sim_mutations(
                 ts,
-                rate=neutral_mut_map,
+                rate=0.99 * 3e-8,
                 model=neutral_mut_model,
-                keep=True, 
-                random_seed=35)
-print(f"The tree sequence now has {mts.num_mutations} mutations,")
-print(f"at {mts.num_sites} distinct sites.")
+                keep=True)
     \end{minted}
 \end{listing}
 
-\begin{pycon}
-The tree sequence now has 443071 mutations, at 431899 distinct sites.
-\end{pycon}
+% \begin{pycon}
+% The tree sequence now has 443071 mutations, at 431899 distinct sites.
+% \end{pycon}
+% 
+% Now, we have a lot more mutations! And some of the sites have more than one mutation:
+% 
+% \begin{listing}[H]
+%     \begin{minted}[fontsize=\small, linenos, bgcolor=gray!10]{python}
+% num_alleles = np.array([len(s.mutations) for s in mts.sites()])
+% for k in range(1, max(num_alleles)+1):
+%   print(f"There are {sum(num_alleles == k)} sites with {k} distinct alleles.")
+%     \end{minted}
+% \end{listing}
+% \begin{pycon}
+% There are 420920 sites with 1 distinct alleles.
+% There are 10790 sites with 2 distinct alleles.
+% There are 185 sites with 3 distinct alleles.
+% There are 4 sites with 4 distinct alleles.
+% \end{pycon}
 
-Now, we have a lot more mutations! And some of the sites have more than one mutation:
+\subsection{VCF output}
 
+It might seem irrelevant to use the \verb|SLiMMutationModel| again
+if we don't plan to read the resulting tree sequence back into \slim.
+However, it's important: if we'd omitted the \verb|model| argument
+(thus using the default Jukes-Cantor model),
+we probably would have got an error:
+``\textit{Existing allele(s) incompatible with mutation model alphabet.}''
+This error occurs when the Jukes-Cantor (which only knows about alleles A, C, G, and T)
+encounters an allele it doesn't recognize
+(such as a comma-separated list of integers, as produced by the \slim mutation model).
+Similar problems occur if you output the tree sequence as a VCF,
+which will be deeply confused by these alleles.
+\pyslim includes tools to make this output easy:
+\verb|generate_nucleotides| to add nucleotides to non-nucleotide models,
+and then \verb|convert_alleles| to replace the comma-separated-list-of-integer alleles
+with the underlying nucleotide alleles.
+So, to output to VCF we'd do:
 \begin{listing}[H]
     \begin{minted}[fontsize=\small, linenos, bgcolor=gray!10]{python}
-num_alleles = np.array([len(s.mutations) for s in mts.sites()])
-for k in range(1, max(num_alleles)+1):
-  print(f"There are {sum(num_alleles == k)} sites with {k} distinct alleles.")
+nts = pyslim.generate_nucleotides(ts)
+nts = pyslim.convert_alleles(ts)
+with open('nucs.vcf', 'w') as f:
+    nts.write_vcf(f)
     \end{minted}
 \end{listing}
-\begin{pycon}
-There are 420920 sites with 1 distinct alleles.
-There are 10790 sites with 2 distinct alleles.
-There are 185 sites with 3 distinct alleles.
-There are 4 sites with 4 distinct alleles.
-\end{pycon}
-
-To get a nice a picture of what has happened, we will pull out a tree that had a lot of mutations on it,
-and print a picture of it, with mutations labeled by their type:
-
-\begin{listing}[H]
-    \begin{minted}[fontsize=\small, linenos, bgcolor=gray!10]{python}
-for t in mts.trees():
- mt = [max([u['mutation_type'] for u in m.metadata['mutation_list']]) for m in t.mutations()]
- if t.num_mutations > 12:
-   break
-
-ml = {m.id: str(mtype) for mtype, m in zip(mt, t.mutations())}
-display(
-    t.draw_svg(mutation_labels=ml,
-               node_labels={},
-               size=(400, 300))
-)
-    \end{minted}
-\end{listing}
-
-%TODO: add the FIG
-
-On this tree each mutation is marked by a red “x”,
-and labeled with its mutation type: either “1”, for newly added mutations, or “2”, for selected mutations present during the SLiM portion.
-(Note: this is a large tree, with 68,211 nodes! But as usual, the main structure is visible because most nodes coalesce very recently.) % TODO: update numbers
-
-OK, but how exactly is this working?
-Can a neutral mutation be added to a site that previously had a selected mutation?
-The short answer is: yes, and new alleles stack on top of existing alleles,
-but existing alleles replace new alleles.
-This is equivalent to including them as the simulation went along,
-by the additivity property of Poisson mutations:
-it turns out that the following two ways of generating mutations along the genome are equivalent:
-either (\textit{a}) placing a random Poisson number with mean,
-and randomly choosing each one to be non-neutral with probability 0.01, or
-(\textit{b}) placing random, independent Poisson numbers of neutral and non-neutral mutations with means $0.99 \mu$ and $0.01 \mu$ respectively.
-Since the neutral ones do not affect the simulation otherwise, we can add them in afterwards.
-Now, when the mutation algorithm in \msprime puts down a new mutation at a site with mutations already existing,
-it appends the newly generated SLiM mutation ID to the previous derived state,
-and adds the metadata for the new SLiM mutation to the list of metadata from the previous mutation.
-However, it does not modify any existing mutations, so their derived states (and metadata) are unchanged.
-The result is that, from the point of view of SLiM, neutral (“m1”) mutations “stack” on top of any other mutations (neutral or selected), while selected (“m2”) mutations stack with each other, but replace any neutral mutations.
-This “stacking policy” is not actually exactly implementable in SLiM,
-but given that our newly added mutations are meant to be entirely neutral,
-seems like a reasonable policy.
-If you wanted some other arrangement (e.g., to have m1 stack on top of m2),
-you could go through and modify derived states and metadata appropriately.
-
-Let’s check there are any sites with stacked mutations of different types in the simulation. There is indeed one such site:
-
-\begin{listing}[H]
-    \begin{minted}[fontsize=\small, linenos, bgcolor=gray!10]{python}
-for site in mts.sites():
-  if len(site.mutations) > 1:
-     types = [set([md["mutation_type"] for md in mut.metadata["mutation_list"]])
-              for mut in site.mutations]
-     if max(map(len, types)) > 1:
-        print(site)
-    \end{minted}
-\end{listing}
-\begin{pycon}
-Site(id=427551, position=8911472.0, ancestral_state='', mutations=[Mutation(id=438595, site=427551, node=75771, derived_state='304', parent=-1, metadata={'mutation_list': [{'mutation_type': 2, 'selection_coeff': 0.017608141526579857, 'subpopulation': -1, 'slim_time': -82602, 'nucleotide': -1}]}, time=83102.9131115732, edge=469898), Mutation(id=438596, site=427551, node=9168, derived_state='304,438765', parent=438595, metadata={'mutation_list': [{'mutation_type': 2, 'selection_coeff': 0.017608141526579857, 'subpopulation': -1, 'slim_time': -82602, 'nucleotide': -1}, {'mutation_type': 1, 'selection_coeff': 0.0, 'subpopulation': -1, 'slim_time': -1041, 'nucleotide': -1}]}, time=1042.8889606594637, edge=104765)], metadata=b'')
-\end{pycon}
-
-%TODO edit this depending on output
-Here, a neutral mutation has been put down on top of a selected mutation, but stacked,
-so that any samples inheriting either of these mutations carries the selected mutation.
-For more discussion of how this works, see  the documentation of \verb|msprime.SLiMMutationModel|.
-
+This code will generate independent, uniformly chosen nucleotides
+for each ancestral state and derived states for each mutation
+from the Jukes-Cantor model.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section*{Post-processing: recapitation and mutation}
-
-Perhaps the most common pyslim operations involve \textit{recapitation} (CITE)
-and/or adding neutral mutations.
-Below we illustrate these in the context of running a ``hybrid'' simulation, combining
-both forwards and backwards (coalescent) methods. This hybrid approach is a popular
-application of pyslim because coalescent algorithms, although more limited in the degree
-of biological realism they can attain, can be much faster than the forwards algorithms
-implemented in SLiM.
-
-A typical use-case is to take an existing SLiM simulation and endow
-it with a history derived from a coalescent simulation: this is known as \textit{recapitation}.
-For instance, suppose we have a SLiM simulation of a population of 100,000 individuals
-that we have run for 10,000 generations without neutral mutations. Now, we wish to
-extract whole-genome genotype data for only 1,000 individuals. Here's one way to do it:
-
-\begin{enumerate}
-    \item `.recapitate` :
-       The simulation has likely not reached demographic equilibrium - it has not
-        \textit{coalesced} entirely; recapitation uses coalescent simulation to provide
-       a "prior history" for the initial generation of the simulation.
-
-    \item `simplify()` : For efficiency, subset the tree
-       sequence to only the information relevant for those 1,000 individuals
-        we wish to sample. (TODO REMOVE?)
-
-    \item `sim\_mutations` : Add neutral mutations to the tree sequence.
-\end{enumerate}
-
-These steps are described below. First, to get something to work with,
-you can run this simple SLiM script of a single population of sexual organisms,
-fluctuating around 1000 individuals, for 1000 generations: ADD LINK?
-
-
 \section*{Parallelizing forward-in-time simulations of multiple species}
 \comment{stitch together with the previous section: there was msp+slim, here is slim+slim}
 Any two branches stemming from the same node in a species tree are independent from each other and
