@@ -253,7 +253,7 @@ SLiM will then preserve all retained individuals while they remain in the geneal
 even if their nodes are not coalescent points in a tree. These non-coalescent nodes are referred to as
 unary nodes.
 If you later decide to reduce the number
-of samples in the tree sequence, you can do so using the tskit function simplify(),
+of samples in the tree sequence, you can do so using the \tskit function simplify(),
 which mirrors SLiM's version of the same procedure.
 In this case, individuals that are 'retained', rather than 'remembered', will be kept only
 if they are still MRCAs in the ancestry of the selected samples.
@@ -263,6 +263,7 @@ you can specify
 
 \paragraph{Remembering everyone}
 \comment{probably remove this}
+\comment{SSG: agree}
 Although not needed to reconstruct full genomic history,
 it is perfectly possible to apply \verb|treeSeqRememberIndividuals()| to every individual
 in every generation of a simulation (everyone who has ever lived).
@@ -281,7 +282,6 @@ either of these is (perhaps surprisingly) possible, even for medium-sized simula
 
 %%%%%%%%%%%%%%%%%%%%%%%
 \section{Recapitation: tying up loose ends}
-
 \begin{figure}
 \centering
     \includegraphics{figures/pedigree_recapitate}
@@ -294,6 +294,41 @@ either of these is (perhaps surprisingly) possible, even for medium-sized simula
 }
 \label{fig:recap_simp}
 \end{figure}
+
+%% below is some stuff Shyamie wrote as an intro to this part
+Thus far, we have discussed how a forward-in-time simulation is operationalized in an ARG-based
+framework with a specific focus on \slim and \tskit software. The individual-based approach
+implemented by these packages affords users a great deal of flexibility in modelling complex
+scenarios. However, a challenge with forward-in-time simulations
+is deciding when to start - that is, at what time point in a population or species' history should we
+begin to simulate these dynamics?
+
+A typical \slim simulation begins with an initial set of individuals that are identical to one
+another, with no genetic variation or prior genealogical relationships by which to differentiate
+them. This is problematic because it assumes a genetically homogenous, clonal starting population,
+which is not representative of most real-world populations. Therefore, without first
+generating a realistic baseline level of diversity for the starting population, our simulations
+would contain less genetic variation than they should have.
+
+There are a few possible approaches for generating this baseline diversity. Staying entirely within the
+domain of forward-in-time simulations, one could build in a ``burn-in'' period at the start of the simulation. This
+involves running the the forward-in-time procedure process until some equilibrium condition is met,
+such as coalescence of all extant nodes, and discarding any events that occurred prior to this point.
+However, the burn-in period can be extremely long, and its length can be difficult to
+predict ahead of time, especially for complex scenarios.
+
+A hybrid simulation approach tackles this problem by grafting a coalescent phase,
+representing the earliest events of the simulation, to the main forward-in-time phase. This
+can efficiently generate a reasonably ancestral history for all the individuals that comprise the
+start of the forward-in-time phase. There are two main ways to achieve this. The first is by
+recapitation
+
+ 
+Backwards-in-time simulations completely avoid this issue by starting with the final generation of
+individuals tracing lineages back until they all naturally coalesce into a single root node.
+%% end Shyamie's stuff
+
+
 
 By default, a \slim simulation begins with all individuals identical.
 This is clearly undesireable; the usual way to avoid after-effects of this
@@ -314,10 +349,6 @@ Recapitation starts at the \textit{top} of the genealogies,
 and runs a coalescent simulation back through time
 to fill out the rest of genealogical history relevant to the samples.
 The green chromosomes are new ancestral nodes that have been added to the tree sequence.
-If we did not do this,
-then effectively we are assuming the initial population was genetically homogeneous,
-and so our simulation would have less genetic variation than it should have
-(since the component of variation from the initial population would be omitted).
 
 Recapitation within a single randomly-mating population of a given size
 can be done by a simple call to
