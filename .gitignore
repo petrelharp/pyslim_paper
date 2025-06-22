@@ -8,3 +8,6 @@
 pyslim_chapter.pdf
 code/virus_evol_example/results/
 _minted
+.DS_Store
+.Rhistory
+__pycache__

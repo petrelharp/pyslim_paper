@@ -17,9 +17,12 @@ initialize() {
 	setSeed(2134);
 }
 
-// create a population of 500 individuals
 1 early() {
 	sim.addSubpop("p1", 50);
 }
 
-200 late() { sim.treeSeqOutput("out.trees"); }
+early() {
+   sim.treeSeqRememberIndividuals(p1.individuals);
+}
+
+500 late() { sim.treeSeqOutput("out.trees"); }
