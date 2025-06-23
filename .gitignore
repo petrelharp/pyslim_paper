@@ -11,3 +11,4 @@ _minted
 .DS_Store
 .Rhistory
 __pycache__
+.snakemake

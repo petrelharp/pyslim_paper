@@ -95,6 +95,8 @@ ABS_TRANSMISSION_DAY first() {
 		sampled_inds = transmitted_inds[(range_end-count):(range_end-1)];
 		founders.setValue(host, sampled_inds.pedigreeID);
 	}
+	// also remember some non-transmitted individuals
+	sim.treeSeqRememberIndividuals(p0.sampleIndividuals(rpois(1, 50)));
 	// transmit - write out a tree sequence containing the information needed for all subsequent infections
 	sim.treeSeqOutput(path = OUTPUT_DIR + INF_ID + "_" + HOST_ID + "_on_inf_day_" + asString(sim.cycle - SIM_START) + "_on_overall_day_" + asString(sim.cycle - 1) + ".trees", simplify=T, includeModel=F, metadata=PARAMS);
 	sim.simulationFinished();

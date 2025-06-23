@@ -20,7 +20,7 @@ else:
     focal_pos = int(sys.argv[2])
 
 outfile = ".".join(fname.split(".")[:-1] + ["muts", "svg"])
-plot_tree(ts, focal_pos, outfile)
+plot_tree(ts, focal_pos, outfile, size=(1200, 800))
 
 outfile = ".".join(fname.split(".")[:-1] + ["simp", "muts", "svg"])
-plot_tree(ts.simplify(ts.samples(time=0), filter_sites=False), focal_pos, outfile)
+plot_tree(ts.simplify(ts.samples(time=0), filter_sites=False), focal_pos, outfile, size=(1200, 800))
