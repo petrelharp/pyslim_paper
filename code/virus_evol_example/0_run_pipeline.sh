@@ -11,3 +11,6 @@ sh 3_run_SLiM.sh
 
 # MERGE FINAL TREE SEQUENCES
 sh 4_merge_ts.sh
+
+# MAKE PLOTS
+sh 5_plot_ts.sh

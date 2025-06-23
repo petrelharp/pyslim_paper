@@ -757,6 +757,95 @@ The example phylogeny we will simulate is encoded in the table below (Table~\ref
     \end{tabular}
 \end{table}
 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Networks of simulations: within-host dynamics}
+
+As a final example, we'll look at a situation that is very different to the usual \slim simulation.
+Pathogens often have very large population (census) sizes,
+but spread out across many host individuals with between-host dynamics
+that are daunting to simulate.
+However, the dynamics \emph{within} a host are closer to a standard \slim simulation,
+which makes this a good target for parallelization:
+the dynamics within each host is a single job;
+each job may create new jobs (new infections)
+or interact with other jobs (co-infection).
+Maintaining a tree sequence across these runs is conceptually similar
+to the previous section, but has additional difficulties.
+
+To do this, we have a \slim script that describes dynamics within a single host.
+This script begins by loading in a tree sequence
+that contains the pathogen individual(s) that initiated the infection and their history,
+and at some later point writes out a tree sequence containing the individual(s) that infect other host(s)
+and their history.
+Then, we use job scheduling software to organize the simulation runs.
+There are thus two important steps to describe:
+first, how individuals are ``transmitted'' from one simulation to the next;
+and second, how we combine the resulting tree sequences.
+There are various ways to set this up; we describe one method that makes bookkeeping
+less daunting.
+
+A first attempt at transmission between hosts would simply save the state of the population
+at the desired time, and then the \slim run describing the next host
+would start from this state by selecting a few individuals as those that were transmitted.
+However, this can easily lead to contradictions: for instance,
+if one host infects two other hosts,
+then a single individual who was present in the first host simulation
+might die at different times in the simulation runs of the two subsequent hosts.
+So, coordination is required.
+\slim can write out arbitrary information to text files,
+but the most convenient place to record auxilliary information that goes along with a given tree sequence
+is usually in the ``top-level metadata'',
+which is visible in both \slim and python as a dictionary
+(in python, as \verb|ts.metadata|).
+So, whenever a new host is to be infected,
+we select some ``founder'' individuals to start the infection;
+Remember these founders and then kill them;
+and then write down their IDs in the metadata
+(under a key which identifies the host they're going on to infect).
+Then for each subsequent host
+we use a python script to post-process the resulting tree sequence
+so that the founder individuals will be ``alive'' (and no others)
+when the tree sequence is loaded into \slim.
+
+The next task is to combine the partially-overlapping histories of different hosts.
+As in the previous section, we use \verb|union| to do this;
+however, we need to work a little harder
+to identify the portions of history that are shared between two tree sequences.
+To do this, we need to
+(a) find the founders that are present in both tree sequences,
+and (b) identify all nodes that are ancestral to these founders.
+The first step is easily done by consulting metadata.
+Here is code that identifies all ancestors in the tree sequence
+of a given set of nodes:
+\begin{lstlisting}{language=py}
+def ancestors(ts, nodes):
+    """
+    Returns the list of nodes reachable from `nodes` by following
+    child->parent relationships in the edge table.
+    """
+    out = np.zeros(ts.num_nodes, dtype='int')
+    out[nodes] = 1
+    x = out.copy()
+    A = scipy.sparse.coo_array(
+            (
+                np.ones(ts.num_edges, dtype='int'),
+                (ts.edges_parent, ts.edges_child)
+            ), dtype='int', shape=(ts.num_nodes, ts.num_nodes)
+    )
+    while np.sum(x) > 0:
+        x = A @ x
+        out += x
+    return np.where(out > 0)[0]
+\end{lstlisting}
+With this in hand, we can use \verb|union|
+as in the prvious section.
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Author contributions}
+
 %%%%%%%%%%%%%%
 \newpage
 \appendix
