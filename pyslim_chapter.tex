@@ -452,7 +452,63 @@ These default values are returned by \verb|slim_default_metadata()|
 (\eg all individuals are hermaphrodite, all chromosomes are autosomal).
 We demonstrate how to modify this metadata by adding selection coefficients to mutations below,
 but other changes (\eg assigning sexes) is similar.
-For instance, top-level metadata now shows:
+
+
+\subsection*{Adding mutations with SLiM metadata}
+
+Next, we will use the \verb|msprime.SLiMMutationModel| to add mutations to the tree sequence.
+These will all be neutral,
+so, we next modify their metadata to have selection coefficients drawn from some distribution.
+We will want this to be as if we'd done it in a burn-in script in \slim :
+\begin{lstlisting}{language=slim}
+        initializeMutationType("m2", 0.5, "e", 0.04);
+        initializeMutationRate(3e-10);
+\end{lstlisting}
+In other words, we would like to sample selection coefficients
+from an exponential distribution with mean 0.04.
+% (but, of course, this is a coalescent simulation,
+% so the dynamics of the mutations up until this point have been neutral).
+% Note that the dominance coefficient is not stored in the tree sequence:
+% it gets set in the SLiM recipe because it is a property of the mutation type,
+% not of individual mutations, in SLiM.
+
+Here is how to add SLiM mutations with \msprime :
+\begin{listing}[H]
+    \begin{minted}[fontsize=\small, linenos, bgcolor=gray!10]{python}
+mut_model = msprime.SLiMMutationModel(type=2)
+ots = msprime.sim_mutations(
+            ots,
+            rate=3e-8,
+            model=mut_model)
+print(f"The tree sequence now has {ots.num_mutations} mutations, at "
+          f"{ots.num_sites} distinct sites.")
+  \end{minted}
+\end{listing}
+\begin{pycon}
+The tree sequence now has 309 mutations, at 309 distinct sites.
+\end{pycon}
+The \verb|type=2| argument to \verb|msprime.SLiMMutationModel|
+means the mutations will be of type ``m2'' in SLiM
+(and, so you must initialize that mutation type in the SLiM recipe).
+
+\begin{listing}[H]
+    \begin{minted}[fontsize=\small, linenos, bgcolor=gray!10]{python}
+s = 0.001
+tables = ots.tables
+tables.mutations.clear()
+for m in ots.mutations():
+  md_list = m.metadata["mutation_list"]
+  for md in md_list:
+    md["selection_coeff"] = s
+  tables.mutations.append(
+          m.replace(metadata={"mutation_list": md_list})
+  )
+  \end{minted}
+\end{listing}
+
+Before loading the tree sequence into SLiM,
+we should check the top-level metadata.
+We can see this with \verb|tables.metadata|:
 \begin{listing}[H]
     \begin{minted}[fontsize=\small, linenos, bgcolor=gray!10]{python}
 tables.metadata
@@ -478,6 +534,7 @@ tables.metadata
 This metadata needs to match our planned slimulation --
 particularly the \verb|model_type| (WF or nonWF) and the \verb|tick|
 (which tells SLiM what value to set the tick counter to once this tree sequence is loaded).
+See the pyslim documentation for how to edit this.
 
 \subsection*{Adding mutations with SLiM metadata}
 
@@ -619,8 +676,10 @@ we have declared them in the recipe as a placeholder.
 We could run this on the command line as \verb|slim -d L=100000000 reload_annotated.slim|.
 
 
+%%%%%%%%%%%%%%%%%%
 \subsection*{Overlaying neutral mutations}
 
+\comment{REMOVE THIS? If not, edit so it matches above.}
 In real data, of course, we do not get to observe selection coefficients.
 We have not added in neutral mutations until this point for efficiency - they are just bookkeeping,
 and do not affect the course of the simulation in any way.
@@ -700,7 +759,7 @@ for each ancestral state and derived states for each mutation
 from the Jukes-Cantor model.
 
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%
 \section*{Parallelizing forward-in-time simulations of multiple species}
 \comment{stitch together with the previous section: there was msp+slim, here is slim+slim}
 Any two branches stemming from the same node in a species tree are independent from each other and
@@ -818,6 +877,7 @@ and (b) identify all nodes that are ancestral to these founders.
 The first step is easily done by consulting metadata.
 Here is code that identifies all ancestors in the tree sequence
 of a given set of nodes:
+\comment{Either remove this; move it to the appendix; or explain what it's doing.}
 \begin{lstlisting}{language=py}
 def ancestors(ts, nodes):
     """
