@@ -1,0 +1,411 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg viewBox="0 0 800 400" xmlns="http://www.w3.org/2000/svg" xmlns:bx="https://boxy-svg.com">
+  <defs>
+    <bx:grid x="0" y="0" width="399.938" height="199.36"/>
+  </defs>
+  <text style="fill: rgb(51, 51, 51); font-family: Arial, sans-serif; font-size: 18px; white-space: pre;" x="164.576" y="59.82">Ancestral</text>
+  <text style="fill: rgb(51, 51, 51); font-family: Arial, sans-serif; font-size: 18px; white-space: pre;" x="506.07" y="79.82">Union: Species A and B</text>
+  <g style="" transform="matrix(1.446153, 0, 0, 1.446153, -255.751526, 27.083797)">
+    <title>Union</title>
+    <g transform="matrix(1, 0, 0, 1, 362.74527, -190.833923)">
+      <title>Pop1</title>
+      <g transform="matrix(1, 0, 0, 1, 0.000023, 214.571259)" style="">
+        <title>Pop1</title>
+        <g transform="matrix(1, 0, 0, 1, 0, -8.303333)">
+          <polyline style="fill: none; stroke: rgb(167, 167, 167); stroke-miterlimit: 1; stroke-linecap: round; stroke-dasharray: 1px, 4px; stroke-width: 0.55px;" points="206.161 168.049 206.126 183.926"/>
+          <polyline style="fill: none; stroke: rgb(167, 167, 167); stroke-miterlimit: 1; stroke-linecap: round; stroke-dasharray: 1px, 4px; stroke-width: 0.55px;" points="198.03 168.049 197.995 183.926"/>
+          <polyline style="fill: none; stroke: rgb(167, 167, 167); stroke-miterlimit: 1; stroke-linecap: round; stroke-dasharray: 1px, 4px; stroke-width: 0.55px;" points="171.452 168.049 171.417 183.926"/>
+          <polyline style="fill: none; stroke: rgb(167, 167, 167); stroke-miterlimit: 1; stroke-linecap: round; stroke-dasharray: 1px, 4px; stroke-width: 0.55px;" points="163.269 168.049 163.234 183.926"/>
+          <g id="g-1" style="display: inline;" transform="matrix(2.191087, 0, 0, 2.191087, 12.924425, -173.040466)">
+            <title>remembered</title>
+            <path style="fill: none; stroke: rgb(167, 167, 167); stroke-miterlimit: 1; stroke-width: 0.251017px;" d="M 72.13 150.162 C 66.956 150.435 103.775 129.464 112.476 129.005"/>
+            <polyline style="fill: none; stroke: rgb(167, 167, 167); stroke-miterlimit: 1; stroke-width: 0.251017px;" points="100.468 129.005 84.374 150.063"/>
+            <polyline style="fill: none; stroke: rgb(167, 167, 167); stroke-miterlimit: 1; stroke-width: 0.251017px;" points="88.094 150.063 115.791 129.005"/>
+            <polyline style="fill: none; stroke: rgb(167, 167, 167); stroke-miterlimit: 1; stroke-width: 0.251017px;" points="96.494 128.481 84.374 150.162"/>
+            <path style="fill: none; stroke: rgb(167, 167, 167); stroke-miterlimit: 1; stroke-width: 0.251017px;" transform="matrix(1, 0, 0, 1, 1.482496, 1.79396)" d="M 67.248 148.269 C 66.128 148.895 89.013 132.275 98.341 127.062"/>
+            <polyline style="fill: none; stroke: rgb(167, 167, 167); stroke-miterlimit: 1; stroke-width: 0.251017px;" points="63.693 142.798 90.767 122.04" transform="matrix(1, 0, 0, 1, 5.037619, 6.441119)"/>
+          </g>
+          <g transform="matrix(2.191087, 0, 0, 2.191087, 12.92501, 33.665691)">
+            <rect y="54.717" x="67.652" height="6.615" width="1.937" id="rect-1" style="display: inline; opacity: 1; fill-opacity: 1; stroke: rgb(0, 0, 0); stroke-width: 0.265; stroke-linecap: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-dashoffset: 0; stroke-opacity: 1; fill: rgb(204, 206, 201);"/>
+            <rect style="display: inline; opacity: 1; fill-opacity: 1; stroke: rgb(0, 0, 0); stroke-width: 0.265; stroke-linecap: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-dashoffset: 0; stroke-opacity: 1; fill: rgb(204, 206, 201);" id="rect-2" width="1.937" height="6.615" x="83.527" y="54.717"/>
+            <rect y="54.717" x="87.231" height="6.615" width="1.937" id="rect-3" style="display: inline; opacity: 1; fill-opacity: 1; stroke: rgb(0, 0, 0); stroke-width: 0.265; stroke-linecap: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-dashoffset: 0; stroke-opacity: 1; fill: rgb(204, 206, 201);"/>
+            <rect style="display: inline; opacity: 1; fill-opacity: 1; stroke: rgb(0, 0, 0); stroke-width: 0.265; stroke-linecap: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-dashoffset: 0; stroke-opacity: 1; fill: rgb(204, 206, 201);" id="rect-4" width="1.937" height="6.615" x="71.356" y="54.717"/>
+          </g>
+        </g>
+      </g>
+    </g>
+    <g transform="matrix(1, 0, 0, 1, 467.835846, -192.19426)" style="">
+      <title>Pop2</title>
+      <g transform="matrix(1, 0, 0, 1, -0.000565, 206.401245)" style="">
+        <title>Pop2</title>
+        <g>
+          <polyline style="fill: none; stroke-miterlimit: 1; stroke-width: 0.55px; stroke: rgb(216, 152, 152);" points="119.557 110.1 153.392 155.448"/>
+          <polyline style="fill: none; stroke-miterlimit: 1; stroke-width: 0.55px; stroke: rgb(216, 152, 152);" points="128.862 110.1 153.391 155.449"/>
+          <polyline style="fill: none; stroke-miterlimit: 1; stroke-width: 0.55px; stroke: rgb(216, 152, 152);" points="153.766 110.1 188.637 157.209"/>
+          <path style="fill: none; stroke-miterlimit: 1; stroke-width: 0.55px; stroke: rgb(216, 152, 152);" d="M 128.862 110.1 C 142.669 108.592 191.662 158.222 180.442 159.448"/>
+          <g id="g-15" style="display: inline;" transform="matrix(2.191087, 0, 0, 2.191087, 12.925003, -172.805908)">
+            <title>remembered</title>
+            <path style="fill: none; stroke-miterlimit: 1; stroke-width: 0.251017px; stroke: rgb(216, 152, 152);" d="M 36.699 129.152 C 40.37 128.15 64.281 148.811 60.61 149.813"/>
+            <polyline style="fill: none; stroke-miterlimit: 1; stroke-width: 0.251017px; stroke: rgb(216, 152, 152);" points="68.827 129.117 80.506 149.813"/>
+          </g>
+          <polyline style="fill: none; stroke-miterlimit: 1; stroke-linecap: round; stroke-dasharray: 1px, 4px; stroke-width: 0.55px; stroke: rgb(217, 152, 152);" points="145.746 169.276 145.711 185.153"/>
+          <polyline style="fill: none; stroke-miterlimit: 1; stroke-linecap: round; stroke-dasharray: 1px, 4px; stroke-width: 0.55px; stroke: rgb(217, 152, 152);" points="153.766 169.276 153.731 185.153"/>
+          <polyline style="fill: none; stroke-miterlimit: 1; stroke-linecap: round; stroke-dasharray: 1px, 4px; stroke-width: 0.55px; stroke: rgb(217, 152, 152);" points="180.477 169.276 180.442 185.153"/>
+          <polyline style="fill: none; stroke-miterlimit: 1; stroke-linecap: round; stroke-dasharray: 1px, 4px; stroke-width: 0.55px; stroke: rgb(217, 152, 152);" points="188.672 169.276 188.637 185.153"/>
+          <g id="g-16" style="display: inline;" transform="matrix(2.191087, 0, 0, 2.191087, -4.720843, 34.891956)">
+            <rect style="display: inline; opacity: 1; fill-opacity: 1; stroke: rgb(0, 0, 0); stroke-width: 0.265; stroke-linecap: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-dashoffset: 0; stroke-opacity: 1; fill: rgb(217, 155, 155);" id="rect-44" width="1.937" height="6.615" x="71.356" y="54.717"/>
+            <rect y="54.717262" x="67.652321" height="6.614583" width="1.9371279" id="rect-45" style="display: inline; opacity: 1; fill-opacity: 1; stroke: rgb(0, 0, 0); stroke-width: 0.265; stroke-linecap: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-dashoffset: 0; stroke-opacity: 1; fill: rgb(217, 155, 155);"/>
+            <rect style="display: inline; opacity: 1; fill-opacity: 1; stroke: rgb(0, 0, 0); stroke-width: 0.265; stroke-linecap: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-dashoffset: 0; stroke-opacity: 1; fill: rgb(217, 155, 155);" id="rect-46" width="1.9371279" height="6.614583" x="83.527321" y="54.717262"/>
+            <rect y="54.717262" x="87.231483" height="6.614583" width="1.9371279" id="rect-47" style="display: inline; opacity: 1; fill-opacity: 1; stroke: rgb(0, 0, 0); stroke-width: 0.265; stroke-linecap: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-dashoffset: 0; stroke-opacity: 1; fill: rgb(217, 155, 155);"/>
+          </g>
+        </g>
+      </g>
+    </g>
+    <g transform="matrix(1, 0, 0, 1, 423.780579, -204.079361)" style="">
+      <title>Anc</title>
+      <g transform="matrix(1, 0, 0, 1, 28.345737, 122.268684)">
+        <title>tube_anc</title>
+        <polyline style="fill: none; stroke-miterlimit: 1; stroke: rgb(0, 0, 0); stroke-width: 1.2px;" points="78.52 130.844 78.587 226.178"/>
+        <polyline style="fill: none; stroke-miterlimit: 1; stroke: rgb(0, 0, 0); stroke-width: 1.2px;" points="198.887 130.844 198.954 226.178"/>
+      </g>
+      <g>
+        <polyline style="fill: none; stroke: rgb(167, 167, 167); stroke-miterlimit: 1; stroke-width: 0.55px;" points="128.997 292.684 129.082 318.967"/>
+        <polyline style="fill: none; stroke: rgb(167, 167, 167); stroke-miterlimit: 1; stroke-width: 0.55px;" points="205.736 292.684 171.612 317.616"/>
+        <polyline style="fill: none; stroke: rgb(167, 167, 167); stroke-miterlimit: 1; stroke-width: 0.55px;" points="171.612 292.684 136.699 317.711"/>
+        <polyline style="fill: none; stroke: rgb(167, 167, 167); stroke-miterlimit: 1; stroke-width: 0.55px;" points="171.889 292.684 197.143 318.967"/>
+        <polyline style="fill: none; stroke: rgb(167, 167, 167); stroke-miterlimit: 1; stroke-width: 0.55px;" points="206.825 293.609 206.361 317.711"/>
+        <polyline style="fill: none; stroke: rgb(167, 167, 167); stroke-miterlimit: 1; stroke-width: 0.55px;" points="163.99 293.612 163.869 317.616"/>
+        <polyline style="fill: none; stroke: rgb(167, 167, 167); stroke-miterlimit: 1; stroke-width: 0.55px;" points="162.909 290.632 136.699 318.967"/>
+        <polyline style="fill: none; stroke: rgb(167, 167, 167); stroke-miterlimit: 1; stroke-width: 0.55px;" points="171.889 292.684 164.038 318.967"/>
+        <g id="g-5" style="display: inline;" transform="matrix(2.191087, 0, 0, 2.191087, 12.92501, 33.665691)">
+          <rect y="128.8006" x="51.777317" height="6.614583" width="1.9371279" id="rect-5" style="display: inline; opacity: 1; fill-opacity: 1; stroke: rgb(0, 0, 0); stroke-width: 0.265; stroke-linecap: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-dashoffset: 0; stroke-opacity: 1; fill: rgb(88, 255, 144);"/>
+          <rect style="display: inline; opacity: 1; fill-opacity: 1; stroke: rgb(0, 0, 0); stroke-width: 0.265; stroke-linecap: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-dashoffset: 0; stroke-opacity: 1; fill: rgb(88, 255, 144);" id="rect-6" width="1.9371279" height="6.614583" x="55.481483" y="128.8006"/>
+          <rect y="128.8006" x="83.527321" height="6.614583" width="1.9371279" id="rect-7" style="display: inline; opacity: 1; fill-opacity: 1; stroke: rgb(0, 0, 0); stroke-width: 0.265; stroke-linecap: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-dashoffset: 0; stroke-opacity: 1; fill: rgb(255, 157, 123);"/>
+          <rect style="display: inline; opacity: 1; fill-opacity: 1; stroke: rgb(0, 0, 0); stroke-width: 0.265; stroke-linecap: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-dashoffset: 0; stroke-opacity: 1; fill: rgb(255, 157, 123);" id="rect-8" width="1.9371279" height="6.614583" x="87.231483" y="128.8006"/>
+          <rect style="display: inline; opacity: 1; fill-opacity: 1; stroke: rgb(0, 0, 0); stroke-width: 0.265; stroke-linecap: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-dashoffset: 0; stroke-opacity: 1; fill: rgb(92, 114, 255);" id="rect-9" width="1.937" height="6.615" x="67.652" y="128.801"/>
+          <rect y="128.801" x="71.356" height="6.615" width="1.937" id="rect-10" style="display: inline; opacity: 1; fill-opacity: 1; stroke: rgb(0, 0, 0); stroke-width: 0.265; stroke-linecap: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-dashoffset: 0; stroke-opacity: 1; fill: rgb(92, 114, 255);"/>
+          <rect y="112.355" x="71.545" height="6.615" width="1.937" id="rect-12" style="display: inline; opacity: 1; fill-opacity: 1; stroke: rgb(0, 0, 0); stroke-width: 0.265; stroke-linecap: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-dashoffset: 0; stroke-opacity: 1; fill: rgb(204, 206, 201);"/>
+          <rect y="112.355" x="51.966" height="6.615" width="1.937" id="rect-13" style="display: inline; opacity: 1; fill-opacity: 1; stroke: rgb(0, 0, 0); stroke-width: 0.265; stroke-linecap: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-dashoffset: 0; stroke-opacity: 1; fill: rgb(204, 206, 201);"/>
+          <rect style="display: inline; opacity: 1; fill-opacity: 1; stroke: rgb(0, 0, 0); stroke-width: 0.265; stroke-linecap: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-dashoffset: 0; stroke-opacity: 1; fill: rgb(204, 206, 201);" id="rect-14" width="1.937" height="6.615" x="67.99" y="112.354"/>
+          <rect y="112.354" x="86.967" height="6.615" width="1.937" id="rect-15" style="display: inline; opacity: 1; fill-opacity: 1; stroke: rgb(0, 0, 0); stroke-width: 0.265; stroke-linecap: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-dashoffset: 0; stroke-opacity: 1; fill: rgb(204, 206, 201);"/>
+        </g>
+        <polyline style="fill: none; stroke: rgb(167, 167, 167); stroke-miterlimit: 1; stroke-linecap: round; stroke-dasharray: 1px, 4px; stroke-width: 0.55px;" points="128.997 266.831 128.949 279.672"/>
+        <polyline style="fill: none; stroke: rgb(167, 167, 167); stroke-miterlimit: 1; stroke-linecap: round; stroke-dasharray: 1px, 4px; stroke-width: 0.55px;" points="164.038 266.831 163.99 279.672"/>
+        <polyline style="fill: none; stroke: rgb(167, 167, 167); stroke-miterlimit: 1; stroke-linecap: round; stroke-dasharray: 1px, 4px; stroke-width: 0.55px;" points="171.66 266.831 171.612 279.672"/>
+        <polyline style="fill: none; stroke: rgb(167, 167, 167); stroke-miterlimit: 1; stroke-linecap: round; stroke-dasharray: 1px, 4px; stroke-width: 0.55px;" points="205.784 266.831 205.736 279.672"/>
+        <g id="g-10" style="display: inline;" transform="matrix(2.191087, 0, 0, 2.191087, 12.92501, 33.665691)">
+          <circle r="5.08" cy="132.323" cx="70.357" id="circle-1" style="display: inline; opacity: 1; fill-opacity: 1; stroke: rgb(0, 0, 0); stroke-width: 0.265; stroke-linecap: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-dashoffset: 0; stroke-opacity: 1; fill: none;"/>
+          <circle style="display: inline; opacity: 1; fill-opacity: 1; stroke: rgb(0, 0, 0); stroke-width: 0.265; stroke-linecap: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-dashoffset: 0; stroke-opacity: 1; fill: none;" id="circle-2" cx="54.481735" cy="132.32333" r="5.0799999"/>
+          <circle style="display: inline; opacity: 1; fill-opacity: 1; stroke: rgb(0, 0, 0); stroke-width: 0.265; stroke-linecap: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-dashoffset: 0; stroke-opacity: 1; fill: none;" id="circle-3" cx="86.231735" cy="132.32333" r="5.0799999"/>
+        </g>
+      </g>
+    </g>
+    <g style="" transform="matrix(0.559713, 0, 0, 0.999997, 260.149597, 0.000767)">
+      <title>Tube</title>
+      <polyline style="fill: none; stroke-miterlimit: 1; stroke: rgb(0, 0, 0); stroke-width: 1.4px;" points="805.93 254.174 751.905 199.181" transform="matrix(-1, 0, 0, -1, 1504.377991, 398.541)"/>
+      <polyline style="fill: none; stroke-miterlimit: 1; stroke: rgb(0, 0, 0); stroke-width: 1.4px;" points="483.411 143.91 428.992 199.36"/>
+      <polyline style="fill: none; stroke-miterlimit: 1; stroke: rgb(0, 0, 0); stroke-width: 1.79521px;" points="651.08 232.236 628.81 199.181" transform="matrix(-1, 0, 0, -1, 1242.001038, 398.541)"/>
+      <polyline style="fill: none; stroke-miterlimit: 1; stroke: rgb(0, 0, 0); stroke-width: 1.79521px;" points="590.921 166.305 567.616 199.36"/>
+    </g>
+  </g>
+  <g transform="matrix(1, 0, 0, 1, 33.112999, -191.581833)" style="">
+    <title>Anc</title>
+    <g transform="matrix(1, 0, 0, 1, 28.345737, 122.268684)">
+      <title>tube_anc</title>
+      <polyline style="fill: none; stroke-miterlimit: 1; stroke: rgb(0, 0, 0); stroke-width: 1.2px;" points="78.52 130.844 78.587 226.178"/>
+      <polyline style="fill: none; stroke-miterlimit: 1; stroke: rgb(0, 0, 0); stroke-width: 1.2px;" points="198.887 130.844 198.954 226.178"/>
+    </g>
+    <g>
+      <polyline style="fill: none; stroke: rgb(167, 167, 167); stroke-miterlimit: 1; stroke-width: 0.55px;" points="128.997 292.684 129.082 318.967"/>
+      <polyline style="fill: none; stroke: rgb(167, 167, 167); stroke-miterlimit: 1; stroke-width: 0.55px;" points="205.736 292.684 171.612 317.616"/>
+      <polyline style="fill: none; stroke: rgb(167, 167, 167); stroke-miterlimit: 1; stroke-width: 0.55px;" points="171.612 292.684 136.699 317.711"/>
+      <polyline style="fill: none; stroke: rgb(167, 167, 167); stroke-miterlimit: 1; stroke-width: 0.55px;" points="171.889 292.684 197.143 318.967"/>
+      <polyline style="fill: none; stroke: rgb(167, 167, 167); stroke-miterlimit: 1; stroke-width: 0.55px;" points="206.825 293.609 206.361 317.711"/>
+      <polyline style="fill: none; stroke: rgb(167, 167, 167); stroke-miterlimit: 1; stroke-width: 0.55px;" points="163.99 293.612 163.869 317.616"/>
+      <polyline style="fill: none; stroke: rgb(167, 167, 167); stroke-miterlimit: 1; stroke-width: 0.55px;" points="162.909 290.632 136.699 318.967"/>
+      <polyline style="fill: none; stroke: rgb(167, 167, 167); stroke-miterlimit: 1; stroke-width: 0.55px;" points="171.889 292.684 164.038 318.967"/>
+      <g id="g-13" style="display: inline;" transform="matrix(2.191087, 0, 0, 2.191087, 12.92501, 33.665691)">
+        <rect y="128.8006" x="51.777317" height="6.614583" width="1.9371279" id="rect-51" style="display: inline; opacity: 1; fill-opacity: 1; stroke: rgb(0, 0, 0); stroke-width: 0.265; stroke-linecap: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-dashoffset: 0; stroke-opacity: 1; fill: rgb(88, 255, 144);"/>
+        <rect style="display: inline; opacity: 1; fill-opacity: 1; stroke: rgb(0, 0, 0); stroke-width: 0.265; stroke-linecap: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-dashoffset: 0; stroke-opacity: 1; fill: rgb(88, 255, 144);" id="rect-52" width="1.9371279" height="6.614583" x="55.481483" y="128.8006"/>
+        <rect y="128.8006" x="83.527321" height="6.614583" width="1.9371279" id="rect-53" style="display: inline; opacity: 1; fill-opacity: 1; stroke: rgb(0, 0, 0); stroke-width: 0.265; stroke-linecap: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-dashoffset: 0; stroke-opacity: 1; fill: rgb(255, 157, 123);"/>
+        <rect style="display: inline; opacity: 1; fill-opacity: 1; stroke: rgb(0, 0, 0); stroke-width: 0.265; stroke-linecap: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-dashoffset: 0; stroke-opacity: 1; fill: rgb(255, 157, 123);" id="rect-54" width="1.9371279" height="6.614583" x="87.231483" y="128.8006"/>
+        <rect style="display: inline; opacity: 1; fill-opacity: 1; stroke: rgb(0, 0, 0); stroke-width: 0.265; stroke-linecap: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-dashoffset: 0; stroke-opacity: 1; fill: rgb(92, 114, 255);" id="rect-55" width="1.937" height="6.615" x="67.652" y="128.801"/>
+        <rect y="128.801" x="71.356" height="6.615" width="1.937" id="rect-56" style="display: inline; opacity: 1; fill-opacity: 1; stroke: rgb(0, 0, 0); stroke-width: 0.265; stroke-linecap: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-dashoffset: 0; stroke-opacity: 1; fill: rgb(92, 114, 255);"/>
+        <rect y="112.355" x="71.545" height="6.615" width="1.937" id="rect-61" style="display: inline; opacity: 1; fill-opacity: 1; stroke: rgb(0, 0, 0); stroke-width: 0.265; stroke-linecap: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-dashoffset: 0; stroke-opacity: 1; fill: rgb(203, 206, 200);"/>
+        <rect y="112.355" x="51.966" height="6.615" width="1.937" id="rect-62" style="display: inline; opacity: 1; fill-opacity: 1; stroke: rgb(0, 0, 0); stroke-width: 0.265; stroke-linecap: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-dashoffset: 0; stroke-opacity: 1; fill: rgb(203, 206, 200);"/>
+        <rect style="display: inline; opacity: 1; fill-opacity: 1; stroke: rgb(0, 0, 0); stroke-width: 0.265; stroke-linecap: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-dashoffset: 0; stroke-opacity: 1; fill: rgb(203, 206, 200);" id="rect-63" width="1.937" height="6.615" x="67.99" y="112.354"/>
+        <rect y="112.354" x="86.967" height="6.615" width="1.937" id="rect-64" style="display: inline; opacity: 1; fill-opacity: 1; stroke: rgb(0, 0, 0); stroke-width: 0.265; stroke-linecap: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-dashoffset: 0; stroke-opacity: 1; fill: rgb(203, 206, 200);"/>
+      </g>
+      <polyline style="fill: none; stroke: rgb(167, 167, 167); stroke-miterlimit: 1; stroke-linecap: round; stroke-dasharray: 1px, 4px; stroke-width: 0.55px;" points="128.997 266.831 128.949 279.672"/>
+      <polyline style="fill: none; stroke: rgb(167, 167, 167); stroke-miterlimit: 1; stroke-linecap: round; stroke-dasharray: 1px, 4px; stroke-width: 0.55px;" points="164.038 266.831 163.99 279.672"/>
+      <polyline style="fill: none; stroke: rgb(167, 167, 167); stroke-miterlimit: 1; stroke-linecap: round; stroke-dasharray: 1px, 4px; stroke-width: 0.55px;" points="171.66 266.831 171.612 279.672"/>
+      <polyline style="fill: none; stroke: rgb(167, 167, 167); stroke-miterlimit: 1; stroke-linecap: round; stroke-dasharray: 1px, 4px; stroke-width: 0.55px;" points="205.784 266.831 205.736 279.672"/>
+      <g id="g-14" style="display: inline;" transform="matrix(2.191087, 0, 0, 2.191087, 12.92501, 33.665691)">
+        <circle r="5.08" cy="132.323" cx="70.357" id="circle-16" style="display: inline; opacity: 1; fill-opacity: 1; stroke: rgb(0, 0, 0); stroke-width: 0.265; stroke-linecap: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-dashoffset: 0; stroke-opacity: 1; fill: none;"/>
+        <circle style="display: inline; opacity: 1; fill-opacity: 1; stroke: rgb(0, 0, 0); stroke-width: 0.265; stroke-linecap: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-dashoffset: 0; stroke-opacity: 1; fill: none;" id="circle-17" cx="54.481735" cy="132.32333" r="5.0799999"/>
+        <circle style="display: inline; opacity: 1; fill-opacity: 1; stroke: rgb(0, 0, 0); stroke-width: 0.265; stroke-linecap: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-dashoffset: 0; stroke-opacity: 1; fill: none;" id="circle-18" cx="86.231735" cy="132.32333" r="5.0799999"/>
+      </g>
+    </g>
+  </g>
+  <g transform="matrix(1, 0, 0, 1, 55.389397, 43.656052)">
+    <title>Two species</title>
+    <text style="fill: rgb(51, 51, 51); font-family: Arial, sans-serif; font-size: 18px; white-space: pre;" x="36.353" y="155.919">Species A</text>
+    <g transform="matrix(1, 0, 0, 1, -90.550362, -92.219604)">
+      <title>Anc+Pop1</title>
+      <g transform="matrix(1, 0, 0, 1, 0.000023, 214.571259)" style="">
+        <title>Pop1</title>
+        <g transform="matrix(1, 0, 0, 1, 0, -8.303333)">
+          <polyline style="fill: none; stroke: rgb(167, 167, 167); stroke-miterlimit: 1; stroke-linecap: round; stroke-dasharray: 1px, 4px; stroke-width: 0.55px;" points="206.161 168.049 206.126 183.926"/>
+          <polyline style="fill: none; stroke: rgb(167, 167, 167); stroke-miterlimit: 1; stroke-linecap: round; stroke-dasharray: 1px, 4px; stroke-width: 0.55px;" points="198.03 168.049 197.995 183.926"/>
+          <polyline style="fill: none; stroke: rgb(167, 167, 167); stroke-miterlimit: 1; stroke-linecap: round; stroke-dasharray: 1px, 4px; stroke-width: 0.55px;" points="171.452 168.049 171.417 183.926"/>
+          <polyline style="fill: none; stroke: rgb(167, 167, 167); stroke-miterlimit: 1; stroke-linecap: round; stroke-dasharray: 1px, 4px; stroke-width: 0.55px;" points="163.269 168.049 163.234 183.926"/>
+          <g id="g-9" style="display: inline;" transform="matrix(2.191087, 0, 0, 2.191087, 12.924425, -173.040466)">
+            <title>remembered</title>
+            <polyline style="fill: none; stroke: rgb(167, 167, 167); stroke-miterlimit: 1; stroke-width: 0.251017px;" points="72.12999725341797 150.16200256347656 84.3740005493164 135.63099670410156"/>
+            <polyline style="fill: none; stroke: rgb(167, 167, 167); stroke-miterlimit: 1; stroke-width: 0.251017px;" points="72.13 134.448 84.374 150.063"/>
+            <polyline style="fill: none; stroke: rgb(167, 167, 167); stroke-miterlimit: 1; stroke-width: 0.251017px;" points="88.094 150.063 88.094 135.631"/>
+            <polyline style="fill: none; stroke: rgb(167, 167, 167); stroke-miterlimit: 1; stroke-width: 0.251017px;" points="68.73 135.631 84.374 150.162"/>
+            <polyline style="fill: none; stroke: rgb(167, 167, 167); stroke-miterlimit: 1; stroke-width: 0.251017px;" points="67.248 148.269 70.647 133.837" transform="matrix(1, 0, 0, 1, 1.482496, 1.79396)"/>
+            <polyline style="fill: none; stroke: rgb(167, 167, 167); stroke-miterlimit: 1; stroke-width: 0.251017px;" points="63.693 143.622 63.692 129.189" transform="matrix(1, 0, 0, 1, 5.037619, 6.441119)"/>
+          </g>
+          <g transform="matrix(2.191087, 0, 0, 2.191087, 12.92501, 33.665691)">
+            <rect y="54.717" x="67.652" height="6.615" width="1.937" id="rect1214" style="display: inline; opacity: 1; fill-opacity: 1; stroke: rgb(0, 0, 0); stroke-width: 0.265; stroke-linecap: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-dashoffset: 0; stroke-opacity: 1; fill: rgb(203, 206, 200);"/>
+            <rect style="display: inline; opacity: 1; fill-opacity: 1; stroke: rgb(0, 0, 0); stroke-width: 0.265; stroke-linecap: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-dashoffset: 0; stroke-opacity: 1; fill: rgb(203, 206, 200);" id="rect1222" width="1.937" height="6.615" x="83.527" y="54.717"/>
+            <rect y="54.717" x="87.231" height="6.615" width="1.937" id="rect1224" style="display: inline; opacity: 1; fill-opacity: 1; stroke: rgb(0, 0, 0); stroke-width: 0.265; stroke-linecap: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-dashoffset: 0; stroke-opacity: 1; fill: rgb(203, 206, 200);"/>
+            <rect style="display: inline; opacity: 1; fill-opacity: 1; stroke: rgb(0, 0, 0); stroke-width: 0.265; stroke-linecap: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-dashoffset: 0; stroke-opacity: 1; fill: rgb(203, 206, 200);" id="rect1216" width="1.937" height="6.615" x="71.356" y="54.717"/>
+          </g>
+        </g>
+      </g>
+      <g transform="matrix(1, 0, 0, 1, 28.345737, 122.268684)">
+        <title>tube_anc</title>
+        <polyline style="fill: none; stroke-miterlimit: 1; stroke: rgb(0, 0, 0); stroke-width: 1.2px;" points="78.29 275.684 78.52 130.844" transform="matrix(-1, 0, 0, -1, 156.809998, 406.527985)"/>
+        <polyline style="fill: none; stroke-miterlimit: 1; stroke: rgb(0, 0, 0); stroke-width: 1.2px;" points="198.496 275.684 198.887 130.844" transform="matrix(-1, 0, 0, -1, 397.382996, 406.527985)"/>
+      </g>
+      <g>
+        <polyline style="fill: none; stroke: rgb(167, 167, 167); stroke-miterlimit: 1; stroke-width: 0.55px;" points="128.997 292.684 129.082 318.967"/>
+        <polyline style="fill: none; stroke: rgb(167, 167, 167); stroke-miterlimit: 1; stroke-width: 0.55px;" points="205.736 292.684 171.612 317.616"/>
+        <polyline style="fill: none; stroke: rgb(167, 167, 167); stroke-miterlimit: 1; stroke-width: 0.55px;" points="171.612 292.684 136.699 317.711"/>
+        <polyline style="fill: none; stroke: rgb(167, 167, 167); stroke-miterlimit: 1; stroke-width: 0.55px;" points="171.889 292.684 197.143 318.967"/>
+        <polyline style="fill: none; stroke: rgb(167, 167, 167); stroke-miterlimit: 1; stroke-width: 0.55px;" points="206.825 293.609 206.361 317.711"/>
+        <polyline style="fill: none; stroke: rgb(167, 167, 167); stroke-miterlimit: 1; stroke-width: 0.55px;" points="163.99 293.612 163.869 317.616"/>
+        <polyline style="fill: none; stroke: rgb(167, 167, 167); stroke-miterlimit: 1; stroke-width: 0.55px;" points="162.909 290.632 136.699 318.967"/>
+        <polyline style="fill: none; stroke: rgb(167, 167, 167); stroke-miterlimit: 1; stroke-width: 0.55px;" points="171.889 292.684 164.038 318.967"/>
+        <g id="g-11" style="display: inline;" transform="matrix(2.191087, 0, 0, 2.191087, 12.92501, 33.665691)">
+          <rect y="128.8006" x="51.777317" height="6.614583" width="1.9371279" id="rect-26" style="display: inline; opacity: 1; fill-opacity: 1; stroke: rgb(0, 0, 0); stroke-width: 0.265; stroke-linecap: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-dashoffset: 0; stroke-opacity: 1; fill: rgb(88, 255, 144);"/>
+          <rect style="display: inline; opacity: 1; fill-opacity: 1; stroke: rgb(0, 0, 0); stroke-width: 0.265; stroke-linecap: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-dashoffset: 0; stroke-opacity: 1; fill: rgb(88, 255, 144);" id="rect-27" width="1.9371279" height="6.614583" x="55.481483" y="128.8006"/>
+          <rect y="128.8006" x="83.527321" height="6.614583" width="1.9371279" id="rect-28" style="display: inline; opacity: 1; fill-opacity: 1; stroke: rgb(0, 0, 0); stroke-width: 0.265; stroke-linecap: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-dashoffset: 0; stroke-opacity: 1; fill: rgb(255, 157, 123);"/>
+          <rect style="display: inline; opacity: 1; fill-opacity: 1; stroke: rgb(0, 0, 0); stroke-width: 0.265; stroke-linecap: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-dashoffset: 0; stroke-opacity: 1; fill: rgb(255, 157, 123);" id="rect-29" width="1.9371279" height="6.614583" x="87.231483" y="128.8006"/>
+          <rect style="display: inline; opacity: 1; fill-opacity: 1; stroke: rgb(0, 0, 0); stroke-width: 0.265; stroke-linecap: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-dashoffset: 0; stroke-opacity: 1; fill: rgb(92, 114, 255);" id="rect-36" width="1.937" height="6.615" x="67.652" y="128.801"/>
+          <rect y="128.801" x="71.356" height="6.615" width="1.937" id="rect-37" style="display: inline; opacity: 1; fill-opacity: 1; stroke: rgb(0, 0, 0); stroke-width: 0.265; stroke-linecap: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-dashoffset: 0; stroke-opacity: 1; fill: rgb(92, 114, 255);"/>
+          <rect y="112.355" x="71.545" height="6.615" width="1.937" id="rect-38" style="display: inline; opacity: 1; fill-opacity: 1; stroke: rgb(0, 0, 0); stroke-width: 0.265; stroke-linecap: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-dashoffset: 0; stroke-opacity: 1; fill: rgb(203, 206, 200);"/>
+          <rect y="112.355" x="51.966" height="6.615" width="1.937" id="rect-39" style="display: inline; opacity: 1; fill-opacity: 1; stroke: rgb(0, 0, 0); stroke-width: 0.265; stroke-linecap: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-dashoffset: 0; stroke-opacity: 1; fill: rgb(203, 206, 200);"/>
+          <rect style="display: inline; opacity: 1; fill-opacity: 1; stroke: rgb(0, 0, 0); stroke-width: 0.265; stroke-linecap: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-dashoffset: 0; stroke-opacity: 1; fill: rgb(203, 206, 200);" id="rect-40" width="1.937" height="6.615" x="67.99" y="112.354"/>
+          <rect y="112.354" x="86.967" height="6.615" width="1.937" id="rect-41" style="display: inline; opacity: 1; fill-opacity: 1; stroke: rgb(0, 0, 0); stroke-width: 0.265; stroke-linecap: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-dashoffset: 0; stroke-opacity: 1; fill: rgb(203, 206, 200);"/>
+        </g>
+        <polyline style="fill: none; stroke: rgb(167, 167, 167); stroke-miterlimit: 1; stroke-linecap: round; stroke-dasharray: 1px, 4px; stroke-width: 0.55px;" points="128.997 266.831 128.949 279.672"/>
+        <polyline style="fill: none; stroke: rgb(167, 167, 167); stroke-miterlimit: 1; stroke-linecap: round; stroke-dasharray: 1px, 4px; stroke-width: 0.55px;" points="164.038 266.831 163.99 279.672"/>
+        <polyline style="fill: none; stroke: rgb(167, 167, 167); stroke-miterlimit: 1; stroke-linecap: round; stroke-dasharray: 1px, 4px; stroke-width: 0.55px;" points="171.66 266.831 171.612 279.672"/>
+        <polyline style="fill: none; stroke: rgb(167, 167, 167); stroke-miterlimit: 1; stroke-linecap: round; stroke-dasharray: 1px, 4px; stroke-width: 0.55px;" points="205.784 266.831 205.736 279.672"/>
+        <g id="g-8" style="display: inline;" transform="matrix(2.191087, 0, 0, 2.191087, 12.92501, 33.665691)">
+          <circle r="5.08" cy="132.323" cx="70.357" id="circle-4" style="display: inline; opacity: 1; fill-opacity: 1; stroke: rgb(0, 0, 0); stroke-width: 0.265; stroke-linecap: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-dashoffset: 0; stroke-opacity: 1; fill: none;"/>
+          <circle style="display: inline; opacity: 1; fill-opacity: 1; stroke: rgb(0, 0, 0); stroke-width: 0.265; stroke-linecap: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-dashoffset: 0; stroke-opacity: 1; fill: none;" id="circle-5" cx="54.481735" cy="132.32333" r="5.0799999"/>
+          <circle style="display: inline; opacity: 1; fill-opacity: 1; stroke: rgb(0, 0, 0); stroke-width: 0.265; stroke-linecap: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-dashoffset: 0; stroke-opacity: 1; fill: none;" id="circle-6" cx="86.231735" cy="132.32333" r="5.0799999"/>
+        </g>
+      </g>
+    </g>
+    <text style="fill: rgb(51, 51, 51); font-family: Arial, sans-serif; font-size: 18px; white-space: pre;" x="171.588" y="155.919">Species B</text>
+    <g transform="matrix(1, 0, 0, 1, 45.019585, -92.219604)" style="">
+      <title>Anc+Pop2</title>
+      <g transform="matrix(1, 0, 0, 1, 19.50174, 122.268684)">
+        <title>tube_anc</title>
+        <polyline style="fill: none; stroke-miterlimit: 1; stroke: rgb(0, 0, 0); stroke-width: 1.2px;" points="86.156 275.684 86.547 130.844" transform="matrix(-1, 0, 0, -1, 172.702995, 406.527985)"/>
+        <polyline style="fill: none; stroke-miterlimit: 1; stroke: rgb(0, 0, 0); stroke-width: 1.2px;" points="208.615 275.684 209.006 130.844" transform="matrix(-1, 0, 0, -1, 417.621002, 406.527985)"/>
+      </g>
+      <g transform="matrix(1, 0, 0, 1, -0.000565, 206.401245)" style="">
+        <title>Pop2</title>
+        <g>
+          <polyline style="fill: none; stroke: rgb(167, 167, 167); stroke-miterlimit: 1; stroke-width: 0.55px;" points="162.689 122.643 153.392 155.448"/>
+          <polyline style="fill: none; stroke: rgb(167, 167, 167); stroke-miterlimit: 1; stroke-width: 0.55px;" points="170.683 122.644 153.391 155.449"/>
+          <polyline style="fill: none; stroke: rgb(167, 167, 167); stroke-miterlimit: 1; stroke-width: 0.55px;" points="197.712 122.642 188.637 157.209"/>
+          <polyline style="fill: none; stroke: rgb(167, 167, 167); stroke-miterlimit: 1; stroke-width: 0.55px;" points="170.683 120.337 180.477 157.209"/>
+          <g id="g-7" style="display: inline;" transform="matrix(2.191087, 0, 0, 2.191087, 12.925003, -172.805908)">
+            <title>remembered</title>
+            <polyline style="fill: none; stroke: rgb(167, 167, 167); stroke-miterlimit: 1; stroke-width: 0.251017px;" points="56.379 134.841 60.61 149.813"/>
+            <polyline style="fill: none; stroke: rgb(167, 167, 167); stroke-miterlimit: 1; stroke-width: 0.251017px;" points="87.824 134.841 79.451 151.639"/>
+          </g>
+          <polyline style="fill: none; stroke: rgb(167, 167, 167); stroke-miterlimit: 1; stroke-linecap: round; stroke-dasharray: 1px, 4px; stroke-width: 0.55px;" points="145.746 169.276 145.711 185.153"/>
+          <polyline style="fill: none; stroke: rgb(167, 167, 167); stroke-miterlimit: 1; stroke-linecap: round; stroke-dasharray: 1px, 4px; stroke-width: 0.55px;" points="153.766 169.276 153.731 185.153"/>
+          <polyline style="fill: none; stroke: rgb(167, 167, 167); stroke-miterlimit: 1; stroke-linecap: round; stroke-dasharray: 1px, 4px; stroke-width: 0.55px;" points="180.477 169.276 180.442 185.153"/>
+          <polyline style="fill: none; stroke: rgb(167, 167, 167); stroke-miterlimit: 1; stroke-linecap: round; stroke-dasharray: 1px, 4px; stroke-width: 0.55px;" points="188.672 169.276 188.637 185.153"/>
+          <g id="g-12" style="display: inline;" transform="matrix(2.191087, 0, 0, 2.191087, -4.720843, 34.891956)">
+            <rect style="display: inline; opacity: 1; fill-opacity: 1; stroke: rgb(0, 0, 0); stroke-width: 0.265; stroke-linecap: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-dashoffset: 0; stroke-opacity: 1; fill: rgb(203, 206, 200);" id="rect-57" width="1.937" height="6.615" x="71.356" y="54.717"/>
+            <rect y="54.717262" x="67.652321" height="6.614583" width="1.9371279" id="rect-58" style="display: inline; opacity: 1; fill-opacity: 1; stroke: rgb(0, 0, 0); stroke-width: 0.265; stroke-linecap: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-dashoffset: 0; stroke-opacity: 1; fill: rgb(203, 206, 200);"/>
+            <rect style="display: inline; opacity: 1; fill-opacity: 1; stroke: rgb(0, 0, 0); stroke-width: 0.265; stroke-linecap: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-dashoffset: 0; stroke-opacity: 1; fill: rgb(203, 206, 200);" id="rect-59" width="1.9371279" height="6.614583" x="83.527321" y="54.717262"/>
+            <rect y="54.717262" x="87.231483" height="6.614583" width="1.9371279" id="rect-60" style="display: inline; opacity: 1; fill-opacity: 1; stroke: rgb(0, 0, 0); stroke-width: 0.265; stroke-linecap: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-dashoffset: 0; stroke-opacity: 1; fill: rgb(203, 206, 200);"/>
+          </g>
+        </g>
+      </g>
+      <g style="">
+        <polyline style="fill: none; stroke: rgb(167, 167, 167); stroke-miterlimit: 1; stroke-width: 0.55px;" points="128.997 292.684 129.082 318.967"/>
+        <polyline style="fill: none; stroke: rgb(167, 167, 167); stroke-miterlimit: 1; stroke-width: 0.55px;" points="205.736 292.684 171.612 317.616"/>
+        <polyline style="fill: none; stroke: rgb(167, 167, 167); stroke-miterlimit: 1; stroke-width: 0.55px;" points="171.612 292.684 136.699 317.711"/>
+        <polyline style="fill: none; stroke: rgb(167, 167, 167); stroke-miterlimit: 1; stroke-width: 0.55px;" points="171.889 292.684 197.143 318.967"/>
+        <polyline style="fill: none; stroke: rgb(167, 167, 167); stroke-miterlimit: 1; stroke-width: 0.55px;" points="206.825 293.609 206.361 317.711"/>
+        <polyline style="fill: none; stroke: rgb(167, 167, 167); stroke-miterlimit: 1; stroke-width: 0.55px;" points="163.99 293.612 163.869 317.616"/>
+        <polyline style="fill: none; stroke: rgb(167, 167, 167); stroke-miterlimit: 1; stroke-width: 0.55px;" points="162.909 290.632 136.699 318.967"/>
+        <polyline style="fill: none; stroke: rgb(167, 167, 167); stroke-miterlimit: 1; stroke-width: 0.55px;" points="171.889 292.684 164.038 318.967"/>
+        <g id="g-4" style="display: inline;" transform="matrix(2.191087, 0, 0, 2.191087, 12.92501, 33.665691)">
+          <rect y="128.8006" x="51.777317" height="6.614583" width="1.9371279" id="rect-25" style="display: inline; opacity: 1; fill-opacity: 1; stroke: rgb(0, 0, 0); stroke-width: 0.265; stroke-linecap: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-dashoffset: 0; stroke-opacity: 1; fill: rgb(88, 255, 144);"/>
+          <rect style="display: inline; opacity: 1; fill-opacity: 1; stroke: rgb(0, 0, 0); stroke-width: 0.265; stroke-linecap: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-dashoffset: 0; stroke-opacity: 1; fill: rgb(88, 255, 144);" id="rect-30" width="1.9371279" height="6.614583" x="55.481483" y="128.8006"/>
+          <rect y="128.8006" x="83.527321" height="6.614583" width="1.9371279" id="rect-31" style="display: inline; opacity: 1; fill-opacity: 1; stroke: rgb(0, 0, 0); stroke-width: 0.265; stroke-linecap: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-dashoffset: 0; stroke-opacity: 1; fill: rgb(255, 157, 123);"/>
+          <rect style="display: inline; opacity: 1; fill-opacity: 1; stroke: rgb(0, 0, 0); stroke-width: 0.265; stroke-linecap: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-dashoffset: 0; stroke-opacity: 1; fill: rgb(255, 157, 123);" id="rect-32" width="1.9371279" height="6.614583" x="87.231483" y="128.8006"/>
+          <rect style="display: inline; opacity: 1; fill-opacity: 1; stroke: rgb(0, 0, 0); stroke-width: 0.265; stroke-linecap: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-dashoffset: 0; stroke-opacity: 1; fill: rgb(92, 114, 255);" id="rect-33" width="1.937" height="6.615" x="67.652" y="128.801"/>
+          <rect y="128.801" x="71.356" height="6.615" width="1.937" id="rect-34" style="display: inline; opacity: 1; fill-opacity: 1; stroke: rgb(0, 0, 0); stroke-width: 0.265; stroke-linecap: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-dashoffset: 0; stroke-opacity: 1; fill: rgb(92, 114, 255);"/>
+          <rect y="112.355" x="71.545" height="6.615" width="1.937" id="rect-35" style="display: inline; opacity: 1; fill-opacity: 1; stroke: rgb(0, 0, 0); stroke-width: 0.265; stroke-linecap: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-dashoffset: 0; stroke-opacity: 1; fill: rgb(203, 206, 200);"/>
+          <rect y="112.355" x="51.966" height="6.615" width="1.937" id="rect-42" style="display: inline; opacity: 1; fill-opacity: 1; stroke: rgb(0, 0, 0); stroke-width: 0.265; stroke-linecap: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-dashoffset: 0; stroke-opacity: 1; fill: rgb(203, 206, 200);"/>
+          <rect style="display: inline; opacity: 1; fill-opacity: 1; stroke: rgb(0, 0, 0); stroke-width: 0.265; stroke-linecap: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-dashoffset: 0; stroke-opacity: 1; fill: rgb(203, 206, 200);" id="rect-43" width="1.937" height="6.615" x="67.99" y="112.354"/>
+          <rect y="112.354" x="86.967" height="6.615" width="1.937" id="rect-50" style="display: inline; opacity: 1; fill-opacity: 1; stroke: rgb(0, 0, 0); stroke-width: 0.265; stroke-linecap: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-dashoffset: 0; stroke-opacity: 1; fill: rgb(203, 206, 200);"/>
+        </g>
+        <polyline style="fill: none; stroke: rgb(167, 167, 167); stroke-miterlimit: 1; stroke-linecap: round; stroke-dasharray: 1px, 4px; stroke-width: 0.55px;" points="128.997 266.831 128.949 279.672"/>
+        <polyline style="fill: none; stroke: rgb(167, 167, 167); stroke-miterlimit: 1; stroke-linecap: round; stroke-dasharray: 1px, 4px; stroke-width: 0.55px;" points="164.038 266.831 163.99 279.672"/>
+        <polyline style="fill: none; stroke: rgb(167, 167, 167); stroke-miterlimit: 1; stroke-linecap: round; stroke-dasharray: 1px, 4px; stroke-width: 0.55px;" points="171.66 266.831 171.612 279.672"/>
+        <polyline style="fill: none; stroke: rgb(167, 167, 167); stroke-miterlimit: 1; stroke-linecap: round; stroke-dasharray: 1px, 4px; stroke-width: 0.55px;" points="205.784 266.831 205.736 279.672"/>
+        <g id="g-6" style="display: inline;" transform="matrix(2.191087, 0, 0, 2.191087, 12.92501, 33.665691)">
+          <circle r="5.08" cy="132.323" cx="70.357" id="circle-13" style="display: inline; opacity: 1; fill-opacity: 1; stroke: rgb(0, 0, 0); stroke-width: 0.265; stroke-linecap: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-dashoffset: 0; stroke-opacity: 1; fill: none;"/>
+          <circle style="display: inline; opacity: 1; fill-opacity: 1; stroke: rgb(0, 0, 0); stroke-width: 0.265; stroke-linecap: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-dashoffset: 0; stroke-opacity: 1; fill: none;" id="circle-14" cx="54.481735" cy="132.32333" r="5.0799999"/>
+          <circle style="display: inline; opacity: 1; fill-opacity: 1; stroke: rgb(0, 0, 0); stroke-width: 0.265; stroke-linecap: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-dashoffset: 0; stroke-opacity: 1; fill: none;" id="circle-15" cx="86.231735" cy="132.32333" r="5.0799999"/>
+        </g>
+      </g>
+    </g>
+  </g>
+  <g transform="matrix(1, 0, 0, 1, -10.271053, 26.023413)" style="visibility: hidden;">
+    <title>pop 1 and pop 2 independent</title>
+    <g transform="matrix(1, 0, 0, 1, 293.072266, 140.361557)" style="">
+      <title>Pop1</title>
+      <g transform="matrix(1, 0, 0, 1, 28.34573, -41.971325)">
+        <title>tube_pop1</title>
+        <polyline style="fill: none; stroke-miterlimit: 1; stroke: rgb(0, 0, 0); stroke-width: 1.2px;" points="78.52 130.844 78.587 226.178"/>
+        <polyline style="fill: none; stroke-miterlimit: 1; stroke: rgb(0, 0, 0); stroke-width: 1.2px;" points="198.887 130.844 198.954 226.178"/>
+      </g>
+      <g transform="matrix(1, 0, 0, 1, 0, -8.303333)">
+        <polyline style="fill: none; stroke: rgb(167, 167, 167); stroke-miterlimit: 1; stroke-linecap: round; stroke-dasharray: 1px, 4px; stroke-width: 0.55px;" points="206.161 168.049 206.126 183.926"/>
+        <polyline style="fill: none; stroke: rgb(167, 167, 167); stroke-miterlimit: 1; stroke-linecap: round; stroke-dasharray: 1px, 4px; stroke-width: 0.55px;" points="198.03 168.049 197.995 183.926"/>
+        <polyline style="fill: none; stroke: rgb(167, 167, 167); stroke-miterlimit: 1; stroke-linecap: round; stroke-dasharray: 1px, 4px; stroke-width: 0.55px;" points="171.452 168.049 171.417 183.926"/>
+        <polyline style="fill: none; stroke: rgb(167, 167, 167); stroke-miterlimit: 1; stroke-linecap: round; stroke-dasharray: 1px, 4px; stroke-width: 0.55px;" points="163.269 168.049 163.234 183.926"/>
+        <g id="g-2" style="display: inline;" transform="matrix(2.191087, 0, 0, 2.191087, 12.924425, -173.040466)">
+          <title>remembered</title>
+          <circle style="display: inline; opacity: 1; fill-opacity: 1; stroke: rgb(0, 0, 0); stroke-width: 0.265; stroke-linecap: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-dashoffset: 0; stroke-opacity: 1; fill: none;" id="circle-10" cx="54.482" cy="132.323" r="5.08"/>
+          <circle style="display: inline; opacity: 1; fill-opacity: 1; stroke: rgb(0, 0, 0); stroke-width: 0.265; stroke-linecap: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-dashoffset: 0; stroke-opacity: 1; fill: none;" id="circle-11" cx="86.232" cy="132.323" r="5.08"/>
+          <circle r="5.08" cy="132.323" cx="70.357" id="circle-12" style="display: inline; opacity: 1; fill-opacity: 1; stroke: rgb(0, 0, 0); stroke-width: 0.265; stroke-linecap: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-dashoffset: 0; stroke-opacity: 1; fill: none;"/>
+          <polyline style="fill: none; stroke: rgb(167, 167, 167); stroke-miterlimit: 1; stroke-width: 0.251017px;" points="72.12999725341797 150.16200256347656 84.3740005493164 135.63099670410156"/>
+          <polyline style="fill: none; stroke: rgb(167, 167, 167); stroke-miterlimit: 1; stroke-width: 0.251017px;" points="72.13 134.448 84.374 150.063"/>
+          <polyline style="fill: none; stroke: rgb(167, 167, 167); stroke-miterlimit: 1; stroke-width: 0.251017px;" points="88.094 150.063 88.094 135.631"/>
+          <polyline style="fill: none; stroke: rgb(167, 167, 167); stroke-miterlimit: 1; stroke-width: 0.251017px;" points="68.73 135.631 84.374 150.162"/>
+          <g transform="matrix(1, 0, 0, 1, -31.995764, -0.129175)" style="">
+            <rect y="129.145" x="83.657" height="6.615" width="1.937" id="rect-11" style="display: inline; opacity: 1; fill-opacity: 1; stroke: rgb(0, 0, 0); stroke-width: 0.265; stroke-linecap: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-dashoffset: 0; stroke-opacity: 1; fill: rgb(89, 255, 144);"/>
+            <rect style="display: inline; opacity: 1; fill-opacity: 1; stroke: rgb(0, 0, 0); stroke-width: 0.265; stroke-linecap: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-dashoffset: 0; stroke-opacity: 1; fill: rgb(89, 255, 144);" id="rect-16" width="1.937" height="6.615" x="87.361" y="129.145"/>
+          </g>
+          <g transform="matrix(1, 0, 0, 1, -0.245764, -0.129175)">
+            <rect y="129.145" x="83.657" height="6.615" width="1.937" id="rect-17" style="display: inline; opacity: 1; fill-opacity: 1; stroke: rgb(0, 0, 0); stroke-width: 0.265; stroke-linecap: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-dashoffset: 0; stroke-opacity: 1; fill: rgb(255, 157, 123);"/>
+            <rect style="display: inline; opacity: 1; fill-opacity: 1; stroke: rgb(0, 0, 0); stroke-width: 0.265; stroke-linecap: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-dashoffset: 0; stroke-opacity: 1; fill: rgb(255, 157, 123);" id="rect-18" width="1.937" height="6.615" x="87.361" y="129.145"/>
+          </g>
+          <g transform="matrix(1, 0, 0, 1, -16.120497, -0.129511)">
+            <rect y="129.145" x="83.657" height="6.615" width="1.937" id="rect-19" style="display: inline; opacity: 1; fill-opacity: 1; stroke: rgb(0, 0, 0); stroke-width: 0.265; stroke-linecap: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-dashoffset: 0; stroke-opacity: 1; fill: rgb(92, 114, 255);"/>
+            <rect style="display: inline; opacity: 1; fill-opacity: 1; stroke: rgb(0, 0, 0); stroke-width: 0.265; stroke-linecap: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-dashoffset: 0; stroke-opacity: 1; fill: rgb(92, 114, 255);" id="rect-20" width="1.937" height="6.615" x="87.361" y="129.145"/>
+          </g>
+          <polyline style="fill: none; stroke: rgb(167, 167, 167); stroke-miterlimit: 1; stroke-width: 0.251017px;" points="67.248 148.269 70.647 133.837" transform="matrix(1, 0, 0, 1, 1.482496, 1.79396)"/>
+          <polyline style="fill: none; stroke: rgb(167, 167, 167); stroke-miterlimit: 1; stroke-width: 0.251017px;" points="63.693 143.622 63.692 129.189" transform="matrix(1, 0, 0, 1, 5.037619, 6.441119)"/>
+        </g>
+        <g transform="matrix(2.191087, 0, 0, 2.191087, 12.92501, 33.665691)">
+          <rect y="54.717" x="67.652" height="6.615" width="1.937" id="rect-21" style="display:inline;opacity:1;fill:#95f2ff;fill-opacity:1;stroke:#000000;stroke-width:0.265;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"/>
+          <rect style="display:inline;opacity:1;fill:#95f2ff;fill-opacity:1;stroke:#000000;stroke-width:0.265;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" id="rect-22" width="1.937" height="6.615" x="83.527" y="54.717"/>
+          <rect y="54.717" x="87.231" height="6.615" width="1.937" id="rect-23" style="display:inline;opacity:1;fill:#95f2ff;fill-opacity:1;stroke:#000000;stroke-width:0.265;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"/>
+          <rect style="display:inline;opacity:1;fill:#95f2ff;fill-opacity:1;stroke:#000000;stroke-width:0.265;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" id="rect-24" width="1.937" height="6.615" x="71.356" y="54.717"/>
+        </g>
+      </g>
+    </g>
+    <g transform="matrix(1, 0, 0, 1, 394.447205, -50.895275)" style="">
+      <title>Anc</title>
+      <g transform="matrix(1, 0, 0, 1, 28.345737, 122.268684)">
+        <title>tube_anc</title>
+        <polyline style="fill: none; stroke-miterlimit: 1; stroke: rgb(0, 0, 0); stroke-width: 1.2px;" points="78.52 130.844 78.587 226.178"/>
+        <polyline style="fill: none; stroke-miterlimit: 1; stroke: rgb(0, 0, 0); stroke-width: 1.2px;" points="198.887 130.844 198.954 226.178"/>
+      </g>
+      <g>
+        <polyline style="fill: none; stroke: rgb(167, 167, 167); stroke-miterlimit: 1; stroke-width: 0.55px;" points="128.997 292.684 129.082 318.967"/>
+        <polyline style="fill: none; stroke: rgb(167, 167, 167); stroke-miterlimit: 1; stroke-width: 0.55px;" points="205.736 292.684 171.612 317.616"/>
+        <polyline style="fill: none; stroke: rgb(167, 167, 167); stroke-miterlimit: 1; stroke-width: 0.55px;" points="171.612 292.684 136.699 317.711"/>
+        <polyline style="fill: none; stroke: rgb(167, 167, 167); stroke-miterlimit: 1; stroke-width: 0.55px;" points="171.889 292.684 197.143 318.967"/>
+        <polyline style="fill: none; stroke: rgb(167, 167, 167); stroke-miterlimit: 1; stroke-width: 0.55px;" points="206.825 293.609 206.361 317.711"/>
+        <polyline style="fill: none; stroke: rgb(167, 167, 167); stroke-miterlimit: 1; stroke-width: 0.55px;" points="163.99 293.612 163.869 317.616"/>
+        <polyline style="fill: none; stroke: rgb(167, 167, 167); stroke-miterlimit: 1; stroke-width: 0.55px;" points="162.909 290.632 136.699 318.967"/>
+        <polyline style="fill: none; stroke: rgb(167, 167, 167); stroke-miterlimit: 1; stroke-width: 0.55px;" points="171.889 292.684 164.038 318.967"/>
+        <g id="g-17" style="display: inline;" transform="matrix(2.191087, 0, 0, 2.191087, 12.92501, 33.665691)">
+          <rect y="128.8006" x="51.777317" height="6.614583" width="1.9371279" id="rect-48" style="display: inline; opacity: 1; fill-opacity: 1; stroke: rgb(0, 0, 0); stroke-width: 0.265; stroke-linecap: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-dashoffset: 0; stroke-opacity: 1; fill: rgb(88, 255, 144);"/>
+          <rect style="display: inline; opacity: 1; fill-opacity: 1; stroke: rgb(0, 0, 0); stroke-width: 0.265; stroke-linecap: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-dashoffset: 0; stroke-opacity: 1; fill: rgb(88, 255, 144);" id="rect-49" width="1.9371279" height="6.614583" x="55.481483" y="128.8006"/>
+          <rect y="128.8006" x="83.527321" height="6.614583" width="1.9371279" id="rect-65" style="display: inline; opacity: 1; fill-opacity: 1; stroke: rgb(0, 0, 0); stroke-width: 0.265; stroke-linecap: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-dashoffset: 0; stroke-opacity: 1; fill: rgb(255, 157, 123);"/>
+          <rect style="display: inline; opacity: 1; fill-opacity: 1; stroke: rgb(0, 0, 0); stroke-width: 0.265; stroke-linecap: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-dashoffset: 0; stroke-opacity: 1; fill: rgb(255, 157, 123);" id="rect-66" width="1.9371279" height="6.614583" x="87.231483" y="128.8006"/>
+          <rect style="display: inline; opacity: 1; fill-opacity: 1; stroke: rgb(0, 0, 0); stroke-width: 0.265; stroke-linecap: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-dashoffset: 0; stroke-opacity: 1; fill: rgb(92, 114, 255);" id="rect-67" width="1.937" height="6.615" x="67.652" y="128.801"/>
+          <rect y="128.801" x="71.356" height="6.615" width="1.937" id="rect-68" style="display: inline; opacity: 1; fill-opacity: 1; stroke: rgb(0, 0, 0); stroke-width: 0.265; stroke-linecap: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-dashoffset: 0; stroke-opacity: 1; fill: rgb(92, 114, 255);"/>
+          <rect y="112.355" x="71.545" height="6.615" width="1.937" id="rect-69" style="display:inline;opacity:1;fill:#95f2ff;fill-opacity:1;stroke:#000000;stroke-width:0.265;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"/>
+          <rect y="112.355" x="51.966" height="6.615" width="1.937" id="rect-70" style="display:inline;opacity:1;fill:#95f2ff;fill-opacity:1;stroke:#000000;stroke-width:0.265;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"/>
+          <rect style="display:inline;opacity:1;fill:#95f2ff;fill-opacity:1;stroke:#000000;stroke-width:0.265;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" id="rect-71" width="1.937" height="6.615" x="67.99" y="112.354"/>
+          <rect y="112.354" x="86.967" height="6.615" width="1.937" id="rect-72" style="display:inline;opacity:1;fill:#95f2ff;fill-opacity:1;stroke:#000000;stroke-width:0.265;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"/>
+        </g>
+        <polyline style="fill: none; stroke: rgb(167, 167, 167); stroke-miterlimit: 1; stroke-linecap: round; stroke-dasharray: 1px, 4px; stroke-width: 0.55px;" points="128.997 266.831 128.949 279.672"/>
+        <polyline style="fill: none; stroke: rgb(167, 167, 167); stroke-miterlimit: 1; stroke-linecap: round; stroke-dasharray: 1px, 4px; stroke-width: 0.55px;" points="164.038 266.831 163.99 279.672"/>
+        <polyline style="fill: none; stroke: rgb(167, 167, 167); stroke-miterlimit: 1; stroke-linecap: round; stroke-dasharray: 1px, 4px; stroke-width: 0.55px;" points="171.66 266.831 171.612 279.672"/>
+        <polyline style="fill: none; stroke: rgb(167, 167, 167); stroke-miterlimit: 1; stroke-linecap: round; stroke-dasharray: 1px, 4px; stroke-width: 0.55px;" points="205.784 266.831 205.736 279.672"/>
+        <g id="g-19" style="display: inline;" transform="matrix(2.191087, 0, 0, 2.191087, 12.92501, 33.665691)">
+          <circle r="5.08" cy="132.323" cx="70.357" id="circle-7" style="display: inline; opacity: 1; fill-opacity: 1; stroke: rgb(0, 0, 0); stroke-width: 0.265; stroke-linecap: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-dashoffset: 0; stroke-opacity: 1; fill: none;"/>
+          <circle style="display: inline; opacity: 1; fill-opacity: 1; stroke: rgb(0, 0, 0); stroke-width: 0.265; stroke-linecap: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-dashoffset: 0; stroke-opacity: 1; fill: none;" id="circle-8" cx="54.481735" cy="132.32333" r="5.0799999"/>
+          <circle style="display: inline; opacity: 1; fill-opacity: 1; stroke: rgb(0, 0, 0); stroke-width: 0.265; stroke-linecap: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-dashoffset: 0; stroke-opacity: 1; fill: none;" id="circle-9" cx="86.231735" cy="132.32333" r="5.0799999"/>
+        </g>
+      </g>
+    </g>
+    <g transform="matrix(1, 0, 0, 1, 427.505676, 131.327438)" style="">
+      <title>Pop2</title>
+      <g transform="matrix(1, 0, 0, 1, 28.34631, -32.93721)">
+        <title>tube_pop2</title>
+        <polyline style="fill: none; stroke-miterlimit: 1; stroke: rgb(0, 0, 0); stroke-width: 1.2px;" points="78.52 130.844 78.587 226.178"/>
+        <polyline style="fill: none; stroke-miterlimit: 1; stroke: rgb(0, 0, 0); stroke-width: 1.2px;" points="198.887 130.844 198.954 226.178"/>
+      </g>
+      <g>
+        <polyline style="fill: none; stroke: rgb(167, 167, 167); stroke-miterlimit: 1; stroke-width: 0.55px;" points="162.689 122.643 153.392 155.448"/>
+        <polyline style="fill: none; stroke: rgb(167, 167, 167); stroke-miterlimit: 1; stroke-width: 0.55px;" points="170.683 122.644 153.391 155.449"/>
+        <polyline style="fill: none; stroke: rgb(167, 167, 167); stroke-miterlimit: 1; stroke-width: 0.55px;" points="197.712 122.642 188.637 157.209"/>
+        <polyline style="fill: none; stroke: rgb(167, 167, 167); stroke-miterlimit: 1; stroke-width: 0.55px;" points="170.683 120.337 180.477 157.209"/>
+        <g id="g-3" style="display: inline;" transform="matrix(2.191087, 0, 0, 2.191087, 12.925003, -172.805908)">
+          <title>remembered</title>
+          <circle style="display: inline; opacity: 1; fill-opacity: 1; stroke: rgb(0, 0, 0); stroke-width: 0.265; stroke-linecap: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-dashoffset: 0; stroke-opacity: 1; fill: none;" id="circle-22" cx="54.482" cy="132.323" r="5.08"/>
+          <circle style="display: inline; opacity: 1; fill-opacity: 1; stroke: rgb(0, 0, 0); stroke-width: 0.265; stroke-linecap: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-dashoffset: 0; stroke-opacity: 1; fill: none;" id="circle-23" cx="86.232" cy="132.323" r="5.08"/>
+          <circle r="5.08" cy="132.323" cx="70.357" id="circle-24" style="display: inline; opacity: 1; fill-opacity: 1; stroke: rgb(0, 0, 0); stroke-width: 0.265; stroke-linecap: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-dashoffset: 0; stroke-opacity: 1; fill: none;"/>
+          <polyline style="fill: none; stroke: rgb(167, 167, 167); stroke-miterlimit: 1; stroke-width: 0.251017px;" points="56.379 134.841 60.61 149.813"/>
+          <polyline style="fill: none; stroke: rgb(167, 167, 167); stroke-miterlimit: 1; stroke-width: 0.251017px;" points="87.824 134.841 79.451 151.639"/>
+          <g transform="matrix(1, 0, 0, 1, -31.995764, -0.129175)">
+            <rect y="129.145" x="83.657" height="6.615" width="1.937" id="rect-79" style="display: inline; opacity: 1; fill-opacity: 1; stroke: rgb(0, 0, 0); stroke-width: 0.265; stroke-linecap: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-dashoffset: 0; stroke-opacity: 1; fill: rgb(88, 255, 144); stroke-linejoin: round;"/>
+            <rect style="display: inline; opacity: 1; fill-opacity: 1; stroke: rgb(0, 0, 0); stroke-width: 0.265; stroke-linecap: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-dashoffset: 0; stroke-opacity: 1; fill: rgb(88, 255, 144); stroke-linejoin: round;" id="rect-80" width="1.937" height="6.615" x="87.361" y="129.145"/>
+          </g>
+          <g transform="matrix(1, 0, 0, 1, -0.245764, -0.129175)">
+            <rect y="129.145" x="83.657" height="6.615" width="1.937" id="rect-81" style="display: inline; opacity: 1; fill-opacity: 1; stroke: rgb(0, 0, 0); stroke-width: 0.265; stroke-linecap: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-dashoffset: 0; stroke-opacity: 1; stroke-linejoin: round; fill: rgb(255, 157, 123);"/>
+            <rect style="display: inline; opacity: 1; fill-opacity: 1; stroke: rgb(0, 0, 0); stroke-width: 0.265; stroke-linecap: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-dashoffset: 0; stroke-opacity: 1; stroke-linejoin: round; fill: rgb(255, 157, 123);" id="rect-82" width="1.937" height="6.615" x="87.361" y="129.145"/>
+          </g>
+          <g transform="matrix(1, 0, 0, 1, -16.120497, -0.129511)">
+            <rect y="129.145" x="83.657" height="6.615" width="1.937" id="rect-83" style="display: inline; opacity: 1; fill-opacity: 1; stroke: rgb(0, 0, 0); stroke-width: 0.265; stroke-linecap: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-dashoffset: 0; stroke-opacity: 1; fill: rgb(92, 114, 255);"/>
+            <rect style="display: inline; opacity: 1; fill-opacity: 1; stroke: rgb(0, 0, 0); stroke-width: 0.265; stroke-linecap: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-dashoffset: 0; stroke-opacity: 1; fill: rgb(92, 114, 255);" id="rect-84" width="1.937" height="6.615" x="87.361" y="129.145"/>
+          </g>
+        </g>
+        <polyline style="fill: none; stroke: rgb(167, 167, 167); stroke-miterlimit: 1; stroke-linecap: round; stroke-dasharray: 1px, 4px; stroke-width: 0.55px;" points="145.746 169.276 145.711 185.153"/>
+        <polyline style="fill: none; stroke: rgb(167, 167, 167); stroke-miterlimit: 1; stroke-linecap: round; stroke-dasharray: 1px, 4px; stroke-width: 0.55px;" points="153.766 169.276 153.731 185.153"/>
+        <polyline style="fill: none; stroke: rgb(167, 167, 167); stroke-miterlimit: 1; stroke-linecap: round; stroke-dasharray: 1px, 4px; stroke-width: 0.55px;" points="180.477 169.276 180.442 185.153"/>
+        <polyline style="fill: none; stroke: rgb(167, 167, 167); stroke-miterlimit: 1; stroke-linecap: round; stroke-dasharray: 1px, 4px; stroke-width: 0.55px;" points="188.672 169.276 188.637 185.153"/>
+        <g id="g-18" style="display: inline;" transform="matrix(2.191087, 0, 0, 2.191087, -4.720843, 34.891956)">
+          <rect style="display:inline;opacity:1;fill:#95f2ff;fill-opacity:1;stroke:#000000;stroke-width:0.265;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" id="rect-85" width="1.937" height="6.615" x="71.356" y="54.717"/>
+          <rect y="54.717262" x="67.652321" height="6.614583" width="1.9371279" id="rect-86" style="display:inline;opacity:1;fill:#95f2ff;fill-opacity:1;stroke:#000000;stroke-width:0.265;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"/>
+          <rect style="display:inline;opacity:1;fill:#95f2ff;fill-opacity:1;stroke:#000000;stroke-width:0.265;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" id="rect-87" width="1.9371279" height="6.614583" x="83.527321" y="54.717262"/>
+          <rect y="54.717262" x="87.231483" height="6.614583" width="1.9371279" id="rect-88" style="display:inline;opacity:1;fill:#95f2ff;fill-opacity:1;stroke:#000000;stroke-width:0.265;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"/>
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>
