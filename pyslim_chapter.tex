@@ -761,7 +761,17 @@ from the Jukes-Cantor model.
 
 %%%%%%%%%%%%%%%%%%%%%%%
 \section*{Parallelizing forward-in-time simulations of multiple species}
-\comment{stitch together with the previous section: there was msp+slim, here is slim+slim}
+
+\begin{figure}[h!]
+    \centering
+     \includegraphics[width=0.33\textwidth]{./code/parallelizing_phylogeny/phylo.pdf}
+     \caption{Example of phylogeny we might want to simulate. Note how branches with the same color can be simulated in parallel when there is no migration.}
+     \label{fig:phylo}
+    \end{figure}
+
+In the previous section, we explored how to do a hybrid simulation, which consists of stitching together a backwards-in-time step followed by a forwards-in-time simulation.
+Now, we will explore how to stitch together multiple forwards-in-time simulations, which we perform in parallel to reduce the total clock time and memory requirements.
+
 Any two branches stemming from the same node in a species tree are independent from each other and
 thus can be simulated in parallel (assuming no migration between the species).
 For example, in the phylogeny depicted in Figure~\ref{fig:phylo},
@@ -769,13 +779,6 @@ branches of the same color can be simulated in parallel.
 To do so, we will need to
 (i) simulate the history of each branch and
 (ii) join the resulting simulations together onto one multi-species history.
-
- \begin{figure}[h!]
- \centering
-  \includegraphics[width=0.5\textwidth]{./code/parallelizing_phylogeny/phylo.pdf}
-  \caption{Example of phylogeny we might want to simulate. Note how branches with the same color can be simulated in parallel when there is no migration.}
-  \label{fig:phylo}
- \end{figure}
 
 \subsection{Parallel simulation of branches}
 
@@ -786,7 +789,7 @@ Also, we will allow deleterious mutations to happen across the entire chromosome
 See the code below (Listing~\ref{lst:slim-example}).
 
 \begin{listing}[H]
-  \inputminted[fontsize=\small, linenos, bgcolor=gray!10]{javascript}{./code/parallelizing_phylogeny/simulate_branch.slim}
+  \inputminted[breaklines, breakautoindent=true, breakanywhere=true, fontsize=\small, linenos, bgcolor=gray!10]{javascript}{./code/parallelizing_phylogeny/simulate_branch.slim}
   \caption{Simple \slim script to simulate a constant size population that can be started from an existing tree sequence.}
   \label{lst:slim-example}
 \end{listing}
@@ -804,7 +807,7 @@ as they will later be used to glue the tree sequences together.
 
 The example phylogeny we will simulate is encoded in the table below (Table~\ref{tab:phylo}).
 
-\begin{table}[H]
+\begin{table}[h]
   \centering
   \caption{Parameters of the phylogeny that will be simulated.}
   \label{tab:phylo}
@@ -815,6 +818,129 @@ The example phylogeny we will simulate is encoded in the table below (Table~\ref
         {\child & \parent & \popsize & \edgelen\\}
     \end{tabular}
 \end{table}
+
+There are several ways to parallelize the simulations of the branches, including a Make script, a workflow manager like Snakemake, or a breadth-first traversal of the phylogeny in Python or your favorite scripting language. For simplicity, we chose to do the parallelization in make, but see the \pyslim \href{https://tskit.dev/pyslim/docs/latest/vignette_parallel_phylo.html}{documentation} for other implementations. Note how in the Make script below, we pass parameters to the \verb|simulate_branch.slim| script to set the population size and edge length for each branch.
+
+\noindent
+\begin{listing}
+    \inputminted[breaklines,fontsize=\small, breakanywhere=true, breakautoindent=true, linenos, bgcolor=gray!10]{basemake}{./code/parallelizing_phylogeny/parallel_sims.make}
+\end{listing}
+
+
+\subsection{Putting it all together: unioning the tree sequences}
+
+With the tree sequences in hand, we now need to glue them together.
+This can be done using the \verb|union| operation from \tskit.
+For two tree sequences which share some of its past history, 
+union works by copying the non-shared parts of one of the tree sequence onto the other.
+See Figure~\ref{fig:union} for an example of how union works.
+
+\begin{figure}[h!]
+    \centering
+     \includegraphics[width=\textwidth]{./figures/union.pdf}
+     \caption{Species A and B share the same ancestral history, but after the split they are simulated independently. Note how the history above the split (delimited by the individuals which are remembered and persistent across tree sequences, highlighted in green, blue and orange) is identical. The \tskit union operation will merge these tree sequences given a map relating the nodes in the two tree sequences that are the same. In this example, union would work by adding all the history of species B that is not already present in the history of species A (nodes and edges added are highlighted in light red).}
+     \label{fig:union}
+    \end{figure}
+
+The trickiest part of this operation is defining the parts that are equivalent in the two tree sequences.
+For that, we will have to create an array that serves as a map of node IDs between the two tree sequences.
+Below is a function that will construct a map of the node IDs of two SLiM tree sequences that correspond to the same chromosomes in SLiM at any time older than the given time ago at which the two populations split. 
+Given two tree sequences \verb|other| and \verb|ts|, the goal here is to find, for each node born before \verb|split_time| ago in other, the matching node in \verb|ts|, where we can identify matching using the SLiM ID in metadata.
+The code could be made easier to read by iterating over nodes, 
+but the following numpy-based version is much faster.
+
+\begin{listing}
+    \begin{minted}[fontsize=\small, linenos, bgcolor=gray!10]{python}
+def match_nodes(other, ts, split_time):
+    """
+    Given SLiM tree sequences `other` and `ts`, builds a numpy array with length
+    `other.num_nodes` in which the indexes represent the node id in `other` and the
+    entries represent the equivalent node id in `ts`. If a node in `other` has no
+    equivalent in `ts`, then the entry takes the value `tskit.NULL` (-1). The
+    matching is done by comparing the IDs assigned by SLiM which are kept in
+    node metadata. This matching of SLiM IDs is *only* done for nodes with time
+    older than the specified `split_time`.
+    """
+    node_mapping = np.full(other.num_nodes, tskit.NULL)
+    sids0 = np.array([n.metadata["slim_id"] for n in ts.nodes()])
+    sids1 = np.array([n.metadata["slim_id"] for n in other.nodes()])
+    alive_before_split1 = (other.tables.nodes.time >= split_time)
+    is_1in0 = np.isin(sids1, sids0)
+    both = np.logical_and(alive_before_split1, is_1in0)
+    sorted_ids0 = np.argsort(sids0)
+    matches = np.searchsorted(
+        sids0,
+        sids1[both],
+        side='left',
+        sorter=sorted_ids0
+    )
+    node_mapping[both] = sorted_ids0[matches]
+    return node_mapping
+    \end{minted}
+\end{listing}
+
+Now we are finally ready to union our tree sequences.
+For that, I wrote a recursive function that goes through a data frame with the phylogeny
+and returns a dictionary with the merged tree sequences from the tip to the root.
+We could manually specify the order of unioning, but this is more flexible and general.
+
+\begin{listing}
+    \begin{minted}[fontsize=\small, linenos, bgcolor=gray!10]{python}
+merged = {
+    row.child : {
+        "ts": tskit.load(row.outfile),
+        "depth": row.edgelen,
+        "children": [row.child]
+    }
+    for i, row in df[df.is_leaf].iterrows()
+}
+
+def union_children(parent, df, merged):
+    print(f"Going in: {parent}")
+    child_rows = df[df.parent == parent]
+    assert (len(child_rows) == 2) or (len(childs) == 0)
+    if len(child_rows) == 2:
+        children = [row.child for _, row in child_rows.iterrows()]
+        for child in children:
+            if child not in merged:
+                union_children(child, df, merged)
+        split_time = merged[children[0]]["depth"]
+        assert split_time == merged[children[1]]["depth"] # ultrametric
+        print(f'Unioning: {children}, Split time: {split_time}')
+        ts0 = merged[children[0]]["ts"]
+        ts1 = merged[children[1]]["ts"]
+        node_map = match_nodes(ts1, ts0, split_time)
+        tsu = ts0.union(ts1, node_map, check_shared_equality=True)
+        # the time from tip to start of simulation is split_time plus the
+        # length of the edge
+        parent_edgelength = df[df.child==parent].edgelen.item()
+        merged[parent] = {
+            "ts": tsu,
+            "depth": split_time + parent_edgelength,
+            "children": merged[children[0]]["children"] + merged[children[1]]["children"]
+        }
+
+union_children("root", df, merged)
+# union of all three species tree sequences is in the root.
+tsu = merged["root"]["ts"]
+pops = merged["root"]["children"]
+    \end{minted}
+\end{listing}
+
+We had keep track of which population in the union’ed tree sequence corresponds to which population in our phylogeny.
+Happily, we’ve stored each population’s name in its metadata field, 
+so it’s easy to match populations in the tree sequence up to what they’re supposed to be.
+Now, we have a union'ed tree sequence of the entire phylogeny we depicted in Figure~\ref{fig:phylo},
+which we can use for our downstream analyses.
+
+In this section, we learned how to parallelize forward-in-time simulations of multiple species.
+The biggest upside of this strategy is that it allows us to simulate a large number of species,
+which wouldn't be possible within a single simulation due to memory constraints.
+For example, in \citet{rodrigues2024shared} it was possible to do whole-chromosome simulations of the entire great apes history,
+spanning over 10 million years, using a similar approach to the one presented here.
+Even though the memory burden of the simulation was distributed across multiple processes,
+single-species simulations would still use over 100Gb of memory.
+Thus, simulating all the great apes species in a single process would have been impossible.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%
@@ -905,6 +1031,9 @@ as in the prvious section.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{Author contributions}
+
+\bibliographystyle{plainnat}
+\bibliography{./references.bib} % Looks for mybib/references.bib
 
 %%%%%%%%%%%%%%
 \newpage
