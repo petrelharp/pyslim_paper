@@ -955,9 +955,46 @@ With this in hand, we can use \verb|union|
 as in the prvious section.
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Discussion}
+
+The use of ARGs in simulation is powerful,
+since a great deal more information can be recorded about the simulation
+while making the simulation more efficient as well.
+The ARG can be used to exchange information between simulators as well.
+The most commonly useful example of this is perhaps \emph{recapitation},
+which allows the prior history of a forwards-time simulation
+to be simulated \emph{post hoc} with a coalescent simulator.
+However, nuances of exactly which ancestors and what portions of history
+are stored in a given ARG can be tricky.
+In this paper, we've aimed to introduce the reader to the topic,
+to several useful tools from \pyslim,
+and to present several useful techniques.
+
+An important topic we have not covered in detail here is \emph{time units}.
+First, ``time'' in \slim goes forwards, while ``time'' as recorded in the tree sequence goes backwards (i.e., it is ``time ago'').
+In matching these up correctly there are myriad possibilities for off-by-one errors.
+More importantly, in \slim's non-Wright-Fisher models one time unit may not equal one generation,
+and so adjustment to the time units used by \msprime is necessary.
+Both topics are covered in more detail in the \pyslim documentation.
+
+A general theme here (and in simulation work generally)
+is a tradeoff between realism and efficiency.
+Since forwards-time simulations more naturally match real population dynamics,
+it would for most cases be conceptually simpler to implement a single \slim simulation.
+However, many situations we'd like to study lead to computationally intractable simulations,
+and so coalescent simulation becomes useful or even necessary.
+The same trade-off occurs when considering rescaling (CITE).
+A general principle to remember in these cases is that a coalescent simulation is equivalent
+to simulation from a certain neutral model of discrete populations.
+If there are concerns about the validity of the approximation,
+then a good strategy is to adjust the parameters of the approximation (e.g., how long ago recapitation is applied)
+and see if important conclusions are affected.
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{Author contributions}
+
 
 \bibliographystyle{plainnat}
 \bibliography{./references.bib} % Looks for mybib/references.bib
