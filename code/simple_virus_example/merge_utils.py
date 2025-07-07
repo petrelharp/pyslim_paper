@@ -51,6 +51,9 @@ def shared_founder_nodes(ts1, ts2):
     sn2 = []
     for k in f1:
         if k in f2:
+            print(k)
+            print(f1[k])
+            print(f2[k])
             assert f1[k] == f2[k]
             sn1.extend([u for sid in f1[k] for u in map1[sid]])
             sn2.extend([u for sid in f2[k] for u in map2[sid]])

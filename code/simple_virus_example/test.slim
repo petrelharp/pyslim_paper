@@ -13,10 +13,10 @@ initialize() {
 		"N_FOUNDERS", 20,              // average number chosen to start a new infection
 		"REPRODUCTION_BENEFIT", 1.0,   // increase in reproduction rate for m2 mutations
 		"TRANSMISSION_BENEFIT", 1e5,   // increase in transmission probability for m1 mutations
-		"TRANSMISSION_DAYS", c(10, 50), // on which day does transmission happen
+		"TRANSMISSION_DAYS", integer(0), // a list of which day does transmission happen
 		"SAMPLING_DAY", 60,            // final sampling day
 		"NUM_SAMPLES",  10,            // number of samples
-		"OUTPUT_HOST_IDS", c("OUT1", "OUT2"),  // IDs of hosts to output infections for
+		"OUTPUT_HOST_IDS", integer(0), // a list of IDs of hosts to output infections for
 		"HOST_ID", "00",               // this host ID
 		"POP_GROWTH_RATE", 1.0,        // rate of growth of population
 		"K", 1e5     				       // carrying capacity within host
@@ -52,6 +52,7 @@ initialize() {
       // infections are started with X pathogens, on average, where X = N_founders / (1 − exp(−N_founders))
       sim.addSubpop(pop_id, rztpois(1, N_FOUNDERS));
       PARAMS.setValue("FOUNDERS", Dictionary(HOST_ID, c()));
+      PARAMS.setValue("FOUNDING_TIME", Dictionary(HOST_ID, sim.cycle));
    } else {
       catn("\nSTARTING SIMULATION\n");
       // load input file
@@ -61,6 +62,7 @@ initialize() {
       // determine which individuals to keep
       inds_to_keep = metadata.getValue("FOUNDERS").getValue(HOST_ID);
       PARAMS.setValue("FOUNDERS", metadata.getValue("FOUNDERS"));
+      PARAMS.setValue("FOUNDING_TIME", metadata.getValue("FOUNDING_TIME"));
       // transfer founders to a new population and kill everyone else
       old_pops = sim.subpopulations;
       sim.addSubpop(pop_id, 0);
@@ -100,9 +102,11 @@ ABS_TRANSMISSION_DAYS late() {
 	sim.killIndividuals(sim.subpopulations.subsetIndividuals(tagL0 = T));
 	// construct dictionary of infected hosts and viral genomes to be transmitted to each
 	founders = PARAMS.getValue("FOUNDERS");
+	founding_time = PARAMS.getValue("FOUNDING_TIME");
 	for (host in hosts_to_infect, count in N_pathogens, range_end in cumSum(N_pathogens)) {
 		sampled_inds = transmitted_inds[(range_end-count):(range_end-1)];
 		founders.setValue(host, sampled_inds.pedigreeID);
+		founding_time.setValue(host, sim.cycle);
 	}
 }
 
@@ -113,6 +117,7 @@ SAMPLING_DAY late() {
 
 max(c(ABS_TRANSMISSION_DAYS, SAMPLING_DAY)) late() {
 	// write out a tree sequence containing the information needed for all subsequent infections
+	sim.killIndividuals(sim.subpopulations.individuals);
 	sim.treeSeqOutput("sim_" + HOST_ID + ".trees", metadata=PARAMS);
 	sim.simulationFinished();
 }
