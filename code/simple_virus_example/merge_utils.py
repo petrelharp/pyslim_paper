@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 import scipy.sparse
 
-import tskit
+import tskit, pyslim
 
 
 def clear_alive(ts):

@@ -52,6 +52,7 @@ initialize() {
       // infections are started with X pathogens, on average, where X = N_founders / (1 − exp(−N_founders))
       sim.addSubpop(pop_id, rztpois(1, N_FOUNDERS));
       PARAMS.setValue("FOUNDERS", Dictionary(HOST_ID, c()));
+      PARAMS.setValue("FOUNDING_TIME", Dictionary(HOST_ID, sim.cycle));
    } else {
       catn("\nSTARTING SIMULATION\n");
       // load input file
@@ -61,6 +62,7 @@ initialize() {
       // determine which individuals to keep
       inds_to_keep = metadata.getValue("FOUNDERS").getValue(HOST_ID);
       PARAMS.setValue("FOUNDERS", metadata.getValue("FOUNDERS"));
+      PARAMS.setValue("FOUNDING_TIME", metadata.getValue("FOUNDING_TIME"));
       // transfer founders to a new population and kill everyone else
       old_pops = sim.subpopulations;
       sim.addSubpop(pop_id, 0);
@@ -100,9 +102,11 @@ ABS_TRANSMISSION_DAYS late() {
 	sim.killIndividuals(sim.subpopulations.subsetIndividuals(tagL0 = T));
 	// construct dictionary of infected hosts and viral genomes to be transmitted to each
 	founders = PARAMS.getValue("FOUNDERS");
+	founding_time = PARAMS.getValue("FOUNDING_TIME");
 	for (host in hosts_to_infect, count in N_pathogens, range_end in cumSum(N_pathogens)) {
 		sampled_inds = transmitted_inds[(range_end-count):(range_end-1)];
 		founders.setValue(host, sampled_inds.pedigreeID);
+		founding_time.setValue(host, sim.cycle);
 	}
 }
 

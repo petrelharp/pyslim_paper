@@ -13,12 +13,12 @@ def shift_times(ts, dt):
         tables.mutations.append(mutation.replace(time=mutation.time + dt))
     return tables
 
-def reset_time(ts, t, offset=1):
+def reset_time(ts, t):
     """
     Change times in ts so that it matches what would have been written out
     by SLiM in tick `t`.
     """
-    dt = ts.metadata['SLiM']['tick'] - t - offset
+    dt = ts.metadata['SLiM']['tick'] - t
     tables = shift_times(ts, -dt)
     tables.individuals.clear()
     alive_inds = pyslim.individuals_alive_at(ts, dt, stage="late", remembered_stage="late")
@@ -29,8 +29,8 @@ def reset_time(ts, t, offset=1):
             new_flags = ind.flags & ~pyslim.INDIVIDUAL_ALIVE
         tables.individuals.append(ind.replace(flags=new_flags))
     md = tables.metadata
-    md['SLiM']['tick'] = t + offset
-    md['SLiM']['cycle'] = t + offset
+    md['SLiM']['tick'] = t
+    md['SLiM']['cycle'] = t
     tables.metadata = md
     return tables.tree_sequence()
 
