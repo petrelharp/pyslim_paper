@@ -9,7 +9,7 @@ initialize() {
 	initializeTreeSeq();
 	defaults = Dictionary(
 		"SEED", getSeed(),
-		"INFILE", "sim_01.25.trees",                  // optional file to read in start from
+		"INFILE", "",                  // optional file to read in start from
 		"N_FOUNDERS", 20,              // average number chosen to start a new infection
 		"REPRODUCTION_BENEFIT", 1.0,   // increase in reproduction rate for m2 mutations
 		"TRANSMISSION_BENEFIT", 1e5,   // increase in transmission probability for m1 mutations
@@ -17,7 +17,7 @@ initialize() {
 		"SAMPLING_DAY", 60,            // final sampling day
 		"NUM_SAMPLES",  10,            // number of samples
 		"OUTPUT_HOST_IDS", c("OUT1", "OUT2"),  // IDs of hosts to output infections for
-		"HOST_ID", "04",             // this host ID
+		"HOST_ID", "00",               // this host ID
 		"POP_GROWTH_RATE", 1.0,        // rate of growth of population
 		"K", 1e5     				       // carrying capacity within host
 		);
@@ -46,10 +46,11 @@ initialize() {
 // Pathogens infect host
 1 late() {
    // start seed simulation or load an input file
+	pop_id = asInteger(HOST_ID);
    if (INFILE == "") {
       catn("\nSTARTING SEED SIMULATION FROM " + INFILE + "\n");
       // infections are started with X pathogens, on average, where X = N_founders / (1 − exp(−N_founders))
-      sim.addSubpop("p0", rztpois(1, N_FOUNDERS));
+      sim.addSubpop(pop_id, rztpois(1, N_FOUNDERS));
       PARAMS.setValue("FOUNDERS", Dictionary(HOST_ID, c()));
    } else {
       catn("\nSTARTING SIMULATION\n");
@@ -60,12 +61,18 @@ initialize() {
       // determine which individuals to keep
       inds_to_keep = metadata.getValue("FOUNDERS").getValue(HOST_ID);
       PARAMS.setValue("FOUNDERS", metadata.getValue("FOUNDERS"));
-      // kill everyone else - mark individuals to be transmitted with a unique tag
-      p0.individuals.tagL0 = T;
-      sim.individualsWithPedigreeIDs(inds_to_keep).tagL0 = F;
-      if (sum(!p0.individuals.tagL0) != size(inds_to_keep))
-      	stop("Some founding individuals are not present (or alive)!" + paste(inds_to_keep, sep=",") + " != " + paste(p0.individuals.pedigreeID, sep=","));
-      sim.killIndividuals(p0.subsetIndividuals(tagL0 = T));
+      // transfer founders to a new population and kill everyone else
+      old_pops = sim.subpopulations;
+      sim.addSubpop(pop_id, 0);
+      new_pop = sim.subpopulations[sim.subpopulations.id == pop_id];
+      founders = sim.individualsWithPedigreeIDs(inds_to_keep);
+      if (size(founders) != size(inds_to_keep)) {
+         catn("Desired founders: " + paste(inds_to_keep, sep=","));
+         catn("Obtained founders: " + paste(new_pop.individuals.pedigreeID, sep=","));
+      	stop("Some founding individuals are not present (or alive)!");
+      }
+		new_pop.takeMigrants(founders);
+      sim.killIndividuals(old_pops.individuals);
    }
    // track simulation start day
    defineConstant("SIM_START", sim.cycle);		
@@ -83,14 +90,14 @@ ABS_TRANSMISSION_DAYS late() {
 	// determine how many pathogens are needed to infect all hosts
 	N_pathogens = rztpois(length(hosts_to_infect), N_FOUNDERS);
 	// determine mutational status of all pathogens
-	mut_status = p0.individuals.countOfMutationsOfType(m1);
+	mut_status = sim.subpopulations.individuals.countOfMutationsOfType(m1);
 	weights = 1 + (mut_status * TRANSMISSION_BENEFIT); // carrying the mutation confers X% higher probability of being transmitted
-	transmitted_inds = sample(p0.individuals, size = sum(N_pathogens), replace = F, weights=weights);
+	transmitted_inds = sample(sim.subpopulations.individuals, size = sum(N_pathogens), replace = F, weights=weights);
 	sim.treeSeqRememberIndividuals(transmitted_inds); // permanently remember these individuals in subsequent parallel infection steps
 	// kill everyone else - mark individuals to be transmitted with a unique tag
-	p0.individuals.tagL0 = T;
+	sim.subpopulations.individuals.tagL0 = T;
 	transmitted_inds.tagL0 = F;
-	sim.killIndividuals(p0.subsetIndividuals(tagL0 = T));
+	sim.killIndividuals(sim.subpopulations.subsetIndividuals(tagL0 = T));
 	// construct dictionary of infected hosts and viral genomes to be transmitted to each
 	founders = PARAMS.getValue("FOUNDERS");
 	for (host in hosts_to_infect, count in N_pathogens, range_end in cumSum(N_pathogens)) {
@@ -101,7 +108,7 @@ ABS_TRANSMISSION_DAYS late() {
 
 SAMPLING_DAY late() {
 	// also remember some non-transmitted individuals
-	sim.treeSeqRememberIndividuals(p0.sampleIndividuals(rpois(1, NUM_SAMPLES)));
+	sim.treeSeqRememberIndividuals(sim.subpopulations.sampleIndividuals(rpois(1, NUM_SAMPLES)));
 }
 
 max(c(ABS_TRANSMISSION_DAYS, SAMPLING_DAY)) late() {
@@ -113,18 +120,17 @@ max(c(ABS_TRANSMISSION_DAYS, SAMPLING_DAY)) late() {
 // Pathogens replicate within the host
 reproduction() {
 	// choose the target population size based on the specified population growth rate
-	target_pop_size = rztpois(1, p0.individualCount * (1 + POP_GROWTH_RATE));
-	mut_status = p0.individuals.countOfMutationsOfType(m2);
-	num_offspring = rpois(p0.individualCount, POP_GROWTH_RATE * (1 + mut_status * REPRODUCTION_BENEFIT));
-	for (i in p0.individuals, n in num_offspring) {
-		offspring = p0.addCloned(i, count=n);
+	mut_status = sim.subpopulations.individuals.countOfMutationsOfType(m2);
+	num_offspring = rpois(sum(sim.subpopulations.individualCount), POP_GROWTH_RATE * (1 + mut_status * REPRODUCTION_BENEFIT));
+	for (i in sim.subpopulations.individuals, n in num_offspring) {
+		offspring = sim.subpopulations.addCloned(i, count=n);
 	}
 	self.active = 0;
 }
 
 // Individuals have their fitness scaled according to the overall population size (logistic growth)
 2: early() {
-	p0.fitnessScaling = pmin(0.9, K / p0.individualCount);
+	sim.subpopulations.fitnessScaling = pmin(0.9, K / sim.subpopulations.individualCount);
 }
 
 

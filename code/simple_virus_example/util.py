@@ -18,7 +18,7 @@ def reset_time(ts, t, offset=1):
     Change times in ts so that it matches what would have been written out
     by SLiM in tick `t`.
     """
-    dt = ts.metadata['SLiM']['tick'] - t
+    dt = ts.metadata['SLiM']['tick'] - t - offset
     tables = shift_times(ts, -dt)
     tables.individuals.clear()
     alive_inds = pyslim.individuals_alive_at(ts, dt, stage="late", remembered_stage="late")
