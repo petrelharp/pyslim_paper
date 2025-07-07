@@ -13,25 +13,25 @@ def clear_alive(ts):
     return tables.tree_sequence()
 
 
-def shift_times(tree_seq, t_to_add):
-    ts_tables = tree_seq.dump_tables()
+def shift_times(ts, t_to_add):
+    ts_tables = ts.dump_tables()
     ts_tables.nodes.clear()
     ts_tables.mutations.clear()
-    for node in tree_seq.nodes():
+    for node in ts.nodes():
         ts_tables.nodes.append(node.replace(time=node.time + t_to_add))
-    for mutation in tree_seq.mutations():
+    for mutation in ts.mutations():
         ts_tables.mutations.append(mutation.replace(time=mutation.time + t_to_add))
-    new_tree_seq = ts_tables.tree_sequence()
-    return new_tree_seq
+    new_ts = ts_tables.tree_sequence()
+    return new_ts
 
 
-def merge_ts(tree_seq1, tree_seq2):
-    node_map = node_mapping(tree_seq1, tree_seq2)
-    merged = tree_seq1.dump_tables()
-    merged.union(tree_seq2.tables, node_map, add_populations = False)
+def merge_ts(ts1, ts2):
+    node_map = node_mapping(ts1, ts2)
+    merged = ts1.dump_tables()
+    merged.union(ts2.tables, node_map, add_populations = True)
     md = merged.metadata
     md['SLiM']['user_metadata']['FOUNDERS'][0].update(
-            tree_seq2.metadata['SLiM']['user_metadata']['FOUNDERS'][0]
+            ts2.metadata['SLiM']['user_metadata']['FOUNDERS'][0]
     )
     merged.metadata = md
     return merged.tree_sequence()
@@ -51,9 +51,6 @@ def shared_founder_nodes(ts1, ts2):
     sn2 = []
     for k in f1:
         if k in f2:
-            print(k)
-            print(f1[k])
-            print(f2[k])
             assert f1[k] == f2[k]
             sn1.extend([u for sid in f1[k] for u in map1[sid]])
             sn2.extend([u for sid in f2[k] for u in map2[sid]])
