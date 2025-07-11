@@ -1,0 +1,27 @@
+// set up a simple neutral simulation
+initialize() {
+	initializeSLiMModelType("WF");
+	initializeTreeSeq();
+
+	// specify a mutation type
+	initializeMutationRate(1e-8);
+	initializeMutationType("m1", 0, "f", 0);
+
+	// specify a genomic element type
+	initializeGenomicElementType("g1", m1, 1.0);
+	
+	// specify a chromosome of length 100 kb with uniform recombination
+	initializeGenomicElement(g1, 0, 99999);
+	initializeRecombinationRate(1e-8);
+}
+
+// define a two-population model of 100 individuals each
+1 early() {
+	sim.addSubpop("p1", 100);
+	sim.addSubpop("p2", 100);
+}
+
+// write out tree sequence at the end of the simulation
+100 late() {
+	sim.treeSeqOutput("recap_example.trees");
+}
