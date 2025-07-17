@@ -247,7 +247,7 @@ This is less burdensome than remembering everyone alive, as individuals can stil
 nodes (which are not marked as samples) are no longer ancestral.
 You can \emph{retain} individuals in this way by using
 \verb|treeSeqRememberIndividuals(..., permanent=F)|.
-Since a retained individual’s nodes are not considered samples,
+Since a retained individual's nodes are not considered samples,
 they are subject to the standard removal 'rules' of simplification.
 It is therefore possible to end up with an individual containing only one genome, as shown in the diagram.
 However, as soon as both nodes of a retained individual have been lost,
@@ -298,7 +298,7 @@ Recapitation is performed to the tree sequence that is generated after a SLiM si
 This may be suitable when the SLiM step does not require the ancestral genotypes for anything, such as determining individual fitness,
 and all that is needed are realistic genealogical relationships. Functionally, recapitation conducts a coalescent simulation
 starting with the first-generation ancestral nodes (SLiM time 0) that have not yet coalesced.
-This is discussed in more detail in \citet{kelleher} and \citet{slim_manual}.
+This is discussed in more detail in \citet{baumdicker_efficient_2022} and \citet{haller2016slim}.
 
 Figure~\ref{fig:recap_simp}A illustrates this process: imagine that, at some sites, one or more samples do not share
 a common ancestor within the SLiM simulated portion of history (shown in blue).
@@ -319,14 +319,13 @@ Recapitation within a single randomly-mating population of a given size
 can be achieved with a simple call to \verb|pyslim.recapitate(ts, ancestral_size=N)|
 Since pyslim.recapitate is a wrapper around
 msprime.sim\_ancestry, we could recapitate our tree with any model that can be represented by \msprime code
-\citep{baumdicker}. For instance, it is possible to recapitate a SLiM-generated tree sequence with a fluctuating population size
+\citep{baumdicker_efficient_2022}. For instance, it is possible to recapitate a SLiM-generated tree sequence with a fluctuating population size
 or non-uniform genetic map by simply passing in the relevant arguments.
 
 Setting up a demographic model in \msprime that is consistent and compatible with a particular SLiM simulation requires
 understanding some of the finer details of each of these software packages, so here we will present a concrete example.
 Consider the following two-population model in SLiM:
 
-\begin{lstlisting}{language=slim}
 % add init stuff
 \begin{minted}[fontsize=\small, linenos, bgcolor=gray!10]{slim}
 1 early() {
@@ -334,11 +333,10 @@ Consider the following two-population model in SLiM:
    sim.addSubpop("p2", K);
 }
 %% add write out ts
-\end{lstlisting}
 \end{minted}
 \comment{TODO provide link to or name of full slim recipe}
 
-If the resulting tree sequence is stored in the file \texttt{recap_example.trees},
+If the resulting tree sequence is stored in the file \texttt{recap\_example.trees},
 then examining the populations using the shell, we see:
 %\begin{lstlisting}{language=bash}
 %> tskit populations recap_example.trees
@@ -348,13 +346,13 @@ then examining the populations using the shell, we see:
 %2	{'name': 'p2', 'slim_id': 2}
 %\end{lstlisting}
 %%% SSG - my output looks a little different, maybe because i'm running SLiM 5?
-\begin{lstlisting}{language=bash}
+\begin{minted}[fontsize=\small, linenos, bgcolor=gray!10]{bash}
 > tskit populations recap_example.trees
 id	metadata
 0	None
 1	{'migration_records': [], 'name': 'p1', 'sex_ratio': 0.0, 'slim_id': 1}
 2	{'migration_records': [], 'name': 'p2', 'sex_ratio': 0.0, 'slim_id': 2}
-\end{lstlisting}
+\end{minted}
 
 There are \emph{three} populations, but the first one is unused, because \slim stores population \texttt{pX} as population \texttt{X}.
 To be compatible with this tree sequence, the \msprime demographic model will need to include three populations as well.
@@ -366,12 +364,12 @@ numbering our populations from 'p3', we would end up with a total of three 'dumm
 Regardless of the population numbering scheme used, \msprime provides a built-in method of seamlessly generating a
 compatible demography given a particular starting tree sequence file. The following code reads the tree sequence ``ts''
 and creates a basic demography from the information contained therein: 
-\begin{lstlisting}{language=py}
+\begin{minted}[fontsize=\small, linenos, bgcolor=gray!10]{python}
 %% read recap_example.trees as ts?
 demography = msprime.Demography.from_tree_sequence(ts, initial_size=100)
-\end{lstlisting}
+\end{minted}
 
-The resulting demography specifies 3 populations with an effective size of 100 individuals each. Not that the initial_size
+The resulting demography specifies 3 populations with an effective size of 100 individuals each. Not that the \verb|initial_size|
 does not have to match what we specified in our SLiM simulation, because it specifies the size of the generation
 immediately preceding the SLiM phase. We could theoretically try to recapitate our tree sequence with this
 demography, but if we did so, \msprime would run forever. This is because we have not allowed for any way for
@@ -380,7 +378,7 @@ lineages from p1 to coalesce with lineages in p2, or vice versa. Therefore, the 
 To remedy this, we need to provide a migration path that allows lineages from different populations to coalesce.
 Let us specify one-directional migration from \p1 to \p2, such that lineages in \p2 move into \p1 as we move backwards in time
 starting 100 generations before the start of the SLiM simulation. Note here that 'time' here must be specified in terms of the coalescent process:
-\begin{lstlisting}{language=py}
+\begin{minted}[fontsize=\small, linenos, bgcolor=gray!10]{python}
 demography.add_migration_rate_change(
     time=ts.metadata['SLiM']['tick'] + 100,
     rate=0.1, source="p2", dest="p1",
@@ -431,7 +429,7 @@ not under stabilizing selection in the wild. To implement this, we will:
 
 Suppose we run the following coalescent simulation in \msprime to produce the tree sequence \verb|ts|:
 
-\begin{listing}[H]
+\begin{minted}[fontsize=\small, linenos, bgcolor=gray!10]{python}
   demog_model = msprime.Demography()
   demog_model.add_population(initial_size=1_000)
   ts = msprime.sim_ancestry(
@@ -440,7 +438,7 @@ Suppose we run the following coalescent simulation in \msprime to produce the tr
           random_seed=5,
           recombination_rate=1e-8,
           sequence_length = 90_000_000)
-\end{listing}
+\end{minted}
 
 This tree sequence is a complete record of the genealogical information relating specific individuals
 and nodes, but is missing other information that  SLiM requires to read it in and use it as an initial state.
@@ -449,27 +447,23 @@ In fact, this function goes beyond simply annotating to ensure that the \msprime
 is compatible with SLiM by also having the user define the model type (Wright-Fisher or non-Wright-Fisher)
 and specify how coalescent- and SLiM-time\ should be aligned.
 
-\begin{listing}[H]
-  \begin{minted}[fontsize=\small, linenos, bgcolor=gray!10]{python}
-    ats = pyslim.annotate(ts, model_type="WF", tick=1, stage="late")
-  \end{minted}
-\end{listing}
+\begin{minted}[fontsize=\small, linenos, bgcolor=gray!10]{python}
+ats = pyslim.annotate(ts, model_type="WF", tick=1, stage="late")
+\end{minted}
 
 This code fills in the default values for every element of the tree sequence that requires it. 
 In this case, that includes all individuals, all nodes that exist within living individuals, and all
 populations referenced by nodes. We can see exactly what these defaults
-are for any given component of the tree sequence by using 'default_slim_metadata':
+are for any given component of the tree sequence by using \verb|default_slim_metadata|:
 
-\begin{listing}[H]
-  \begin{minted}[fontsize=\small, linenos, bgcolor=gray!10]{python}
-    pyslim.default_slim_metadata("individual")
-    pyslim.default_slim_metadata("node")
-    pyslim.default_slim_metadata("population")
-  \end{minted}
-\end{listing}
+\begin{minted}[fontsize=\small, linenos, bgcolor=gray!10]{python}
+pyslim.default_slim_metadata("individual")
+pyslim.default_slim_metadata("node")
+pyslim.default_slim_metadata("population")
+\end{minted}
 
-We can see that pyslim.annotate will designate all individuals as hermaphroditic (individual 'sex' is -1) and
-all chromosomes as autosomal (node 'genome_type' is 0). It is possible to change these values in order to,
+We can see that \verb|pyslim.annotate| will designate all individuals as hermaphroditic (individual \verb|sex| is -1) and
+all chromosomes as autosomal (node \verb|genome_type| is 0). It is possible to change these values in order to,
 for example, define sexes. Below, we show how to do this specifically for mutations, but other modifications
 can be done in a similar manner.
 
@@ -481,10 +475,10 @@ mutations per base pair per generation. Further, let us assume that 99\% of all 
 are neutral. If we were doing this simulation entirely within a forward-in-time framework with a long
 burn-in, we could have achieved this outcome using the following \slim code:
 
-\begin{lstlisting}{language=slim}
+\begin{minted}[fontsize=\small, linenos, bgcolor=gray!10]{slim}
         initializeMutationType("m2", 0.5, "f", 0.001);
         initializeMutationRate(3e-10);
-\end{lstlisting}
+\end{minted}
 
 This code defines a mutation type \verb|m2| that has a dominance coefficient of 0.5 and a fixed selection
 coefficient of 0.001 (the latter can be made more flexible, e.g. drawn from a distribution - see \slim manual).
@@ -492,12 +486,10 @@ Notice, too, that we have set these non-neutral mutations to arise at a rate of 
 or 1\% of our desired overall mutation rate of 3e-8. To approximate this result using \msprime, we must first
 use the function \verb|SLiMMutationModel| to apply some mutations to the existing tree sequence:
 
-\begin{listing}[H]
-  \begin{minted}[fontsize=\small, linenos, bgcolor=gray!10]{python}
-    mut_model = msprime.SLiMMutationModel(type=2)
-    mts = msprime.sim_mutations(ats, rate=3e-10, model=mut_model)
-  \end{minted}
-\end{listing}
+\begin{minted}[fontsize=\small, linenos, bgcolor=gray!10]{python}
+mut_model = msprime.SLiMMutationModel(type=2)
+mts = msprime.sim_mutations(ats, rate=3e-10, model=mut_model)
+\end{minted}
 
 The \verb|type=2| argument denotes that the mutations will be of type ``m2'' in SLiM, which will also
 need to be explicitly initialized in the forward-in-time phase of the simulation (see below).
@@ -509,7 +501,6 @@ a particular tree sequence we need to instead copy its underlying tables, modify
 and then re-generate the tree sequence. Below, we show how to apply this procedure to modify the
 selection coefficient for all existing mutations:
 
-\begin{listing}[H]
   \begin{minted}[fontsize=\small, linenos, bgcolor=gray!10]{python}
     tables = mts.dump_tables()
     tables.mutations.clear()
@@ -521,19 +512,16 @@ selection coefficient for all existing mutations:
 
     sts = tables.tree_sequence()
   \end{minted}
-\end{listing}
 
 To reiterate, this code first copied all the tables that describe the tree sequence \verb|mts|, cleared all the
 information in the mutations table, and then added each existing mutation back with a new selection
 coefficient. Finally, it generated a new tree sequence with this new mutation table. If we print a single
 mutation from the 'before' and 'after' tree sequences, we can see the change:
 
-\begin{listing}[H]
   \begin{minted}[fontsize=\small, linenos, bgcolor=gray!10]{python}
   mts.mutation(0)
   sts.mutation(0)
   \end{minted}
-\end{listing}
 
 As we intended, every piece of information about this mutation is the same except the selection coefficient. The resulting tree
 sequence can now be read into \slim in order to proceed with the forward-in-time phase of our coalescent simulation.
@@ -547,45 +535,43 @@ position to 'stack' on top of each other. However, even though mutations technic
 format stores the information required to represent recurrent mutation events in the data associated with each mutation.
 Consider the following example of a 'double hit' mutation:
 
-\begin{listing}[H]
-    \begin{minted}[fontsize=\small, linenos, bgcolor=gray!10]{python}
+\begin{minted}[fontsize=\small, linenos, bgcolor=gray!10]{python}
 Mutation(id=295, site=180, node=43931, derived_state='193,194',
-    parent=294, time=8.74,
-    metadata={'mutation_list': [
-        {'mutation_type': 2, 'selection_coeff': 0.001, 'subpopulation': -1, 'slim_time': -559, 'nucleotide': -1},
-        {'mutation_type': 2, 'selection_coeff': 0.001, 'subpopulation': -1, 'slim_time': -7, 'nucleotide': -1}
-    ]})
-    \end{minted}
-\end{listing}
+parent=294, time=8.74,
+metadata={'mutation_list': [
+{'mutation_type': 2, 'selection_coeff': 0.001, 'subpopulation': -1, 'slim_time': -559, 'nucleotide': -1},
+{'mutation_type': 2, 'selection_coeff': 0.001, 'subpopulation': -1, 'slim_time': -7, 'nucleotide': -1}
+]})
+\end{minted}
 
-There are two parts of this record that give away the fact that this was a recurrent mutation. First, the recorded 'derived_state' is
-actually two distinct states separated by a comma. Second, the 'mutation_list' element of the mutation's metadata lists two distinct
+There are two parts of this record that give away the fact that this was a recurrent mutation. First, the recorded \verb|derived_state| is
+actually two distinct states separated by a comma. Second, the \verb|mutation_list| element of the mutation's metadata lists two distinct
 events, one occurring 559 ticks ago and one occurring 7 ticks ago. Technically, this mutation corresponds only to the most recent
 mutation event, but \tskit keeps a detailed record of what happened prior to this. This allows \slim to reconstruct these events in order
 to apply the appropriate stacking policy if this tree sequence is used as an initial state for a forward-in-time simulation. So, for example,
-we can infer that a mutation occurred at this site at slim_time -559 producing a derived state of 193, and then another mutation
-occurred at the same site at slim_time -7 producing a derived state of 194. If another mutation occurred in a different node carrying
+we can infer that a mutation occurred at this site at \verb|slim_time| $-559$ producing a derived state of 193, and then another mutation
+occurred at the same site at \verb|slim_time| $-7$ producing a derived state of 194. If another mutation occurred in a different node carrying
 the same initial mutation, it would be recorded as a separate mutation in the mutation tables. Therefore, one can think of each mutation
 record as representing a distinct lineage of mutations all occurring at a particular genomic location. This is why, when modifying
 the selection coefficients of each mutation earlier in this section, we had to have two nested loops - one iterated over each entry of the
-mutation table while the second updated each element of the associated 'mutation_list'.
+mutation table while the second updated each element of the associated \verb|mutation_list|.
 
 Sharp-eyed readers will note that the ``time'' of the mutation given by the tree sequence (8.74 generations ago) does not exactly
-correspond to the ``\slim time'' recorded in metadata (-7 generations in the future); in general this conversion is ``rounded and sometimes
+correspond to the \verb|slim_time| recorded in metadata ($-7$ generations in the future); in general this conversion is ``rounded and sometimes
 off by one, depending on the model type''. For a detailed discussion of how time is converted between the tree sequence and the SLiM
-model, see the pyslim documentation.
+model, see the \pyslim documentation.
 
 \subsection*{Loading into SLiM}
 
 We can finally move onto the forward-in-time component of our hybrid simulation using \slim. First, we will load in the tree sequence we just
-generated using \msprime and modified using \pyslim and \tskit from a file called 'init.trees'. We need to ensure that everything matches
+generated using \msprime and modified using \pyslim and \tskit from a file called \verb|init.trees|. We need to ensure that everything matches
 across this tree sequence and the SLiM model that we are setting up. Specifically, the genome length defined in SLiM must be equal to the
-result of the 'sequence_length' property of the tree sequence to be loaded and used as an initial state. We will also define an \verb|m2|
+result of the \verb|sequence_length| property of the tree sequence to be loaded and used as an initial state. We will also define an \verb|m2|
 mutation type to match the process we used to generate mutations for the tree sequence. Additionally, we will define a placeholder mutation
 type \verb|m1| for neutral mutations, to be added later. The population size(s) are automatically inferred by \slim from the tree sequence,
 but we will make a point to ``Remember'' all the individuals who are alive at the start of the simulation to facilitate downstream analysis.
 
-\begin{lstlisting}[language=slim]
+\begin{minted}[fontsize=\small, linenos, bgcolor=gray!10]{slim}
 initialize()
 {
     initializeSLiMModelType("WF");
@@ -704,14 +690,14 @@ represents the joint history of all species.
 \subsection{Parallel simulation of branches}
 
 We will use the following \slim script to simulate the history of each species, represented by its own branch, in our phylogeny. Here, each species can have a different
-(but fixed) population size ('popsize') and total duration ('num_gen'). Additionally, we will model deleterious mutations accumulating across the entire genome at a fixed rate.
+(but fixed) population size (\verb|popsize|) and total duration (\verb|num_gen|). Additionally, we will model deleterious mutations accumulating across the entire genome at a fixed rate.
 
 \begin{minted}[fontsize=\small, linenos, bgcolor=gray!10]{slim}
   \inputminted[breaklines, breakautoindent=true, breakanywhere=true, fontsize=\small, linenos, bgcolor=gray!10]{javascript}{./code/parallelizing_phylogeny/simulate_branch.slim}
 \end{minted}
 
-Notice that, in addition to 'popsize' and 'num_gen', the variables 'infile' and 'outfile' are left undefined in this SLiM script. This allows the relationship between branches, and the
-resulting tree sequences, to be explicitly defined. As a result, this single SLiM model can represent every species simply by passing the appropriate values of 'infile' and 'outfile'.
+Notice that, in addition to \verb|popsize| and \verb|num_gen|, the variables \verb|infile| and \verb|outfile| are left undefined in this SLiM script. This allows the relationship between branches, and the
+resulting tree sequences, to be explicitly defined. As a result, this single SLiM model can represent every species simply by passing the appropriate values of \verb|infile| and \verb|outfile|.
 We can do this by recoding the phylogeny depicted in Figure~\ref{fig:phylo} as a table:
 
 \begin{table}[h]
@@ -726,8 +712,8 @@ We can do this by recoding the phylogeny depicted in Figure~\ref{fig:phylo} as a
     \end{tabular}
 \end{table}
 
-For each branch, the presence or absence of \verb|infile| tells \slim whether a previous branch exists or not. For the 'root' branch of our phylogeny, there is no 'parent'; this is the branch
-that is ancestral to all other branches. For all other branches, \slim will read in the 'parent' tree sequence and use the living individuals to create a new population, adjusting the
+For each branch, the presence or absence of \verb|infile| tells \slim whether a previous branch exists or not. For the \verb|root| branch of our phylogeny, there is no \verb|parent|; this is the branch
+that is ancestral to all other branches. For all other branches, \slim will read in the \verb|parent| tree sequence and use the living individuals to create a new population, adjusting the
 final population size based on the corresponding value in the table. When initializing a SLiM simulation using an existing tree sequence, the starting tick will be updated
 based on the time encoded in that tree sequence. Therefore, we also define the ending tick of the simulation as the start time plus the total branch length (\verb|num_gens|),
 instead of the branch length itself.
@@ -745,7 +731,7 @@ the appropriate parameters to our generic \verb|simulate_branch.slim| script.
 \inputminted[breaklines,fontsize=\small, breakanywhere=true, breakautoindent=true, linenos, bgcolor=gray!10]{basemake}{./code/parallelizing_phylogeny/parallel_sims.make}
 
 This script essentially recodes our original phylogeny through a list of 'rules' that define each parent-child relationship. For example, the child nodes 'A.trees' and 'B.trees' both
-rely on the internal node 'I.trees', which in turn relies on the ultimate ancestral branch 'root.trees'. Note that our use of 'node' in the previous sentence refers to the nodes of the
+rely on the internal node 'I.trees', which in turn relies on the ultimate ancestral branch 'root.trees'. Note that our use of \verb|node| in the previous sentence refers to the nodes of the
 phylogeny and not of any particular tree sequence. Each rule in the Make file also specifies how to generate the output given the required input through a single line of SLiM code.
 
 We can then execute this Make file using the following bash code, in which the -j argument specifies the maximum number of simulations to run simultaneously:
@@ -767,13 +753,13 @@ Figure~\ref{fig:union} illustrates how this works.
     \end{figure}
 
 The key to correctly combining these disparate tree sequences is to identify which parts of each pair of tree sequences are equivalent to each other. To do that, union requires
-a 'map' that matches shared nodes across the two tree sequences. Luckily, SLiM stores a value called 'slim_id' in the metadata of each node that it produces. We can use this
-information to identify nodes that are shared across multiple trees. However, this is not sufficient to identify a positive match. That is because while 'slim_id' values are unique
+a 'map' that matches shared nodes across the two tree sequences. Luckily, SLiM stores a value called \verb|slim_id| in the metadata of each node that it produces. We can use this
+information to identify nodes that are shared across multiple trees. However, this is not sufficient to identify a positive match. That is because while \verb|slim_id| values are unique
 within a given SLiM run, this is not necessarily the case when running simulations in parallel. When SLiM loads a tree sequence in order to continue a simulation, it will start assigning
-'slim_id' values to new nodes using the last 'slim_id' value present in the ancestral tree sequence as a starting point. When more than one simulation is initiated with the same
-ancestral tree sequence and the resulting tree sequences are merged back together, it is likely for the same 'slim_id' to be used to refer to different nodes. For that reason, we
+\verb|slim_id| values to new nodes using the last \verb|slim_id| value present in the ancestral tree sequence as a starting point. When more than one simulation is initiated with the same
+ancestral tree sequence and the resulting tree sequences are merged back together, it is likely for the same \verb|slim_id| to be used to refer to different nodes. For that reason, we
 will use a second criterion, node, age to identify equivalent nodes. The following function constructs a 'node map' that relates two tree sequences, \verb|other| and \verb|ts|, by
-first identifying nodes that arose before the \verb|split_time| of the two branches and then by searching for a 'slim_id' match. This code could be made easier to read by iterating
+first identifying nodes that arose before the \verb|split_time| of the two branches and then by searching for a \verb|slim_id| match. This code could be made easier to read by iterating
 over nodes, but the following numpy-based version is much faster:
 
 \begin{minted}[fontsize=\small, linenos, bgcolor=gray!10]{python}
@@ -895,19 +881,14 @@ The key, then, is to store only the information that is critical for piecing the
 solution we present achieves this by generating a single output tree sequence that contains all the samples required to represent all downstream transmission events.
 We execute our solution by making use of advanced SLiM properties, such as tags and top-level metadata, as well as additional \pyslim functions.
 
-For a host infection that transmits to multiple downstream hosts, the SLiM simulation starts by loading the input tree sequence, if specified. The simulation proceeds
-with the pathogen reproducing  
-
-
-that contains multiple marked sets of individuals that will initiate the subsequent set of infections
-
-to reuse the same output tree sequence, which will carry the 'time' associated with the final infection, to initiate downstream infections that start at different times.
+For a host infection that transmits to multiple downstream hosts, the SLiM simulation starts by loading the input tree sequence, if specified.
+The simulation proceeds with the pathogen reproducing that contains multiple marked sets of individuals that will initiate the subsequent set of infections to reuse the same output tree sequence,
+which will carry the 'time' associated with the final infection,
+to initiate downstream infections that start at different times.
 
 
 A major difference arises when a host goes on to transmit to more than
 one host. 
-
-
 To do this, we have a \slim script that describes dynamics within a single host.
 This script begins by loading in a tree sequence
 that contains the pathogen individual(s) that initiated the infection and their history,
@@ -974,7 +955,7 @@ This framework makes it feasible to represent an extremely large pathogen (censu
 creates in some unique challenges. First, we have to figure out how to stitch together the multiple tree sequences
 that will result from this process by coming up with a way to identify shared subsets of multiple tree sequences.
 
-Let us also imagine that there exists a genetic variant in the pathogen population that underlies a life history trade-off between replication and transmissibility; one allele allows the individual carrying it to reproduce at a faster rate while the alternate allele increases an individual’s likelihood of being transmitted to a new host. This kind of trade-off has been observed in influenza, HIV, and COVID-19 [cite], so this kind of model could shed light on the evolutionary dynamics of these viruses…
+Let us also imagine that there exists a genetic variant in the pathogen population that underlies a life history trade-off between replication and transmissibility; one allele allows the individual carrying it to reproduce at a faster rate while the alternate allele increases an individual's likelihood of being transmitted to a new host. This kind of trade-off has been observed in influenza, HIV, and COVID-19 [cite], so this kind of model could shed light on the evolutionary dynamics of these viruses…
 
 representing the massive size and complex structure of such a population.
 
