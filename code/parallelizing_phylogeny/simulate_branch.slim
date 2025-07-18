@@ -1,10 +1,10 @@
 // The following constants need to be defined:
-// - outfile: path to save the tree sequence of the simulation.
+// - outfile: path to save the resulting tree sequence to.
 // - popsize: population size.
-// - num_gens: run simulation for num_gens ticks.
-// - infile: a string with path to tree sequence to start from; optional.
-initialize()
-{
+// - popname: the name of the population.
+// - num_gens: number of generations to run for.
+// - infile: path to tree sequence to start from; can be ''.
+initialize() {
     initializeSLiMModelType("WF");
     initializeTreeSeq();
     initializeMutationRate(1e-8);
@@ -14,28 +14,21 @@ initialize()
     initializeRecombinationRate(1e-9);
 }
 
-1 late() {
+1 late() { // reloading should happen in late()
     // if no input tree sequence is provided, then start a subpopulation
     if (infile == "") {
         p = sim.addSubpop("p1", popsize);
     } else {
-        // reloading must happen in late()
         sim.readFromPopulationFile(infile);
         parent = sim.subpopulations[0];
         p = sim.addSubpopSplit(max(sim.subpopulations.id) + 1, popsize, parent);
         parent.setSubpopulationSize(0);
     }
     p.name = popname;
+    defineConstant("END", community.tick + num_gens);
 }
 
-// schedule the end of the simulation
-1 late() {
-    finaltick = num_gens + community.tick;
-    community.rescheduleScriptBlock(s0, ticks=finaltick);
-}
-
-// event that saves the tree sequence
-s0 1000 late() {
+END late() {
     sim.treeSeqRememberIndividuals(sim.subpopulations.individuals);
     sim.treeSeqOutput(outfile);
 }
