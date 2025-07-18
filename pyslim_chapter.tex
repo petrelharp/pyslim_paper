@@ -1010,41 +1010,37 @@ power of the ARG.
 %%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{Discussion}
 
-Moving beyond simulating genotype data to simulating full ARGs represents a 
+Moving beyond simulating genotype data to simulating full ARGs represents a major step forward for evolutionary genomic inference. ARGs are capable of storing a great
+deal more information about a population's evolutionary history as well as making simulation more efficient \citep{kelleher2016efficient}. Information can also be passed
+between different simulations via the ARG, which enables hybrid simulations that combine both forward- and backward-in-time components as well as parallel simulations.
+In this chapter, we have sought to introduce readers to this topic and provide a small glimpse into the potential of these methods to expand the scope of evolutionary simulation
+more broadly. Additionally, we have provided practical vignettes to introduce \pyslim, a software packages that provides many functions to make model development and
+analysis more seamless.
 
-The use of ARGs in simulation is powerful,
-since a great deal more information can be recorded about the simulation
-while making the simulation more efficient as well \citep{kelleher2016efficient}.
-The ARG can be used to exchange information between simulators as well.
-The most commonly useful example of this is perhaps \emph{recapitation},
-which allows the prior history of a forwards-time simulation
-to be simulated \emph{post hoc} with a coalescent simulator.
-However, nuances of exactly which ancestors and what portions of history
-are stored in a given ARG can be tricky.
-In this chapter, we've aimed to introduce the reader to the topic,
-to several useful tools from \pyslim,
-and to present several useful techniques.
+One aspect of simulations that can present a suite of potential difficulties is \emph{time unit conversion}. As we discussed, forward- and backward-in-time approaches polarize time
+differently, with the zero time point being the first or last generation of a simulation, respectively. This can sometimes result in off-by-one errors when combining a forward-in-time
+step to a coalescent step. However, time can be much more complex than this, particularly when using \slim, which allows for much more fine-grained representations of time
+(see \slim chapter?). Most importantly, users should be aware that for non-Wright-Fisher models in \slim, a single tick may not necessarily equal one generation, which has
+implications for conducting hybrid simulation. For example, recombination or mutation rates may need to be adjusted in cases where the meaning of a time unit fundamentally
+changes across different phases of the simulation. This complex topic is covered in more detail in the \pyslim documentation.
 
-An important matter we have not covered in detail here is \emph{time units}.
-First, ``time'' in \slim goes forwards, while ``time'' as recorded in the tree sequence goes backwards (i.e., it is ``time ago'').
-In matching these up correctly there are myriad possibilities for off-by-one errors.
-More importantly, in \slim's non-Wright-Fisher models one time unit may not equal one generation,
-and so adjustment to the time units used by \msprime is necessary.
-Both these cases are covered in more detail in the \pyslim documentation.
+An overarching theme of our chapter, and of evolutionary simulations more general, is the trade-off between realism and efficiency. Forward-in-time simulations can be fashioned to
+more naturally match real population dynamics, but this generally comes at the cost of speed. On the other hand, coalescent simulations make many assumptions, many of which
+are unrealistic, in exchange for faster runtimes. The same type of trade-off occurs when considering rescaling \citep{cury_simulation_2022,dabi_population_2025}. Here, we describe
+how users can begin to achieve the best of both worlds, outlining several examples that leverage hybrid approaches and parallelization to model scenarios that would otherwise be
+computationally intractable.
 
-A general theme here (and in simulation work generally)
-is a tradeoff between realism and efficiency.
-Since forwards-time simulations more naturally match real population dynamics,
-it would for most cases be conceptually simpler to implement a single \slim simulation.
-However, many situations we'd like to study lead to computationally intractable simulations,
-and so coalescent simulation becomes useful or even necessary.
-The same trade-off occurs when considering rescaling \citep{cury_simulation_2022,dabi_population_2025}.
-A general principle to remember in these cases is that a coalescent simulation is equivalent
-to simulation from a certain neutral model of discrete populations.
-If there are concerns about the validity of the approximation,
-then a good strategy is to adjust the parameters of the approximation (e.g., how long ago recapitation is applied)
-and see if important conclusions are affected.
+While approximations are always necessary in modeling, advances in simulation and ARG software have gone along way to increase realism. For example, we discuss how we
+can use a coalescent phase to reduce the burden of simulating a burn-in period. As a result, ancient events occur under a much less realistic model, but this may be acceptable in
+certain situation. As with all cases where the validity of a particular approximation may be questionable, a good strategy is to adjust its parameters (e.g., the duration of the
+forward-in-time phase prior to recapitation) to see if important conclusions are affected.
 
+
+
+
+
+
+THE END :)
 
 %%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{Author contributions}
