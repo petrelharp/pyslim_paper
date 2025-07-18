@@ -967,6 +967,11 @@ before we attempt to initiate the next set of infections. The following python s
 it marks the necessary founder individuals as 'alive' and turns back time to the precise moment of transmission. The latter step is crucial for all but the very last transmission
 event from a given host, as the output tree sequence's 'time' property will correspond to the final tick of the simulation.
 
+%% insert python script
+% set flags of the correct individuals to 'alive'
+% run pyslim.reset_time() function (to be written?)
+%%%
+
 Similar to the previous example, we can run our simulation in parallel using a job scheduler like Make. See full example on github? appendix? At the end of this process, we
 also have the same problem of merging multiple tree sequences into a single one. In our previous example, we used the split time between two branches to disambiguate
 distinct nodes that might happen to share a 'slim_id'. We could theoretically use the same approach here, but we will instead demonstrate an alternative method that is equally
@@ -991,20 +996,21 @@ use of a second id that is unique to each infection in order to correctly identi
 % code? or just put on github?
 %%%
 
-LEFTOVER TOPICS:
-- transmission/reproduction trade-off case study
-- conclusion
+The framework we outline here makes it possible to model the evolution of very large and complex pathogen meta-populations in order to understand how both among-host
+and within-host factor impact these processes. For example, we can use our model to develop expectations for how pathogens evolve under variable selection pressures. Let
+us imagine that there exists a genetic variant in the pathogen population that underlies a life history trade-off between replication and transmissibility; one allele allows the
+individual carrying it to reproduce at a faster rate while the alternate allele increases an individual's likelihood of being transmitted to a new host. This kind of trade-off has been
+observed in influenza, HIV, and COVID-19 [cite], but would be challenging to model realistically without parallelization. Therefore, we present an extension of our framework
+that can accommodate a transmission-reproduction trade-off within the host on github(?), and show how this process can impact the tree sequence.
 
-This framework makes it feasible to represent an extremely large pathogen (census) population size, but it also
-creates in some unique challenges. First, we have to figure out how to stitch together the multiple tree sequences
-that will result from this process by coming up with a way to identify shared subsets of multiple tree sequences.
-
-Let us also imagine that there exists a genetic variant in the pathogen population that underlies a life history trade-off between replication and transmissibility; one allele allows the individual carrying it to reproduce at a faster rate while the alternate allele increases an individual's likelihood of being transmitted to a new host. This kind of trade-off has been observed in influenza, HIV, and COVID-19 [cite], so this kind of model could shed light on the evolutionary dynamics of these viruses…
-
-representing the massive size and complex structure of such a population.
+Parallelizing forward-in-time models represents a powerful approach to increasing the complexity and realism of evolutionary models, but introduces some additional challenges.
+Luckily, there now exists a coherent software ecosystem, which includes \slim, \tskit, and \pyslim, that allows users to overcome these challenges in order to leverage the full
+power of the ARG.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{Discussion}
+
+Moving beyond simulating genotype data to simulating full ARGs represents a 
 
 The use of ARGs in simulation is powerful,
 since a great deal more information can be recorded about the simulation
