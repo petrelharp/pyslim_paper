@@ -1,9 +1,10 @@
-Outline:
+# Bridging forward-in-time and coalescent simulations using pyslim
 
-1.   intro: what's pyslim generally do; what are some use cases for it; follow on from SLiM chapter (murillo)
-2.   what's SLiM record in the tree sequence (from https://tskit.dev/pyslim/docs/latest/introduction.html) (peter)
-3.   recapitation:https://tskit.dev/pyslim/docs/latest/tutorial.html#recapitation-with-migration-between-more-than-one-population  (peter)
-4.   generating initial diversity with msprime: https://tskit.dev/pyslim/docs/latest/vignette_coalescent_diversity.html (murillo) - remember to link in to Ben's SLiM chapter
-5.   parallelizing across branches: https://tskit.dev/pyslim/docs/latest/vignette_parallel_phylo.html (murillo)
-6.   alternating life cycle (something short from Shyamalika?) (shyamalika)
-7.   conclusion, looking forwards to the future (e.g., (6) could be a lot easier; better tools for annotation) (later, all?)
+by Shyamalika Gopalan, Murillo Rodrigues, Ben Haller, and Peter Ralph
+
+Code accompanying the sections:
+
+1. Recapitation: [notebook](code/recapitation/recapitation.ipynb), [SLiM script](code/recapitation/recap_example.slim)
+2. Generating initial diversity: [notebook](code/generating_diversity/generating.ipynb), [SLiM script](code/generating_diversity/reload_annotated.slim)
+3. Generating genetic data: [notebook](code/generating_genetic_data/generating.ipynb)
+4. Parallelizing multiplle species: [notebook](code/parallelizing_multiple_species/parallelizing.ipynb), [SLiM script](code/parallelizing_multiple_species/simulate_branch.slim), [Makefile](code/parallelizing_multiple_species/parallel_sims.make)

@@ -340,7 +340,7 @@ contributed by the green portion of the tree would be omitted.
 
 Recapitation within a single randomly-mating population of a size \verb|N|
 can be achieved with a simple call to \verb|pyslim.recapitate(ts, ancestral_size=N)|
-Since \verb|pyslim.recapitate| is a wrapper around
+Since \verb|recapitate| is a wrapper around
 \verb|msprime.sim_ancestry|, we could recapitate our tree with any model that can be represented by \msprime code \citep{baumdicker_efficient_2022}.
 For instance, it is possible to recapitate a \slim-generated tree sequence with a fluctuating population size
 or non-uniform genetic map by simply passing in the relevant arguments.
@@ -354,6 +354,7 @@ Suppose our \slim model has the following population structure:
    sim.addSubpop("p2", K);
 }
 \end{minted}
+for some population size \verb|K|.
 If the resulting tree sequence is stored in the file \texttt{recap\_example.trees},
 then examining the populations using the shell, we see
 (edited to remove some extraneous information):
@@ -523,7 +524,7 @@ use the function \verb|msprime.sim_mutations|
 with the \verb|SLiMMutationModel| to generate some mutations on the existing tree sequence:
 \begin{minted}[fontsize=\small, linenos, bgcolor=gray!10]{python}
 mut_model = msprime.SLiMMutationModel(type=2)
-mts = msprime.sim_mutations(ats, rate=3e-9, model=mut_model, random_seed=35)
+mts = msprime.sim_mutations(ats, rate=3e-10, model=mut_model)
 \end{minted}
 The \verb|type=2| argument denotes that the mutations will be of type \verb|m2| in SLiM, which will also
 need to be explicitly initialized in the forward-in-time phase of the simulation (as in the \slim code above).
@@ -564,18 +565,24 @@ position to `stack' on top of each other.
 So, the \verb|SLiMMutationModel| encodes this ``stacking'' information within the \tskit mutation object.
 Consider the following example of a `double hit' mutation
 that could have been produced by the code above, produced by \verb|print(sts.mutation(295))|
-(it is the $295^\text{th}$ mutation in \verb|sts|):
+(it is the $622^\text{th}$ mutation in \verb|sts|):
+% Mutation(id=622, site=621, node=5607, derived_state='621,622', parent=621,
+% metadata={'mutation_list': [{'mutation_type': 2, 'selection_coeff':
+% 0.0010000000474974513, 'subpopulation': -1, 'slim_time': -987, 'nucleotide':
+% -1}, {'mutation_type': 2, 'selection_coeff': 0.0, 'subpopulation': -1,
+%  'slim_time': -8, 'nucleotide': -1}]}, time=9.684319995964623, edge=22712)
 \begin{minted}[fontsize=\small, linenos, bgcolor=gray!10]{python}
-Mutation(id=2959, site=2957, node=655, derived_state='2957,2958', parent=2957, 
+Mutation(id=622, site=621, node=5607, derived_state='621,622', parent=621, 
     metadata={'mutation_list': [
-        {'mutation_type': 2, 'selection_coeff': 0.0010000000474974513, 'subpopulation': -1, 'slim_time': -1691, 'nucleotide': -1}, 
-        {'mutation_type': 2, 'selection_coeff': 0.0010000000474974513, 'subpopulation': -1, 'slim_time': -13, 'nucleotide': -1}]}, time=14.032248014022404, edge=32586)
+        {'mutation_type': 2, 'selection_coeff': 0.001, 'slim_time': -1691},
+        {'mutation_type': 2, 'selection_coeff': 0.001, 'slim_time': -13, 'nucleotide': -1}]},
+    time=14.0322, edge=32586)
 \end{minted}
 There are two parts of this record that give away the fact that this was a recurrent mutation.
-First, the \verb|derived_state| is a comma-separated list of \emph{two} integers, \verb||.
+First, the \verb|derived_state| is a comma-separated list of \emph{two} integers, \verb|621,622|.
 These integers are the \slim IDs of the corresponding mutations.
 Second, the \verb|mutation_list| element of the mutation's metadata has two entries which represent those two \slim mutations,
-the first (with \slim ID 193) one occurring 559 ticks ago and the second (with \slim ID 194)  occurring 7 ticks ago.
+the first (with \slim ID 621) one occurring 1691 ticks ago and the second (with \slim ID 622)  occurring 13 ticks ago.
 % This allows \slim to reconstruct these events in order
 % to apply the appropriate stacking policy if this tree sequence is used as an initial state for a forward-in-time simulation.
 % So, for example,
@@ -589,8 +596,8 @@ the selection coefficients of each mutation earlier in this section, we had to h
 one iterated over mutations,
 while the second updated each element of the mutation's associated \verb|mutation_list|.
 
-Sharp-eyed readers will note that the ``time'' of the mutation given by the tree sequence (8.74 generations ago) does not exactly
-correspond to the \verb|slim_time| recorded in metadata ($-7$ generations in the future); in general this conversion is ``rounded and sometimes
+Sharp-eyed readers will note that the ``time'' of the mutation given by the tree sequence (14.0322 generations ago) does not exactly
+correspond to the \verb|slim_time| recorded in metadata ($-13$ generations in the future); in general this conversion is ``rounded and sometimes
 off by one, depending on the model type''. For a detailed discussion of how time is converted between the tree sequence and the SLiM
 model, see the \pyslim documentation.
 
@@ -632,7 +639,7 @@ for an additional 100 generations.
 However, in this phase, an individual's genetic make-up (\ie the non-neutral genetic variants they carry)
 will influence their fitness as the population continues to evolve.
 
-\section{Generating realistic genetic data}
+\section{Generating genetic data}
 
 Next, we will discuss some final steps for generating a genetic dataset from our hybrid simulation that has many of the properties of real data that is generated from
 sequencing or genotyping real organisms. Whether it was generated by recapitation or by first generating initial
@@ -716,7 +723,7 @@ Figure~\ref{fig:phylo} shows the simple example we work with.
 
 \begin{figure}[h!]
     \centering
-     \includegraphics[width=0.33\textwidth]{code/parallelizing_phylogeny/phylo.pdf}
+     \includegraphics[width=0.33\textwidth]{code/parallelizing_multiple_species/phylo.pdf}
      \caption{
          Example phylogeny.
          Branches with the same color can be simulated in parallel if there is no migration between them.
@@ -729,7 +736,7 @@ Figure~\ref{fig:phylo} shows the simple example we work with.
 We will use the following \slim script to simulate the history of each species, represented by its own branch, in our phylogeny. Here, each species can have a different
 (but fixed) population size (\verb|popsize|) and total duration (\verb|num_gen|). Additionally, we will model deleterious mutations accumulating across the entire genome at a fixed rate.
 %
-\inputminted[breaklines, breakautoindent=true, breakanywhere=true, fontsize=\small, linenos, bgcolor=gray!10]{slim}{code/parallelizing_phylogeny/simulate_branch.slim}
+\inputminted[breaklines, breakautoindent=true, breakanywhere=true, fontsize=\small, linenos, bgcolor=gray!10]{slim}{code/parallelizing_multiple_species/simulate_branch.slim}
 %
 Notice that, in addition to \verb|popsize|, \verb|popname| and \verb|num_gen|, the variables \verb|infile| and \verb|outfile| are left undefined in this SLiM script.
 This allows the relationship between branches, and the
@@ -747,7 +754,7 @@ Therefore, we define the ending tick of the simulation as the start time plus th
 %     \begin{tabular}{llll}
 %       \bfseries Child & \bfseries Parent & \bfseries Population size & \bfseries Edge length \\
 %       \hline
-%       \csvreader[head to column names]{code/parallelizing_phylogeny/phylo.csv}{}%
+%       \csvreader[head to column names]{code/parallelizing_multiple_specie/phylo.csv}{}%
 %         {\child & \parent & \popsize & \edgelen\\}
 %     \end{tabular}
 % \end{table}
@@ -765,7 +772,7 @@ To actually run our parallelized simulation, we could use workflow management so
 \href{https://tskit.dev/pyslim/docs/latest/vignette_parallel_phylo.html}{documentation} for details on different implementations. Here, we will use the simple Make script below to pass
 the appropriate parameters to our generic \verb|simulate_branch.slim| script.
 %
-\inputminted[breaklines,fontsize=\small, breakanywhere=true, breakautoindent=true, linenos, bgcolor=gray!10]{basemake}{code/parallelizing_phylogeny/parallel_sims.make}
+\inputminted[breaklines,fontsize=\small, breakanywhere=true, breakautoindent=true, linenos, bgcolor=gray!10]{basemake}{code/parallelizing_multiple_species/parallel_sims.make}
 %
 This script essentially recodes our original phylogeny through a list of `rules' that define each parent-child relationship.
 For example, the files `A.trees' and `B.trees' both depend on the internal node `I.trees',
