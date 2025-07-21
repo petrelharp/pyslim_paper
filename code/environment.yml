@@ -9,8 +9,6 @@ dependencies:
   - numpy
   - matplotlib
   - msprime
-  - pip
-  - slim=5
+  - pyslim
+  - slim
   - tskit
-  - pip:
-    - git+https://github.com/tskit-dev/pyslim.git@740dc70
