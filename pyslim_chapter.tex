@@ -413,7 +413,7 @@ rts = pyslim.recapitate(ts, demography=demography,
 \end{minted}
 
 The \pyslim function `recapitate' passes the tree sequence \verb|ts| to the
-\verb|initial_state| argument of \verb|msprime.sim\_ancestry|,
+\verb|initial_state| argument of \verb|msprime.sim_ancestry|,
 along with the demographic model that we specified.
 The root of each uncoalesced lineage in this tree sequence is a node
 that exists at a particular time and in a particular population;
@@ -563,8 +563,8 @@ This differs from \slim, which, by default, allows recurrent mutations at the sa
 position to `stack' on top of each other.
 So, the \verb|SLiMMutationModel| encodes this ``stacking'' information within the \tskit mutation object.
 Consider the following example of a `double hit' mutation
-that could have been produced by the code above, produced by \verb|print(sts.mutation(2959))|
-(it is the $2959^\text{th}$ mutation in \verb|sts|):
+that could have been produced by the code above, produced by \verb|print(sts.mutation(295))|
+(it is the $295^\text{th}$ mutation in \verb|sts|):
 \begin{minted}[fontsize=\small, linenos, bgcolor=gray!10]{python}
 Mutation(id=2959, site=2957, node=655, derived_state='2957,2958', parent=2957, 
     metadata={'mutation_list': [
@@ -572,10 +572,10 @@ Mutation(id=2959, site=2957, node=655, derived_state='2957,2958', parent=2957,
         {'mutation_type': 2, 'selection_coeff': 0.0010000000474974513, 'subpopulation': -1, 'slim_time': -13, 'nucleotide': -1}]}, time=14.032248014022404, edge=32586)
 \end{minted}
 There are two parts of this record that give away the fact that this was a recurrent mutation.
-First, the \verb|derived_state| is a comma-separated list of \emph{two} integers, \verb|2957,2958|.
+First, the \verb|derived_state| is a comma-separated list of \emph{two} integers, \verb||.
 These integers are the \slim IDs of the corresponding mutations.
 Second, the \verb|mutation_list| element of the mutation's metadata has two entries which represent those two \slim mutations,
-the first (with \slim ID 2957) one occurring 1691 ticks ago and the second (with \slim ID 2958)  occurring 13 ticks ago.
+the first (with \slim ID 193) one occurring 559 ticks ago and the second (with \slim ID 194)  occurring 7 ticks ago.
 % This allows \slim to reconstruct these events in order
 % to apply the appropriate stacking policy if this tree sequence is used as an initial state for a forward-in-time simulation.
 % So, for example,
@@ -589,8 +589,8 @@ the selection coefficients of each mutation earlier in this section, we had to h
 one iterated over mutations,
 while the second updated each element of the mutation's associated \verb|mutation_list|.
 
-Sharp-eyed readers will note that the ``time'' of the mutation given by the tree sequence (14.03 generations ago) does not exactly
-correspond to the \verb|slim_time| recorded in metadata ($-13$ generations in the future); in general this conversion is ``rounded and sometimes
+Sharp-eyed readers will note that the ``time'' of the mutation given by the tree sequence (8.74 generations ago) does not exactly
+correspond to the \verb|slim_time| recorded in metadata ($-7$ generations in the future); in general this conversion is ``rounded and sometimes
 off by one, depending on the model type''. For a detailed discussion of how time is converted between the tree sequence and the SLiM
 model, see the \pyslim documentation.
 
@@ -860,7 +860,7 @@ but the problem is easy in this simple example:
     nm = match_nodes(B, A, split_time=50)
     AB = A.union(B, nm)
     nm = match_nodes(C, AB, split_time=200)
-    ABC = AB.union(C)
+    ABC = AB.union(C, nm)
 \end{minted}
 % 
 % The following recursive function through the data frame containing the phylogeny and returns a dictionary
