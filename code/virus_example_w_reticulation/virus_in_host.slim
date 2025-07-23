@@ -1,0 +1,135 @@
+// -------------------
+// WITHIN-HOST MODEL
+// -------------------
+
+// INITIALIZE
+initialize() {
+	initializeSLiMModelType("nonWF");
+	initializeSLiMOptions(keepPedigrees = T);
+	initializeTreeSeq();
+	defaults = Dictionary(
+		"SEED", getSeed(),
+		"HOST_ID", "00",               // the current host ID
+		"INFILE", c(""),                  // optional list of files to read in to initiate this infection
+		"TRANSMISSION_DAYS", c(20),    // a list of days (relative to start of infection) in which transmission events occur
+		"OUTPUT_HOST_IDS", c("01"),    // a list of host IDs to transmit infections to
+		"N_FOUNDERS", 20,              // number of pathogen individuals that starts a new infection
+		"POP_GROWTH_RATE", 1.0,        // rate of growth of population
+		"K", 1e5,     				       // carrying capacity within host
+		"GENOME_LENGTH", 1e3
+		);
+	
+	// Set up parameters with a user-defined function
+	setupParams(defaults);
+	defineConstant("PARAMS", defaults);
+	initializeChromosome(1, GENOME_LENGTH, "H");
+	initializeRecombinationRate(0);
+	initializeMutationRate(0);
+	initializeMutationType("m0", 0, "f", 0);
+	initializeGenomicElementType("g1", m0, 1);
+	initializeGenomicElement(g1, 0, GENOME_LENGTH-1);
+
+	// print start message
+	catn("\n\nWITHIN-HOST PARAMETER SUMMARY:\n");
+}
+
+// Pathogens infect host
+1 late() {
+   // start seed simulation or load an input file
+	defineConstant("POP_ID", asInteger(HOST_ID));
+   if (INFILE == "") {
+      catn("\nSTARTING SEED SIMULATION\n");
+      // infections are started with 'N_FOUNDERS' pathogens
+      sim.addSubpop(POP_ID, N_FOUNDERS);
+      PARAMS.setValue("FOUNDERS", Dictionary(HOST_ID, c()));
+      PARAMS.setValue("FOUNDING_TIME", Dictionary(HOST_ID, sim.cycle));
+   } else {
+      catn("\nSTARTING SIMULATION FROM " + INFILE + "\n");
+      // load input tree sequence
+      sim.readFromPopulationFile(INFILE);
+      // load tree sequence metadata
+      metadata = treeSeqMetadata(INFILE);
+      // determine which individuals to keep
+      inds_to_keep = metadata.getValue("FOUNDERS").getValue(HOST_ID);
+      PARAMS.setValue("FOUNDERS", metadata.getValue("FOUNDERS"));
+      PARAMS.setValue("FOUNDING_TIME", metadata.getValue("FOUNDING_TIME"));
+      // transfer founders to a new population
+      old_pops = sim.subpopulations;
+      sim.addSubpop(POP_ID, 0);
+      active_pop = sim.subpopulations[sim.subpopulations.id == POP_ID];
+      founders = sim.individualsWithPedigreeIDs(inds_to_keep);
+      if (size(founders) != size(inds_to_keep)) {
+         catn("Desired founders: " + paste(inds_to_keep, sep=","));
+         catn("Obtained founders: " + paste(active_pop.individuals.pedigreeID, sep=","));
+      	stop("Some founding individuals are not present (or alive)!");
+      }
+		active_pop.takeMigrants(founders);
+   }
+   // track simulation start day
+   defineConstant("SIM_START", sim.cycle);		
+   PARAMS.setValue("SIM_START", SIM_START);
+   // calculate the overall transmission day
+   defineConstant("ABS_TRANSMISSION_DAYS", SIM_START + asInteger(TRANSMISSION_DAYS));
+   PARAMS.setValue("ABS_TRANSMISSION_DAYS", ABS_TRANSMISSION_DAYS);
+}
+
+// Pathogens are transmitted to next host
+ABS_TRANSMISSION_DAYS late() {
+	// parse 'output_host_id' to figure out which hosts to transmit to
+	which_hosts = which(ABS_TRANSMISSION_DAYS == community.tick);
+	hosts_to_infect = OUTPUT_HOST_IDS[which_hosts];
+	// determine how many pathogens are needed to infect all hosts
+	N_pathogens = rep(N_FOUNDERS, count = length(hosts_to_infect));
+	// sample individuals to transmit
+	transmitted_inds = sample(sim.subpopulations.individuals, size = sum(N_pathogens), replace = F);
+	sim.treeSeqRememberIndividuals(transmitted_inds); // permanently remember these individuals in subsequent parallel infection steps
+	// kill everyone else - mark individuals to be transmitted with a unique tag
+	sim.subpopulations.individuals.tagL0 = T;
+	transmitted_inds.tagL0 = F;
+	sim.killIndividuals(sim.subpopulations.subsetIndividuals(tagL0 = T));
+	// construct dictionary of infected hosts and viral genomes to be transmitted to each
+	founders = PARAMS.getValue("FOUNDERS");
+	founding_time = PARAMS.getValue("FOUNDING_TIME");
+	for (host in hosts_to_infect, count in N_pathogens, range_end in cumSum(N_pathogens)) {
+		sampled_inds = transmitted_inds[(range_end-count):(range_end-1)];
+		founders.setValue(host, sampled_inds.pedigreeID);
+		founding_time.setValue(host, sim.cycle);
+	}
+}
+
+max(ABS_TRANSMISSION_DAYS) late() {
+	// write out a tree sequence containing the information needed for all subsequent infections
+	sim.killIndividuals(sim.subpopulations.individuals);
+	sim.treeSeqOutput(HOST_ID + ".trees", metadata=PARAMS);
+	sim.simulationFinished();
+}
+
+// Pathogens replicate within the host
+reproduction() {
+	active_pop = sim.subpopulations[sim.subpopulations.id == POP_ID];
+	// choose the target population size based on the specified population growth rate
+	num_offspring = rpois(sum(active_pop.individualCount), POP_GROWTH_RATE);
+	for (i in active_pop.individuals, n in num_offspring) {
+		offspring = active_pop.addCloned(i, count=n);
+	}
+	self.active = 0;
+}
+
+// Individuals have their fitness scaled according to the overall population size (logistic growth)
+2: early() {
+	sim.subpopulations.fitnessScaling = pmin(0.9, K / sim.subpopulations.individualCount);
+}
+
+
+function (void)setupParams(object<Dictionary>$ defaults)
+{
+	for (k in defaults.allKeys) {
+		if (!exists(k))
+			defineConstant(k, defaults.getValue(k));
+		else
+			defaults.setValue(k, executeLambda(k + ";"));
+	}
+	catn("===========================");
+	catn("Model constants: " + defaults.serialize("pretty"));
+	catn("===========================");
+}
