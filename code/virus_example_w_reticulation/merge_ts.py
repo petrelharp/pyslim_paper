@@ -77,7 +77,7 @@ def main(args):
     slim_update_file = working_dir + "slim_id_update.csv"
     if os.path.isfile(slim_update_file) and os.path.getsize(slim_update_file) > 0:
         slim_update_df = pd.read_csv(slim_update_file, header=None)
-        slim_update_df.columns = ['old_slim_id', 'new_slim_id', 'pop', 'time']
+        slim_update_df.columns = ['old_slim_id', 'new_slim_id', 'pop']
         slim_update_dict = slim_update_df.set_index(slim_update_df.columns[0]).to_dict(orient='index')
         tslist = [relabel_slim_ids(x, slim_update_dict) for x in tslist]
 

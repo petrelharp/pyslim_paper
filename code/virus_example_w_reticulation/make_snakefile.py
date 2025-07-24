@@ -20,7 +20,7 @@ def main(args):
     working_dir=os.getcwd() + "/"
 
     # read in infection sequence
-    inf_seq = pd.read_csv(working_dir + "inf_seq.csv", dtype=str)
+    inf_seq = pd.read_csv(working_dir + args.input, dtype=str)
 
     # collect all host IDs for origin infections
     all_origin_ids = set(sum(inf_seq["origin_id"].apply(extract_ids), []))

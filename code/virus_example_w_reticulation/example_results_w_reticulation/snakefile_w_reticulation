@@ -4,248 +4,296 @@ rule all:
 
 rule H00:
 	output:
-		"/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/even_simpler_virus_example_w_reticulation/00_to_01.trees",
-		"/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/even_simpler_virus_example_w_reticulation/00_to_02.trees",
-		"/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/even_simpler_virus_example_w_reticulation/00_to_03.trees"
+		"/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/virus_example_w_reticulation/00_to_01.trees",
+		"/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/virus_example_w_reticulation/00_to_02.trees",
+		"/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/virus_example_w_reticulation/00_to_03.trees"
 	shell:
 		"""
 			slim -d "INFILE=''" \
 				-d "HOST_ID='00'" \
 				-d "TRANSMISSION_DAYS=c(20,33,22)" \
 				-d "OUTPUT_HOST_IDS=c('01','02','03')" \
-				/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/even_simpler_virus_example_w_reticulation/virus_in_host.slim
-			python /Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/even_simpler_virus_example_w_reticulation/process.py --infile "/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/even_simpler_virus_example_w_reticulation/00.trees"
+				/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/virus_example_w_reticulation/virus_in_host.slim
+			python /Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/virus_example_w_reticulation/process.py --infile "/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/virus_example_w_reticulation/00.trees"
 		"""
 
 rule H01:
 	input:
-		"/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/even_simpler_virus_example_w_reticulation/00_to_01.trees"
+		"/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/virus_example_w_reticulation/00_to_01.trees"
 	output:
-		"/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/even_simpler_virus_example_w_reticulation/01_to_04.trees",
-		"/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/even_simpler_virus_example_w_reticulation/01_to_05.trees"
+		"/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/virus_example_w_reticulation/01_to_04.trees",
+		"/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/virus_example_w_reticulation/01_to_05.trees",
+		"/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/virus_example_w_reticulation/01_to_10.trees"
 	shell:
 		"""
-			slim -d "INFILE='/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/even_simpler_virus_example_w_reticulation/00_to_01.trees'" \
+			slim -d "INFILE='/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/virus_example_w_reticulation/00_to_01.trees'" \
 				-d "HOST_ID='01'" \
-				-d "TRANSMISSION_DAYS=c(36,23)" \
-				-d "OUTPUT_HOST_IDS=c('04','05')" \
-				/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/even_simpler_virus_example_w_reticulation/virus_in_host.slim
-			python /Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/even_simpler_virus_example_w_reticulation/process.py --infile "/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/even_simpler_virus_example_w_reticulation/01.trees"
+				-d "TRANSMISSION_DAYS=c(36,23,38)" \
+				-d "OUTPUT_HOST_IDS=c('04','05','10')" \
+				/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/virus_example_w_reticulation/virus_in_host.slim
+			python /Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/virus_example_w_reticulation/process.py --infile "/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/virus_example_w_reticulation/01.trees"
 		"""
 
 rule H02:
 	input:
-		"/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/even_simpler_virus_example_w_reticulation/00_to_02.trees"
+		"/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/virus_example_w_reticulation/00_to_02.trees"
 	output:
-		"/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/even_simpler_virus_example_w_reticulation/02_to_10.trees",
-		"/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/even_simpler_virus_example_w_reticulation/02_to_11.trees",
-		"/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/even_simpler_virus_example_w_reticulation/02_to_12.trees"
+		"/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/virus_example_w_reticulation/02_to_10.trees",
+		"/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/virus_example_w_reticulation/02_to_11.trees",
+		"/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/virus_example_w_reticulation/02_to_12.trees"
 	shell:
 		"""
-			slim -d "INFILE='/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/even_simpler_virus_example_w_reticulation/00_to_02.trees'" \
+			slim -d "INFILE='/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/virus_example_w_reticulation/00_to_02.trees'" \
 				-d "HOST_ID='02'" \
 				-d "TRANSMISSION_DAYS=c(25,28,23)" \
 				-d "OUTPUT_HOST_IDS=c('10','11','12')" \
-				/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/even_simpler_virus_example_w_reticulation/virus_in_host.slim
-			python /Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/even_simpler_virus_example_w_reticulation/process.py --infile "/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/even_simpler_virus_example_w_reticulation/02.trees"
+				/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/virus_example_w_reticulation/virus_in_host.slim
+			python /Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/virus_example_w_reticulation/process.py --infile "/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/virus_example_w_reticulation/02.trees"
 		"""
 
 rule H03:
 	input:
-		"/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/even_simpler_virus_example_w_reticulation/00_to_03.trees"
+		"/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/virus_example_w_reticulation/00_to_03.trees"
 	output:
-		"/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/even_simpler_virus_example_w_reticulation/03_to_06.trees"
+		"/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/virus_example_w_reticulation/03_to_06.trees"
 	shell:
 		"""
-			slim -d "INFILE='/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/even_simpler_virus_example_w_reticulation/00_to_03.trees'" \
+			slim -d "INFILE='/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/virus_example_w_reticulation/00_to_03.trees'" \
 				-d "HOST_ID='03'" \
 				-d "TRANSMISSION_DAYS=c(30)" \
 				-d "OUTPUT_HOST_IDS=c('06')" \
-				/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/even_simpler_virus_example_w_reticulation/virus_in_host.slim
-			python /Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/even_simpler_virus_example_w_reticulation/process.py --infile "/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/even_simpler_virus_example_w_reticulation/03.trees"
+				/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/virus_example_w_reticulation/virus_in_host.slim
+			python /Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/virus_example_w_reticulation/process.py --infile "/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/virus_example_w_reticulation/03.trees"
 		"""
 
 rule H04:
 	input:
-		"/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/even_simpler_virus_example_w_reticulation/01_to_04.trees"
+		"/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/virus_example_w_reticulation/01_to_04.trees"
 	output:
-		"/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/even_simpler_virus_example_w_reticulation/04_to_07.trees"
+		"/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/virus_example_w_reticulation/04_to_07.trees"
 	shell:
 		"""
-			slim -d "INFILE='/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/even_simpler_virus_example_w_reticulation/01_to_04.trees'" \
+			slim -d "INFILE='/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/virus_example_w_reticulation/01_to_04.trees'" \
 				-d "HOST_ID='04'" \
 				-d "TRANSMISSION_DAYS=c(36)" \
 				-d "OUTPUT_HOST_IDS=c('07')" \
-				/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/even_simpler_virus_example_w_reticulation/virus_in_host.slim
-			python /Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/even_simpler_virus_example_w_reticulation/process.py --infile "/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/even_simpler_virus_example_w_reticulation/04.trees"
+				/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/virus_example_w_reticulation/virus_in_host.slim
+			python /Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/virus_example_w_reticulation/process.py --infile "/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/virus_example_w_reticulation/04.trees"
 		"""
 
 rule H05:
 	input:
-		"/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/even_simpler_virus_example_w_reticulation/01_to_05.trees"
+		"/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/virus_example_w_reticulation/01_to_05.trees"
 	output:
-		"/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/even_simpler_virus_example_w_reticulation/05_to_08.trees",
-		"/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/even_simpler_virus_example_w_reticulation/05_to_09.trees"
+		"/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/virus_example_w_reticulation/05_to_08.trees",
+		"/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/virus_example_w_reticulation/05_to_09.trees",
+		"/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/virus_example_w_reticulation/05_to_07.trees"
 	shell:
 		"""
-			slim -d "INFILE='/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/even_simpler_virus_example_w_reticulation/01_to_05.trees'" \
+			slim -d "INFILE='/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/virus_example_w_reticulation/01_to_05.trees'" \
 				-d "HOST_ID='05'" \
-				-d "TRANSMISSION_DAYS=c(23,25)" \
-				-d "OUTPUT_HOST_IDS=c('08','09')" \
-				/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/even_simpler_virus_example_w_reticulation/virus_in_host.slim
-			python /Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/even_simpler_virus_example_w_reticulation/process.py --infile "/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/even_simpler_virus_example_w_reticulation/05.trees"
+				-d "TRANSMISSION_DAYS=c(23,25,49)" \
+				-d "OUTPUT_HOST_IDS=c('08','09','07')" \
+				/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/virus_example_w_reticulation/virus_in_host.slim
+			python /Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/virus_example_w_reticulation/process.py --infile "/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/virus_example_w_reticulation/05.trees"
 		"""
 
 rule H06:
 	input:
-		"/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/even_simpler_virus_example_w_reticulation/03_to_06.trees"
+		"/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/virus_example_w_reticulation/03_to_06.trees"
 	output:
-		"/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/even_simpler_virus_example_w_reticulation/06_to_13.trees",
-		"/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/even_simpler_virus_example_w_reticulation/06_to_14.trees"
+		"/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/virus_example_w_reticulation/06_to_13.trees",
+		"/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/virus_example_w_reticulation/06_to_14.trees",
+		"/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/virus_example_w_reticulation/06_to_11.trees"
 	shell:
 		"""
-			slim -d "INFILE='/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/even_simpler_virus_example_w_reticulation/03_to_06.trees'" \
+			slim -d "INFILE='/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/virus_example_w_reticulation/03_to_06.trees'" \
 				-d "HOST_ID='06'" \
-				-d "TRANSMISSION_DAYS=c(32,29)" \
-				-d "OUTPUT_HOST_IDS=c('13','14')" \
-				/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/even_simpler_virus_example_w_reticulation/virus_in_host.slim
-			python /Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/even_simpler_virus_example_w_reticulation/process.py --infile "/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/even_simpler_virus_example_w_reticulation/06.trees"
+				-d "TRANSMISSION_DAYS=c(32,29,9)" \
+				-d "OUTPUT_HOST_IDS=c('13','14','11')" \
+				/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/virus_example_w_reticulation/virus_in_host.slim
+			python /Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/virus_example_w_reticulation/process.py --infile "/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/virus_example_w_reticulation/06.trees"
 		"""
 
 rule H07:
 	input:
-		"/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/even_simpler_virus_example_w_reticulation/04_to_07.trees"
+		"/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/virus_example_w_reticulation/04-05_to_07.trees"
 	output:
-		"/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/even_simpler_virus_example_w_reticulation/07.trees"
+		"/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/virus_example_w_reticulation/07.trees"
 	shell:
 		"""
-			slim -d "INFILE='/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/even_simpler_virus_example_w_reticulation/04_to_07.trees'" \
+			slim -d "INFILE='/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/virus_example_w_reticulation/04-05_to_07.trees'" \
 				-d "HOST_ID='07'" \
 				-d "TRANSMISSION_DAYS=c(29,37)" \
 				-d "OUTPUT_HOST_IDS=c('15','16')" \
-				/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/even_simpler_virus_example_w_reticulation/virus_in_host.slim
+				/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/virus_example_w_reticulation/virus_in_host.slim
 		"""
 
 rule H08:
 	input:
-		"/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/even_simpler_virus_example_w_reticulation/05_to_08.trees"
+		"/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/virus_example_w_reticulation/05_to_08.trees"
 	output:
-		"/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/even_simpler_virus_example_w_reticulation/08.trees"
+		"/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/virus_example_w_reticulation/08.trees"
 	shell:
 		"""
-			slim -d "INFILE='/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/even_simpler_virus_example_w_reticulation/05_to_08.trees'" \
+			slim -d "INFILE='/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/virus_example_w_reticulation/05_to_08.trees'" \
 				-d "HOST_ID='08'" \
 				-d "TRANSMISSION_DAYS=c(33)" \
 				-d "OUTPUT_HOST_IDS=c('17')" \
-				/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/even_simpler_virus_example_w_reticulation/virus_in_host.slim
+				/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/virus_example_w_reticulation/virus_in_host.slim
 		"""
 
 rule H09:
 	input:
-		"/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/even_simpler_virus_example_w_reticulation/05_to_09.trees"
+		"/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/virus_example_w_reticulation/05_to_09.trees"
 	output:
-		"/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/even_simpler_virus_example_w_reticulation/09.trees"
+		"/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/virus_example_w_reticulation/09.trees"
 	shell:
 		"""
-			slim -d "INFILE='/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/even_simpler_virus_example_w_reticulation/05_to_09.trees'" \
+			slim -d "INFILE='/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/virus_example_w_reticulation/05_to_09.trees'" \
 				-d "HOST_ID='09'" \
 				-d "TRANSMISSION_DAYS=c(26,22,34)" \
 				-d "OUTPUT_HOST_IDS=c('18','19','20')" \
-				/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/even_simpler_virus_example_w_reticulation/virus_in_host.slim
+				/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/virus_example_w_reticulation/virus_in_host.slim
 		"""
 
 rule H10:
 	input:
-		"/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/even_simpler_virus_example_w_reticulation/02_to_10.trees"
+		"/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/virus_example_w_reticulation/02-01_to_10.trees"
 	output:
-		"/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/even_simpler_virus_example_w_reticulation/10.trees"
+		"/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/virus_example_w_reticulation/10.trees"
 	shell:
 		"""
-			slim -d "INFILE='/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/even_simpler_virus_example_w_reticulation/02_to_10.trees'" \
+			slim -d "INFILE='/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/virus_example_w_reticulation/02-01_to_10.trees'" \
 				-d "HOST_ID='10'" \
 				-d "TRANSMISSION_DAYS=c(28)" \
 				-d "OUTPUT_HOST_IDS=c('21')" \
-				/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/even_simpler_virus_example_w_reticulation/virus_in_host.slim
+				/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/virus_example_w_reticulation/virus_in_host.slim
 		"""
 
 rule H11:
 	input:
-		"/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/even_simpler_virus_example_w_reticulation/02_to_11.trees"
+		"/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/virus_example_w_reticulation/02-06_to_11.trees"
 	output:
-		"/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/even_simpler_virus_example_w_reticulation/11.trees"
+		"/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/virus_example_w_reticulation/11.trees"
 	shell:
 		"""
-			slim -d "INFILE='/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/even_simpler_virus_example_w_reticulation/02_to_11.trees'" \
+			slim -d "INFILE='/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/virus_example_w_reticulation/02-06_to_11.trees'" \
 				-d "HOST_ID='11'" \
 				-d "TRANSMISSION_DAYS=c(33,31)" \
 				-d "OUTPUT_HOST_IDS=c('22','23')" \
-				/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/even_simpler_virus_example_w_reticulation/virus_in_host.slim
+				/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/virus_example_w_reticulation/virus_in_host.slim
 		"""
 
 rule H12:
 	input:
-		"/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/even_simpler_virus_example_w_reticulation/02_to_12.trees"
+		"/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/virus_example_w_reticulation/02_to_12.trees"
 	output:
-		"/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/even_simpler_virus_example_w_reticulation/12.trees"
+		"/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/virus_example_w_reticulation/12.trees"
 	shell:
 		"""
-			slim -d "INFILE='/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/even_simpler_virus_example_w_reticulation/02_to_12.trees'" \
+			slim -d "INFILE='/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/virus_example_w_reticulation/02_to_12.trees'" \
 				-d "HOST_ID='12'" \
 				-d "TRANSMISSION_DAYS=c(30)" \
 				-d "OUTPUT_HOST_IDS=c('24')" \
-				/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/even_simpler_virus_example_w_reticulation/virus_in_host.slim
+				/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/virus_example_w_reticulation/virus_in_host.slim
 		"""
 
 rule H13:
 	input:
-		"/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/even_simpler_virus_example_w_reticulation/06_to_13.trees"
+		"/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/virus_example_w_reticulation/06_to_13.trees"
 	output:
-		"/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/even_simpler_virus_example_w_reticulation/13.trees"
+		"/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/virus_example_w_reticulation/13.trees"
 	shell:
 		"""
-			slim -d "INFILE='/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/even_simpler_virus_example_w_reticulation/06_to_13.trees'" \
+			slim -d "INFILE='/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/virus_example_w_reticulation/06_to_13.trees'" \
 				-d "HOST_ID='13'" \
 				-d "TRANSMISSION_DAYS=c(34)" \
 				-d "OUTPUT_HOST_IDS=c('25')" \
-				/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/even_simpler_virus_example_w_reticulation/virus_in_host.slim
+				/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/virus_example_w_reticulation/virus_in_host.slim
 		"""
 
 rule H14:
 	input:
-		"/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/even_simpler_virus_example_w_reticulation/06_to_14.trees"
+		"/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/virus_example_w_reticulation/06_to_14.trees"
 	output:
-		"/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/even_simpler_virus_example_w_reticulation/14.trees"
+		"/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/virus_example_w_reticulation/14.trees"
 	shell:
 		"""
-			slim -d "INFILE='/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/even_simpler_virus_example_w_reticulation/06_to_14.trees'" \
+			slim -d "INFILE='/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/virus_example_w_reticulation/06_to_14.trees'" \
 				-d "HOST_ID='14'" \
 				-d "TRANSMISSION_DAYS=c(37,32)" \
 				-d "OUTPUT_HOST_IDS=c('26','27')" \
-				/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/even_simpler_virus_example_w_reticulation/virus_in_host.slim
+				/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/virus_example_w_reticulation/virus_in_host.slim
+		"""
+
+rule make_07_infile:
+	input:
+		"/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/virus_example_w_reticulation/04_to_07.trees",
+		"/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/virus_example_w_reticulation/05_to_07.trees"
+	output:
+		"/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/virus_example_w_reticulation/04-05_to_07.trees"
+	shell:
+		"""
+			python /Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/virus_example_w_reticulation/generate_input_ts.py \
+				--input "/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/virus_example_w_reticulation/04_to_07.trees" \
+				"/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/virus_example_w_reticulation/05_to_07.trees" \
+				--host_id "07" \
+				--output "/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/virus_example_w_reticulation/04-05_to_07.trees"
+		"""
+
+rule make_10_infile:
+	input:
+		"/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/virus_example_w_reticulation/02_to_10.trees",
+		"/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/virus_example_w_reticulation/01_to_10.trees"
+	output:
+		"/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/virus_example_w_reticulation/02-01_to_10.trees"
+	shell:
+		"""
+			python /Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/virus_example_w_reticulation/generate_input_ts.py \
+				--input "/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/virus_example_w_reticulation/02_to_10.trees" \
+				"/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/virus_example_w_reticulation/01_to_10.trees" \
+				--host_id "10" \
+				--output "/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/virus_example_w_reticulation/02-01_to_10.trees"
+		"""
+
+rule make_11_infile:
+	input:
+		"/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/virus_example_w_reticulation/02_to_11.trees",
+		"/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/virus_example_w_reticulation/06_to_11.trees"
+	output:
+		"/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/virus_example_w_reticulation/02-06_to_11.trees"
+	shell:
+		"""
+			python /Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/virus_example_w_reticulation/generate_input_ts.py \
+				--input "/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/virus_example_w_reticulation/02_to_11.trees" \
+				"/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/virus_example_w_reticulation/06_to_11.trees" \
+				--host_id "11" \
+				--output "/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/virus_example_w_reticulation/02-06_to_11.trees"
 		"""
 
 rule merge:
 	input:
-		"/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/even_simpler_virus_example_w_reticulation/07.trees",
-		"/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/even_simpler_virus_example_w_reticulation/08.trees",
-		"/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/even_simpler_virus_example_w_reticulation/09.trees",
-		"/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/even_simpler_virus_example_w_reticulation/10.trees",
-		"/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/even_simpler_virus_example_w_reticulation/11.trees",
-		"/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/even_simpler_virus_example_w_reticulation/12.trees",
-		"/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/even_simpler_virus_example_w_reticulation/13.trees",
-		"/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/even_simpler_virus_example_w_reticulation/14.trees"
+		"/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/virus_example_w_reticulation/07.trees",
+		"/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/virus_example_w_reticulation/08.trees",
+		"/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/virus_example_w_reticulation/09.trees",
+		"/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/virus_example_w_reticulation/10.trees",
+		"/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/virus_example_w_reticulation/11.trees",
+		"/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/virus_example_w_reticulation/12.trees",
+		"/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/virus_example_w_reticulation/13.trees",
+		"/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/virus_example_w_reticulation/14.trees"
 	output:
 		"merged.trees"
 	shell:
 		"""
-			python /Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/even_simpler_virus_example_w_reticulation/merge_ts.py \
-				--input "/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/even_simpler_virus_example_w_reticulation/07.trees" \
-				"/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/even_simpler_virus_example_w_reticulation/08.trees" \
-				"/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/even_simpler_virus_example_w_reticulation/09.trees" \
-				"/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/even_simpler_virus_example_w_reticulation/10.trees" \
-				"/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/even_simpler_virus_example_w_reticulation/11.trees" \
-				"/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/even_simpler_virus_example_w_reticulation/12.trees" \
-				"/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/even_simpler_virus_example_w_reticulation/13.trees" \
-				"/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/even_simpler_virus_example_w_reticulation/14.trees" \
+			python /Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/virus_example_w_reticulation/merge_ts.py \
+				--input "/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/virus_example_w_reticulation/07.trees" \
+				"/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/virus_example_w_reticulation/08.trees" \
+				"/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/virus_example_w_reticulation/09.trees" \
+				"/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/virus_example_w_reticulation/10.trees" \
+				"/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/virus_example_w_reticulation/11.trees" \
+				"/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/virus_example_w_reticulation/12.trees" \
+				"/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/virus_example_w_reticulation/13.trees" \
+				"/Users/shyamag/Dropbox/Work/Research/Projects/hybrid_sims_chapter/pyslim_paper/code/virus_example_w_reticulation/14.trees" \
 								--output merged.trees
 		"""
