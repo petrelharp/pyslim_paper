@@ -58,12 +58,15 @@ initialize() {
       sim.addSubpop(POP_ID, 0);
       active_pop = sim.subpopulations[sim.subpopulations.id == POP_ID];
       founders = sim.individualsWithPedigreeIDs(inds_to_keep);
+		active_pop.takeMigrants(founders);
       if (size(founders) != size(inds_to_keep)) {
          catn("Desired founders: " + paste(inds_to_keep, sep=","));
          catn("Obtained founders: " + paste(active_pop.individuals.pedigreeID, sep=","));
       	stop("Some founding individuals are not present (or alive)!");
       }
-		active_pop.takeMigrants(founders);
+      if (!isNULL(metadata.getValue("slim_id_update_dict"))) {
+	      PARAMS.setValue("slim_id_update_dict", metadata.getValue("slim_id_update_dict"));
+	   }
    }
    // track simulation start day
    defineConstant("SIM_START", sim.cycle);		
