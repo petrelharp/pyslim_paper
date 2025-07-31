@@ -68,10 +68,11 @@ def node_mapping(ts1, ts2):
         sid = ts2_slim_ids[i]
         # check for slim_id match
         if sid in ts1_slim_ids_set:
-            ts1_match_idx = np.where(ts1_slim_ids == sid)[0][0]
+            ts1_match_idx = np.where(ts1_slim_ids == sid)[0]
             # check for population id match
-            if ts1.nodes_population[ts1_match_idx] == ts2.nodes_population[i]:
-                node_map[i] = ts1_match_idx
+            for j in ts1_match_idx:
+                if ts1.nodes_population[j] == ts2.nodes_population[i]:
+                    node_map[i] = j
     return node_map
 
 def shift_ped_ids(ts, pedigree_ids=None, ped_offset_value=None):
