@@ -120,7 +120,7 @@ def main(args):
         file.write("\tshell:\n\t\t\"\"\"\n\t\t\tpython " + working_dir + "merge_ts.py \\\n\t\t\t\t--input ")
         for i in files_to_merge:
             file.write("\"" + i + "\" \\\n\t\t\t\t")
-        file.write("\t\t\t\t--output merged.trees\n\t\t\"\"\"")
+        file.write("--output" + working_dir + "merged.trees\n\t\t\"\"\"")
 
 if __name__ == '__main__':
     sys.exit(main(sys.argv[1:]))

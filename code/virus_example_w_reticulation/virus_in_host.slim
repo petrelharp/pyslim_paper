@@ -10,24 +10,23 @@ initialize() {
 	defaults = Dictionary(
 		"SEED", getSeed(),
 		"HOST_ID", "00",               // the current host ID
-		"INFILE", c(""),                  // optional list of files to read in to initiate this infection
-		"TRANSMISSION_DAYS", c(20,14,20),    // a list of days (relative to start of infection) in which transmission events occur
-		"OUTPUT_HOST_IDS", c("01","12","02"),    // a list of host IDs to transmit infections to
+		"INFILE", c(""),               // optional list of files to read in to initiate this infection
+		"TRANSMISSION_DAYS", c(20),	 // a list of days (relative to start of infection) in which transmission events occur
+		"OUTPUT_HOST_IDS", c("01"),    // a list of host IDs to transmit infections to
 		"N_FOUNDERS", 20,              // number of pathogen individuals that starts a new infection
 		"POP_GROWTH_RATE", 1.0,        // rate of growth of population
-		"K", 1e5,     				       // carrying capacity within host
-		"GENOME_LENGTH", 1e3
+		"K", 1e5     				       // carrying capacity within host
 		);
 	
 	// Set up parameters with a user-defined function
 	setupParams(defaults);
 	defineConstant("PARAMS", defaults);
-	initializeChromosome(1, GENOME_LENGTH, "H");
+	initializeChromosome(1, 1, "H");
 	initializeRecombinationRate(0);
 	initializeMutationRate(0);
 	initializeMutationType("m0", 0, "f", 0);
 	initializeGenomicElementType("g1", m0, 1);
-	initializeGenomicElement(g1, 0, GENOME_LENGTH-1);
+	initializeGenomicElement(g1, 0, 0);
 
 	// stop if number of output host ids is not the same as the number of transmission events
 	if (length(TRANSMISSION_DAYS) != length(OUTPUT_HOST_IDS)) {
@@ -41,11 +40,10 @@ initialize() {
 // Pathogens infect host
 1 late() {
    // start seed simulation or load an input file
-	defineConstant("POP_ID", asInteger(HOST_ID));
    if (INFILE == "") {
       catn("\nSTARTING SEED SIMULATION\n");
       // infections are started with 'N_FOUNDERS' pathogens
-      sim.addSubpop(POP_ID, N_FOUNDERS);
+      sim.addSubpop(asInteger(HOST_ID), N_FOUNDERS);
       PARAMS.setValue("FOUNDERS", Dictionary(HOST_ID, c()));
       PARAMS.setValue("FOUNDING_TIME", Dictionary(HOST_ID, sim.cycle));
    } else {
@@ -60,8 +58,8 @@ initialize() {
       PARAMS.setValue("FOUNDING_TIME", metadata.getValue("FOUNDING_TIME"));
       // transfer founders to a new population
       old_pops = sim.subpopulations;
-      sim.addSubpop(POP_ID, 0);
-      active_pop = sim.subpopulations[sim.subpopulations.id == POP_ID];
+      sim.addSubpop(asInteger(HOST_ID), 0);
+      active_pop = sim.subpopulations[sim.subpopulations.id == asInteger(HOST_ID)];
       founders = sim.individualsWithPedigreeIDs(inds_to_keep);
 		active_pop.takeMigrants(founders);
       if (size(founders) != size(inds_to_keep)) {
@@ -114,9 +112,9 @@ max(ABS_TRANSMISSION_DAYS) late() {
 
 // Pathogens replicate within the host
 reproduction() {
-	active_pop = sim.subpopulations[sim.subpopulations.id == POP_ID];
+	active_pop = sim.subpopulations[sim.subpopulations.id == asInteger(HOST_ID)];
 	// choose the target population size based on the specified population growth rate
-	num_offspring = rpois(sum(active_pop.individualCount), POP_GROWTH_RATE);
+	num_offspring = rpois(n = active_pop.individualCount, lambda = POP_GROWTH_RATE);
 	for (i in active_pop.individuals, n in num_offspring) {
 		offspring = active_pop.addCloned(i, count=n);
 	}
@@ -125,7 +123,8 @@ reproduction() {
 
 // Individuals have their fitness scaled according to the overall population size (logistic growth)
 2: early() {
-	sim.subpopulations.fitnessScaling = pmin(0.9, K / sim.subpopulations.individualCount);
+	active_pop = sim.subpopulations[sim.subpopulations.id == asInteger(HOST_ID)];
+	active_pop.fitnessScaling = min(0.9, K/active_pop.individualCount);
 }
 
 
