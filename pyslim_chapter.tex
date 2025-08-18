@@ -1065,7 +1065,7 @@ reproduction() {
 }
 \end{minted}
 
-When the simulation reaches one of the designated \verb|transmission days|, an additional callback is executed that samples some individuals from the
+When the simulation reaches one of the designated \textit{transmission days}, an additional callback is executed that samples some individuals from the
 population and marks them for transmission to a subsequent host. The code in this block first identifies the host ID(s) corresponding to the current transmission event.
 It then samples new founders from the entire population without replacement, remembers them permanently, and then kills then to ensure that they can no longer
 contribute to the current population. However, as we will see, these individuals are only dead temporarily; they will be resurrected in order to
