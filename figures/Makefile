@@ -4,7 +4,7 @@ INKSCAPE := $(shell command -v inkscape 2> /dev/null)
 
 # NOTE: all layers must be visible in pedigrees.ink.svg for this to work.
 
-all: pedigree0.pdf pedigree1.pdf pedigree2.pdf pedigree_recapitate.pdf pedigree_simplify.pdf pedigree_mutate.pdf pedigree_remember.pdf
+all: pedigree0.pdf pedigree1.pdf pedigree2.pdf pedigree_recapitate.pdf pedigree_simplify.pdf pedigree_mutate.pdf pedigree_remember.pdf DAG_no_reticulation.pdf DAG_w_reticulation.pdf
 
 pedigree0.svg : pedigrees.ink.svg
 	./export-layers-svg.sh $< \
