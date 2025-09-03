@@ -5,14 +5,6 @@ import scipy.sparse
 import tskit, pyslim
 
 
-def clear_alive(ts):
-    tables = ts.dump_tables()
-    tables.individuals.clear()
-    for ind in ts.individuals():
-        tables.individuals.append(ind.replace(flags=ind.flags & ~pyslim.INDIVIDUAL_ALIVE))
-    return tables.tree_sequence()
-
-
 def shift_times(ts, t_to_add):
     ts_tables = ts.dump_tables()
     ts_tables.nodes.clear()
