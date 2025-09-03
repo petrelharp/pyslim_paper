@@ -408,3 +408,137 @@ Section: New Results},
 	pages = {iyae180},
 	file = {Snapshot:/Users/rodrigmu/Zotero/storage/V3QXTQLE/iyae180.html:text/html},
 }
+
+@article{dehaas2024enabling,
+  abstract = {Computational analysis of a large number of genomes requires a data structure that can represent the dataset compactly while also enabling efficient operations on variants and samples. However, encoding genetic data in existing tabular data structures and file formats has become costly and unsustainable. Here we introduce the genotype representation graph (GRG), a fully connected hierarchical data structure that losslessly encodes phased whole-genome polymorphisms. Exploiting variant-sharing across samples enables GRG to compress 200,000 UK Biobank phased human genomes to 5--26{\thinspace}gigabytes per chromosome, also enabling graph-traversal algorithms to reuse computed values in random access memory. Constructing and processing GRG files scales to a million whole genomes. Using allele frequencies and association effects as examples, we show that computation on GRG via graph traversal runs the fastest among all tested alternatives. GRG-based algorithms have the potential to increase the scalability and reduce the cost of analyzing large genomic datasets.},
+  added-at = {2025-02-24T18:30:59.000+0100},
+  author = {DeHaas, Drew and Pan, Ziqing and Wei, Xinzhu},
+  biburl = {https://www.bibsonomy.org/bibtex/2640385bca604bcb395fed2a6b04543ca/peter.ralph},
+  day = 05,
+  doi = {10.1038/s43588-024-00739-9},
+  interhash = {ef7d5986baa496c2ca3e24c2d96fc359},
+  intrahash = {640385bca604bcb395fed2a6b04543ca},
+  issn = {2662-8457},
+  journal = {Nature Computational Science},
+  keywords = {ARGs data_structures},
+  month = dec,
+  timestamp = {2025-02-24T18:30:59.000+0100},
+  title = {Enabling efficient analysis of biobank-scale data with genotype representation graphs},
+  url = {https://doi.org/10.1038/s43588-024-00739-9},
+  year = 2024
+}
+
+@article{gunnarsson2024scalable,
+  abstract = {The ancestral recombination graph (ARG) is a graph-like structure that encodes a detailed genealogical history of a set of individuals along the genome. ARGs that are accurately reconstructed from genomic data have several downstream applications, but inference from data sets comprising millions of samples and variants remains computationally challenging. We introduce Threads, a threading-based method that significantly reduces the computational costs of ARG inference while retaining high accuracy. We apply Threads to infer the ARG of 487,409 genomes from the UK Biobank using \~{}10 million high-quality imputed variants, reconstructing a detailed genealogical history of the samples while compressing the input genotype data. Additionally, we develop ARG-based imputation strategies that increase genotype imputation accuracy for ultra-rare variants (MAC <=10) from UK Biobank exome sequencing data by 5-10\%. We leverage ARGs inferred by Threads to detect associations with 52 quantitative traits in non-European UK Biobank samples, identifying 22.5\% more signals than ARG-Needle. These analyses underscore the value of using computationally efficient genealogical modeling to improve and complement genotype imputation in large-scale genomic studies.Competing Interest StatementA.F.G. is an employee of deCODE genetics/Amgen; B.C.Z. is an employee of Adaptive Biotechnologies.},
+  added-at = {2025-02-23T16:45:24.000+0100},
+  author = {Gunnarsson, \'Arni Freyr and Zhu, Jiazheng and Zhang, Brian C. and Tsangalidou, Zoi and Allmont, Alex and Palamara, Pier Francesco},
+  biburl = {https://www.bibsonomy.org/bibtex/20ae6cf02200b3b4c1743ffbb5dbcc7ed/peter.ralph},
+  doi = {10.1101/2024.08.31.610248},
+  elocation-id = {2024.08.31.610248},
+  eprint = {https://www.biorxiv.org/content/early/2024/09/02/2024.08.31.610248.full.pdf},
+  interhash = {75c9fe0c25acfcc3281a28adec24d5cd},
+  intrahash = {0ae6cf02200b3b4c1743ffbb5dbcc7ed},
+  journal = {bioRxiv},
+  keywords = {ARG_inference},
+  publisher = {Cold Spring Harbor Laboratory},
+  timestamp = {2025-02-23T18:30:42.000+0100},
+  title = {A scalable approach for genome-wide inference of ancestral recombination graphs},
+  url = {https://www.biorxiv.org/content/early/2024/09/02/2024.08.31.610248},
+  year = 2024
+}
+
+@article{parida2011minimal,
+  abstract = {Ancestral Recombinations Graph (ARG) is a phylogenetic structure that encodes both duplication events, such as mutations, as well as genetic exchange events, such as recombinations: this captures the (genetic) dynamics of a population evolving over generations.},
+  added-at = {2025-08-31T16:11:27.000+0200},
+  author = {Parida, Laxmi and Palamara, Pier Francesco and Javed, Asif},
+  biburl = {https://www.bibsonomy.org/bibtex/2f0ca2acc15524594db42f1a44f6525cf/peter.ralph},
+  day = 15,
+  doi = {10.1186/1471-2105-12-S1-S6},
+  interhash = {0cf32906a2b91f1d14828451b2621bbc},
+  intrahash = {f0ca2acc15524594db42f1a44f6525cf},
+  issn = {1471-2105},
+  journal = {BMC Bioinformatics},
+  keywords = {ARGs algorithms},
+  month = feb,
+  number = 1,
+  pages = {S6},
+  timestamp = {2025-08-31T16:11:27.000+0200},
+  title = {A minimal descriptor of an ancestral recombinations graph},
+  url = {https://doi.org/10.1186/1471-2105-12-S1-S6},
+  volume = 12,
+  year = 2011
+}
+
+@article{palamara2016argon,
+  abstract = {Motivation: Simulation under the coalescent model is ubiquitous in the analysis of genetic data. The
+rapid growth of real data sets from multiple human populations led to increasing interest in simulat-
+ing very large sample sizes at whole-chromosome scales. When the sample size is large, the coales-
+cent model becomes an increasingly inaccurate approximation of the discrete time Wright-Fisher
+model (DTWF). Analytical and computational treatment of the DTWF, however, is generally harder.
+Results: We present a simulator (ARGON) for the DTWF process that scales up to hundreds of thou-
+sands of samples and whole-chromosome lengths, with a time/memory performance comparable
+or superior to currently available methods for coalescent simulation. The simulator supports arbi-
+trary demographic history, migration, Newick tree output, variable mutation/recombination rates
+and gene conversion, and efﬁciently outputs pairwise identical-by-descent sharing data.
+Availability: ARGON (version 0.1) is written in Java, open source, and freely available at https://
+github.com/pierpal/ARGON},
+  added-at = {2025-02-28T20:55:01.000+0100},
+  author = {Palamara, Pier Francesco},
+  biburl = {https://www.bibsonomy.org/bibtex/225491dd554b7141de894e6c94993bb9f/peter.ralph},
+  doi = {10.1093/bioinformatics/btw355},
+  interhash = {f7e530ea159093053fa1e02546caeb65},
+  intrahash = {25491dd554b7141de894e6c94993bb9f},
+  issn = {1367-4803},
+  journal = {Bioinformatics},
+  keywords = {ARG_algorithms ARGs IBD coalescent_simulator simulation simulation_study},
+  month = jun,
+  number = 19,
+  pages = {3032–3034},
+  publisher = {Oxford University Press (OUP)},
+  timestamp = {2025-02-28T20:55:01.000+0100},
+  title = {{ARGON}: fast, whole-genome simulation of the discrete time Wright-fisher process},
+  url = {http://dx.doi.org/10.1093/bioinformatics/btw355},
+  volume = 32,
+  year = 2016
+}
+
+@article{lewanski2024introduction,
+  abstract = {In the presence of recombination, the evolutionary relationships between a set of sampled genomes cannot be described by a single genealogical tree. Instead, the genomes are related by a complex, interwoven collection of genealogies formalized in a structure called an ancestral recombination graph (ARG). An ARG extensively encodes the ancestry of the genome(s) and thus is replete with valuable information for addressing diverse questions in evolutionary biology. Despite its potential utility, technological and methodological limitations, along with a lack of approachable literature, have severely restricted awareness and application of ARGs in evolution research. Excitingly, recent progress in ARG reconstruction and simulation have made ARG-based approaches feasible for many questions and systems. In this review, we provide an accessible introduction and exploration of ARGs, survey recent methodological breakthroughs, and describe the potential for ARGs to further existing goals and open avenues of inquiry that were previously inaccessible in evolutionary genomics. Through this discussion, we aim to more widely disseminate the promise of ARGs in evolutionary genomics and encourage the broader development and adoption of ARG-based inference.},
+  added-at = {2024-01-25T20:53:56.000+0100},
+  author = {Lewanski, Alexander L. and Grundler, Michael C. and Bradburd, Gideon S.},
+  biburl = {https://www.bibsonomy.org/bibtex/26bd1d8e4f0102b3ce6d27563948de6cf/peter.ralph},
+  doi = {10.1371/journal.pgen.1011110},
+  interhash = {07747dbe029628083bf46d34198d6136},
+  intrahash = {6bd1d8e4f0102b3ce6d27563948de6cf},
+  journal = {PLOS Genetics},
+  keywords = {ARG review tree_sequence},
+  month = {01},
+  number = 1,
+  pages = {1-24},
+  publisher = {Public Library of Science},
+  timestamp = {2024-01-25T20:53:56.000+0100},
+  title = {The era of the {ARG}: {An} introduction to ancestral recombination graphs and their significance in empirical evolutionary genomics},
+  url = {https://doi.org/10.1371/journal.pgen.1011110},
+  volume = 20,
+  year = 2024
+}
+
+
+@article{brandt2022evaluation,
+  added-at = {2024-03-12T23:36:37.000+0100},
+  author = {Brandt, D{\'e}bora and Wei, Xinzhu and Deng, Yun and Vaughn, Andrew H and Nielsen, Rasmus},
+  biburl = {https://www.bibsonomy.org/bibtex/275e1f61461df148682ea10f8529a43e2/peter.ralph},
+  interhash = {905cc58be8b24de9a9fd4f7e9e94a48f},
+  intrahash = {75e1f61461df148682ea10f8529a43e2},
+  journal = {Genetics},
+  keywords = {ARG methods_comparison},
+  number = 1,
+  pages = {iyac044},
+  publisher = {Oxford University Press},
+  timestamp = {2024-03-12T23:36:37.000+0100},
+  title = {Evaluation of methods for estimating coalescence times using ancestral recombination graphs},
+  volume = 221,
+  year = 2022
+}
+
+

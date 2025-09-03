@@ -53,14 +53,12 @@ initialize() {
       // load tree sequence metadata
       metadata = treeSeqMetadata(INFILE);
       // determine which individuals to keep
-      inds_to_keep = metadata.getValue("FOUNDERS").getValue(HOST_ID);
+      founder_ids = metadata.getValue("FOUNDERS").getValue(HOST_ID);
       PARAMS.setValue("FOUNDERS", metadata.getValue("FOUNDERS"));
       PARAMS.setValue("FOUNDING_TIME", metadata.getValue("FOUNDING_TIME"));
       // transfer founders to a new population
-      old_pops = sim.subpopulations;
-      sim.addSubpop(asInteger(HOST_ID), 0);
-      active_pop = sim.subpopulations[sim.subpopulations.id == asInteger(HOST_ID)];
-      founders = sim.individualsWithPedigreeIDs(inds_to_keep);
+      active_pop = sim.addSubpop(asInteger(HOST_ID), 0);
+      founders = sim.individualsWithPedigreeIDs(founder_ids);
 		active_pop.takeMigrants(founders);
       if (size(founders) != size(inds_to_keep)) {
          catn("Desired founders: " + paste(inds_to_keep, sep=","));
