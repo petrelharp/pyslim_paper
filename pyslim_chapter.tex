@@ -1172,16 +1172,21 @@ and labels a given set of individuals as being alive.
 This results in a curious thing: the tree sequence can contain information about the ``future''.
 Of course, SLiM only pays attention to those individuals that are marked as being alive,
 so this is harmless.
+The argument to \verb|set_slim_state| is in \tskit time ago,
+while the value we stored in metadata was a \slim tick,
+so to convert we subtract the stored tick from the current tick,
+which we obtain from top-level metadata.
 This step is done for every host that the current infection transmits to, producing
 a distinct version of the output tree sequence for each one.
 \begin{minted}[fontsize=\small, linenos, bgcolor=gray!10, breaklines]{python}
     user_metadata = ts.metadata['SLiM']['user_metadata']
     output_host_ids = user_metadata['OUTPUT_HOST_IDS']
+    tick = ts.metadata['SLiM']['tick']
 
     for host_id in output_host_ids:
         founding_time = user_metadata['FOUNDING_TIME'][0][host_id][0]
         founders = user_metadata['FOUNDERS'][0][host_id][0]
-        rts = pyslim.set_slim_state(ts, founding_time, individuals=founders)
+        rts = pyslim.set_slim_state(ts, tick - founding_time, individuals=founders)
         rts.dump(working_dir + '/' + user_metadata["HOST_ID"][0] + '_to_' + host_id + '.trees')
 \end{minted}
 

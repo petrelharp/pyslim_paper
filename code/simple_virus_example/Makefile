@@ -27,3 +27,6 @@ sim_04.trees : sim_01.04.trees
 
 sim_05.trees : sim_02.05.trees
 	slim -d "INFILE='$<'" -d "HOST_ID='05'" -d "SAMPLING_DAY=15" virus_in_host.slim
+
+clean : 
+	-rm *.trees

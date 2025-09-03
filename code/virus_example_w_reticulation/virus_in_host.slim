@@ -9,11 +9,11 @@ initialize() {
 	initializeTreeSeq();
 	defaults = Dictionary(
 		"SEED", getSeed(),
-		"HOST_ID", "00",               // the current host ID
-		"INFILE", c(""),               // optional list of files to read in to initiate this infection
+		"HOST_ID", "00",               // this host ID
+		"INFILE", "",                  // optional file to start from
 		"TRANSMISSION_DAYS", c(20),	 // a list of days (relative to start of infection) in which transmission events occur
 		"OUTPUT_HOST_IDS", c("01"),    // a list of host IDs to transmit infections to
-		"N_FOUNDERS", 20,              // number of pathogen individuals that starts a new infection
+		"N_FOUNDERS", 20,              // number chosen to start a new infection
 		"POP_GROWTH_RATE", 1.0,        // rate of growth of population
 		"K", 1e5     				       // carrying capacity within host
 		);
@@ -21,6 +21,7 @@ initialize() {
 	// Set up parameters with a user-defined function
 	setupParams(defaults);
 	defineConstant("PARAMS", defaults);
+
 	initializeChromosome(1, 1, "H");
 	initializeRecombinationRate(0);
 	initializeMutationRate(0);
@@ -34,7 +35,7 @@ initialize() {
 	}
 
 	// print start message
-	catn("\n\nWITHIN-HOST PARAMETER SUMMARY:\n");	
+	catn("\n\nWITHIN-HOST PARAMETER SUMMARY:\n");
 }
 
 // Pathogens infect host
@@ -59,7 +60,7 @@ initialize() {
       // transfer founders to a new population
       active_pop = sim.addSubpop(asInteger(HOST_ID), 0);
       founders = sim.individualsWithPedigreeIDs(founder_ids);
-		active_pop.takeMigrants(founders);
+      active_pop.takeMigrants(founders);
       if (size(founders) != size(inds_to_keep)) {
          catn("Desired founders: " + paste(inds_to_keep, sep=","));
          catn("Obtained founders: " + paste(active_pop.individuals.pedigreeID, sep=","));
@@ -95,10 +96,7 @@ unique(ABS_TRANSMISSION_DAYS) late() {
 		founders.setValue(host, sampled_inds.pedigreeID);
 		founding_time.setValue(host, sim.cycle);
 	}
-	// kill everyone else - mark individuals to be transmitted with a unique tag
-	sim.subpopulations.individuals.tagL0 = T;
-	transmitted_inds.tagL0 = F;
-	sim.killIndividuals(sim.subpopulations.subsetIndividuals(tagL0 = F));
+	sim.killIndividuals(transmitted_inds);
 }
 
 max(ABS_TRANSMISSION_DAYS) late() {
