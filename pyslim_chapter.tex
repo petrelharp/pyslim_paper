@@ -1,4 +1,5 @@
 \documentclass[12pt]{article}
+\usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
 \usepackage{lineno}
 \usepackage{authblk}
@@ -349,12 +350,12 @@ or non-uniform genetic map by simply passing in the relevant arguments.
 Setting up a demographic model in \msprime that is consistent and compatible with a particular \slim simulation requires
 understanding some of the finer details of each of these software packages, so here we will present a concrete example.
 Suppose our \slim model has the following population structure:
-\begin{minted}[fontsize=\small, linenos, bgcolor=gray!10]{slim}
+\begin{lstlisting}[language=slim, style=slimstyle, breaklines=true]
 1 early() {
    sim.addSubpop("p1", K);
    sim.addSubpop("p2", K);
 }
-\end{minted}
+\end{lstlisting}
 for some population size \verb|K|.
 If the resulting tree sequence is stored in the file \texttt{recap\_example.trees},
 then examining the populations using the shell, we see
@@ -511,10 +512,10 @@ mutations per base pair per generation. Further, let us assume that 99\% of all 
 are neutral, and the remaining 1\% have a selection coefficient of 0.001.
 If we were doing this simulation entirely within a forward-in-time framework with a long
 burn-in, we could have achieved this outcome using the following \slim code:
-\begin{minted}[fontsize=\small, linenos, bgcolor=gray!10]{slim}
+\begin{lstlisting}[language=slim, style=slimstyle, breaklines=true]
         initializeMutationType("m2", 0.5, "f", 0.001);
         initializeMutationRate(3e-10);
-\end{minted}
+\end{lstlisting}
 This code defines a mutation type \verb|m2| that has a dominance coefficient of 0.5 and a fixed selection
 coefficient of 0.001 (the latter can be made more flexible, \eg drawn from a distribution -- see the \slim manual).
 Notice, too, that we have set these non-neutral mutations to arise at a rate of $3 \times 10^{-10}$ per base per generation,
@@ -616,7 +617,7 @@ In the script we will also define a placeholder mutation type \verb|m1| for neut
 There is no need to set up a population or individuals -- this is read in from the tree sequence.
 %% PLR: no need to do this?
 % but we will make a point to ``Remember'' all the individuals who are alive at the start of the simulation to facilitate downstream analysis.
-\begin{minted}[fontsize=\small, linenos, bgcolor=gray!10]{slim}
+\begin{lstlisting}[language=slim, style=slimstyle, breaklines=true]
 initialize()
 {
     initializeSLiMModelType("WF");
@@ -634,7 +635,7 @@ initialize()
 100 late() {
     sim.treeSeqOutput("final.trees");
 }
-\end{minted}
+\end{lstlisting}
 This \slim code picks up the simulation where \msprime left off, applying the same mutation rate and recombination rates
 for an additional 100 generations.
 However, in this phase, an individual's genetic make-up (\ie the non-neutral genetic variants they carry)
@@ -988,7 +989,7 @@ to the start of the simulation, (\verb|TRANSMISSION_DAYS|), and how many pathoge
 to some rules; in our case, we parametrize this process by setting an overall growth rate (\verb|POP_GROWTH_RATE|) and an upper limit, or carrying capacity, for pathogens
 within the host (\verb|K|).
 
-\begin{minted}[fontsize=\small, linenos, bgcolor=gray!10, breaklines]{slim}
+\begin{lstlisting}[language=slim, style=slimstyle, breaklines=true]
 // INITIALIZE
 initialize() {
 	initializeSLiMModelType("nonWF");
@@ -1015,14 +1016,14 @@ initialize() {
 	initializeGenomicElementType("g1", m0, 1);
 	initializeGenomicElement(g1, 0, 0);
 }
-\end{minted}
+\end{lstlisting}
 
 We can begin a seed simulation by not specifying an input tree sequence in our initialize callback. This creates a new subpopulation in SLiM that is the integer version of the
 current host ID. This step also takes care of some important bookkeeping by creating entries for founder pathogen IDs and infection start times (\ie \textit{founding times}). These
 values are stored in a dictionary that we can access within SLiM as well as within tskit, which is important for later processing steps, as we will demonstrate. Finally, this code
 calculates the \textit{absolute transmission times} (the day of the overall simulation) by adding the start time of the current simulation to transmission days supplied.
 
-\begin{minted}[fontsize=\small, linenos, bgcolor=gray!10, breaklines]{slim}
+\begin{lstlisting}[language=slim, style=slimstyle, breaklines=true]
 // Pathogens infect host
 1 late() {
    // start seed simulation or load an input file
@@ -1040,13 +1041,13 @@ calculates the \textit{absolute transmission times} (the day of the overall simu
    defineConstant("ABS_TRANSMISSION_DAYS", SIM_START + asInteger(TRANSMISSION_DAYS));
    PARAMS.setValue("ABS_TRANSMISSION_DAYS", ABS_TRANSMISSION_DAYS);
 }
-\end{minted}
+\end{lstlisting}
 
 We then allow this population to evolve using the callbacks below. Reproduction proceeds with each individual producing a designated number of clones, as
 determined by a draw from the Poisson distribution. After these individuals are produced, their fitness is rescaled depending on the overall population size; when
 the population exceeds size the carrying capacity, individual pathogen fitness of the population is reduced accordingly to bring their numbers back down.
 
-\begin{minted}[fontsize=\small, linenos, bgcolor=gray!10, breaklines]{slim}
+\begin{lstlisting}[language=slim, style=slimstyle, breaklines=true]
 // Pathogens replicate within the host
 reproduction() {
 	active_pop = sim.subpopulations[sim.subpopulations.id == asInteger(HOST_ID)];
@@ -1063,7 +1064,7 @@ reproduction() {
 	active_pop = sim.subpopulations[sim.subpopulations.id == asInteger(HOST_ID)];
 	sim.subpopulations.fitnessScaling = min(0.9, K / active_pop.individualCount);
 }
-\end{minted}
+\end{lstlisting}
 
 When the simulation reaches one of the designated \textit{transmission days}, an additional callback is executed that samples some individuals from the
 population and marks them for transmission to a subsequent host. The code in this block first identifies the host ID(s) corresponding to the current transmission event.
@@ -1078,7 +1079,7 @@ simulation time, this transmission event happens. This information, along with e
 of tree sequences, which is accessible in both \slim and python, is extremely useful because it can store arbitrary bits of information that we might want later. In our case,
 we will use \verb|FOUNDERS| and \verb|FOUNDING_TIME| to determine which individuals to bring back from the dead and how far to rewind tree sequence time, respectively.
 
-\begin{minted}[fontsize=\small, linenos, bgcolor=gray!10, breaklines]{slim}
+\begin{lstlisting}[language=slim, style=slimstyle, breaklines=true]
 // Pathogens are transmitted to next host
 unique(ABS_TRANSMISSION_DAYS) late() {
 	// parse 'output_host_id' to figure out which hosts to transmit to
@@ -1102,7 +1103,7 @@ unique(ABS_TRANSMISSION_DAYS) late() {
 	transmitted_inds.tagL0 = F;
 	sim.killIndividuals(sim.subpopulations.subsetIndividuals(tagL0 = F));
 }
-\end{minted}
+\end{lstlisting}
 
 This simulation runs as long as necessary to complete all the specified transmission events, and then ends by writing out a single output tree sequence. In this tree sequence, all of
 individuals that were transmitted at any point in the simulation will be \textit{remembered} as samples, but will be dead. Additionally, we kill all remaining individuals in the host population
@@ -1110,14 +1111,14 @@ just before writing the output. If we did not do this, thousands of individuals 
 would be stored in the tree sequence. Because we only care about the relatively few individuals that will go on to found new infections, we can save significant hard disk space
 (as well as time and memory) by getting rid of everyone else, too. Note that the \verb|PARAMS| dictionary is added to the output as top-level metadata.
 
-\begin{minted}[fontsize=\small, linenos, bgcolor=gray!10, breaklines]{slim}
+\begin{lstlisting}[language=slim, style=slimstyle, breaklines=true]
 max(ABS_TRANSMISSION_DAYS) late() {
 	// write out a tree sequence containing the information needed for all subsequent infections
 	sim.killIndividuals(sim.subpopulations.individuals);
 	sim.treeSeqOutput(HOST_ID + ".trees", metadata=PARAMS);
 	sim.simulationFinished();
 }
-\end{minted}
+\end{lstlisting}
 
 Now we have a tree sequence with no living individuals at all, which will not be of much use if we were to load it back into SLiM directly. We therefore need to do some file processing
 with \tskit before we can initiate the next set of infections, which is accomplished with the python script below. Here, we extract the host IDs that we need to transmit to (\verb|OUTPUT_HOST_IDS|)
@@ -1231,23 +1232,23 @@ As with all cases where the validity of a particular approximation may be questi
 
 Doing this is as simple as:
 
-\begin{minted}[fontsize=\small, linenos, bgcolor=gray!10]{slim}
+\begin{lstlisting}[language=slim, style=slimstyle, breaklines=true]
 orig_ts = tskit.load("example_sim.trees")
 rts = pyslim.recapitate(orig_ts,
             recombination_rate=1e-8,
             ancestral_Ne=200, random_seed=5)
-\end{minted}
+\end{lstlisting}
 The warning is harmless; it is reminding us to think about generation time
 when recapitating a nonWF simulation (a topic we'll deal with later).
 
 We can check that this worked as expected, by verifying that after recapitation
 all trees have only one root:
-\begin{minted}[fontsize=\small, linenos, bgcolor=gray!10]{slim}
+\begin{lstlisting}[language=slim, style=slimstyle, breaklines=true]
 orig_max_roots = max(t.num_roots for t in orig_ts.trees())
 recap_max_roots = max(t.num_roots for t in rts.trees())
 print(f"Maximum number of roots before recapitation: {orig_max_roots}\n"
       f"After recapitation: {recap_max_roots}")
-\end{minted}
+\end{lstlisting}
 
 The `.recapitate` method
 is just a thin wrapper around `msprime.sim\_ancestry`,
@@ -1311,17 +1312,17 @@ which would be inconsistent with the SLiM simulation.
 After recapitation,
 simplification to the history of 100 individuals alive today
 can be done with the {meth}`tskit.TreeSequence.simplify` method:
-\begin{minted}[fontsize=\small, linenos, bgcolor=gray!10]{slim}
+\begin{lstlisting}[language=slim, style=slimstyle, breaklines=true]
 import numpy as np
 rng = np.random.default_rng(seed=3)
 alive_inds = pyslim.individuals_alive_at(rts, 0)
-keep_indivs = rng.choice(alive_inds, 100, replace=False)
+keep_indivs = rng.choice(alive_indivs, 100, replace=False)
 keep_nodes = []
 for i in keep_indivs:
   keep_nodes.extend(rts.individual(i).nodes)
 
 sts = rts.simplify(keep_nodes, keep_input_roots=True)
-\end{minted}
+\end{lstlisting}
 
 Note that you must pass simplify a list of \textit{node IDs}, not individual IDs.
 Here, we used the `.individuals\_alive\_at` method to obtain the list
@@ -1347,7 +1348,7 @@ at the rate per unit time that you request.
 We'll add these using the {class}`msprime.SLiMMutationModel`, so that the file can be read back into SLiM,
 but any of the other mutation models in msprime could be used.
 This works as follows:
-\begin{minted}[fontsize=\small, linenos, bgcolor=gray!10]{slim}
+\begin{lstlisting}[language=slim, style=slimstyle, breaklines=true]
 next_id = pyslim.next_slim_mutation_id(sts)
 ts = msprime.sim_mutations(
            sts,
@@ -1355,7 +1356,7 @@ ts = msprime.sim_mutations(
            model=msprime.SLiMMutationModel(type=0, next_id=next_id),
            keep=True,
 )
-\end{minted}
+\end{lstlisting}
 
 
 What's going on here? Let's step through the code.
@@ -1468,7 +1469,7 @@ to some rules; in our case, we parametrize this process by setting an overall gr
 within the host ('K'). This simulation runs as long as necessary to complete all the specified transmission events and ultimately writes out an output tree sequence in which
 all transmitted pathogens are marked as samples. The full SLiM script is available on github? appendix?
 
-\begin{minted}[fontsize=\small, linenos, bgcolor=gray!10]{slim}
+\begin{lstlisting}[language=slim, style=slimstyle, breaklines=true]
 // INITIALIZE
 initialize() {
 	initializeSLiMModelType("nonWF");
@@ -1489,13 +1490,13 @@ initialize() {
 		"K", 1e5     				       // carrying capacity within host
 		);
 }
-\end{minted}
+\end{lstlisting}
 
 If a particular host infection step represents a branch point, i.e. there is more than one value in 'OUTPUT\_HOST\_IDS', we have to ensure that each set of samples is tracked
 and marked according to the downstream infection step that they are destined for. To do this, our script executes the following code on days that a transmission event occurs:
 
 %% SSG: propose cutting the transmission vs. reproduction benefit stuff for now
-\begin{minted}[fontsize=\small, linenos, bgcolor=gray!10]{slim}
+\begin{lstlisting}[language=slim, style=slimstyle, breaklines=true]
 ABS_TRANSMISSION_DAYS late() {
 	// parse 'output_host_id' to figure out which hosts to transmit to
 	which_hosts = which(ABS_TRANSMISSION_DAYS == community.tick);
@@ -1509,6 +1510,7 @@ ABS_TRANSMISSION_DAYS late() {
 	sim.treeSeqRememberIndividuals(transmitted_inds); // permanently remember these individuals in subsequent parallel infection steps
 	// kill everyone else - mark individuals to be transmitted with a unique tag
 	sim.subpopulations.individuals.tagL0 = T;
+	sim.subpopulations.individuals.tagL0 = T;
 	transmitted_inds.tagL0 = F;
 	sim.killIndividuals(sim.subpopulations.subsetIndividuals(tagL0 = T));
 	// construct dictionary of infected hosts and viral genomes to be transmitted to each
@@ -1520,7 +1522,7 @@ ABS_TRANSMISSION_DAYS late() {
 		founding_time.setValue(host, sim.cycle);
 	}
 }
-\end{minted}
+\end{lstlisting}
 
 The code in this block first identifies the host ID corresponding to the current transmission event. Then, it selects the individuals to be transmitted to the next host from the
 pathogen population. These individuals are permanently remembered and marked with a unique tag, 'tagL0', which stores a boolean value. These individuals are then 'killed'
@@ -1537,14 +1539,14 @@ but dead. Additionally, we kill all remaining individuals in the host population
 the simulation would be marked as samples and their full genealogical history would be stored in the tree sequence. Because we only care about the relatively few individuals
 that will go on to found new infections, we can save significant hard disk space (as well as time and memory) by getting rid of everyone else, too.
 
-\begin{minted}[fontsize=\small, linenos, bgcolor=gray!10]{slim}
+\begin{lstlisting}[language=slim, style=slimstyle, breaklines=true]
 max(c(ABS_TRANSMISSION_DAYS, ABS_SAMPLING_DAY)) late() {
 	// write out a tree sequence containing the information needed for all subsequent infections
 	sim.killIndividuals(sim.subpopulations.individuals);
 	sim.treeSeqOutput("sim_" + HOST_ID + ".trees", metadata=PARAMS);
 	sim.simulationFinished();
 }
-\end{minted}
+\end{lstlisting}
 
 Now we have a tree sequence with no living individuals at all, which will not be of much use if we were to load it back into SLiM. We therefore need to do some pre-processing
 before we attempt to initiate the next set of infections. The following python script is run prior to each new host infection and executes the two main functions mentioned above:
@@ -1561,9 +1563,9 @@ also have the same problem of merging multiple tree sequences into a single one.
 distinct nodes that might happen to share a 'slim\_id'. We could theoretically use the same approach here, but we will instead demonstrate an alternative method that is equally
 effective. Within our SLiM model, we initiate each within-host infection by moving or creating founder individuals in a subpopulation that is labelled with the host ID:
 
-\begin{minted}[fontsize=\small, linenos, bgcolor=gray!10]{slim}
+\begin{lstlisting}[language=slim, style=slimstyle, breaklines=true]
 	pop_id = asInteger(HOST_ID);
-\end{minted}
+\end{lstlisting}
 
 Crucially, host IDs are unique in our simulation set-up - no host is infected more than one time and so their IDs are never reused. This means that we can use a combination
 of the 'slim\_id' and 'population' property of nodes to definitively match them across pairs of trees, and to generate the node map required by tskit.union(). Tree sequence
