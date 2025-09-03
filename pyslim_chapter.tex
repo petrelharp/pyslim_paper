@@ -1098,7 +1098,7 @@ calculates the \textit{absolute transmission times} (the day of the overall simu
 We then allow this population to evolve using the callbacks below. Reproduction proceeds with each individual producing a random number of clones.
 After these individuals are produced, their fitness is rescaled depending on the overall population size; when
 the population exceeds size the carrying capacity, individual pathogen fitness of the population is reduced accordingly to bring their numbers back down.
-\begin{minted}[fontsize=\small, linenos, bgcolor=gray!10, breaklines]{slim}
+\begin{lstlisting}[language=slim, style=slimstyle, breaklines=true]
 // Pathogens replicate within the host
 reproduction() {
 	num_offspring = rpois(1, POP_GROWTH_RATE);
