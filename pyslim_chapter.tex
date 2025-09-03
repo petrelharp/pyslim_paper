@@ -959,25 +959,35 @@ Finally, we consider a more complex scenario that requires more advanced manipul
 simulation of the within-host dynamics of a pathogen,
 where individual hosts simulated in parallel using the same basic \slim script.
 This is therefore similar to the previous example, but more complex for two reasons:
-1) we cannot retain the entire population at branch points, for efficiency reasons, especially because pathogen populations can be extremely large; and
-2) we will allow for reticulations in the phylogeny, where branches can sometimes 'meet' and are therefore not strictly independent of each other.
+1) we don't want to retain the entire population at branch points, for efficiency reasons; and
+2) we will allow for reticulations in the ``phylogeny'',
+which occur when a host individual is infected from more than one source.
 % Accommodating these scenarios requires some tweaks to the previous modeling
 % framework such that we can retain all the information necessary to identify shared sections in all possible pairs of tree sequences.
 % We demonstrate how to accomplish this task
 % by using pathogen evolution as an example.
 
 
+% \begin{figure}[h!]
+%     \centering
+%      \includegraphics[width=\textwidth]{figures/DAG_no_reticulation.pdf}
+%      \caption{
+%         Nodes in this figure represent individual host infections, while the arrows represent the direction in which pathogens are transmitted from one to the next. 
+%      \label{fig:DAG_no_reticulation}
+%      }
+%     \end{figure}
+
 \begin{figure}[h!]
     \centering
-     \includegraphics[width=\textwidth]{figures/DAG_no_reticulation.pdf}
+     \includegraphics[width=\textwidth]{figures/DAG_w_reticulation.pdf}
      \caption{
-        Nodes in this figure represent individual host infections, while the arrows represent the direction in which pathogens are transmitted from one to the next. 
-     \label{fig:DAG_no_reticulation}
+        Nodes in this figure represent individual host infections, while the arrows represent the direction in which pathogens are transmitted from one to the next. Here, red arrows represent cases of reticulation in the transmission graph, where a host infection is founded by pathogens from two distinct source infections.
+     \label{fig:DAG_w_reticulation}
      }
     \end{figure}
 
 We can model a pathogen infecting a host species as a large meta-population, where each infected host constitutes a distinct pathogen deme.
-Similar to our previous section, we can represent the relationship between individual hosts with a simple branching structure, \ie a phylogeny (Figure~\ref{fig:DAG_no_reticulation}).
+Similar to our previous section, we can represent the relationship between individual hosts with a phylogeny-like branching structure, as in Figure~\ref{fig:DAG_w_reticulation}.
 In this figure, nodes represent pathogen subpopulations within individual hosts and transmission events from one host to another are represented by edges.
 % Although this model operates on a much shorter time scale than the prior example,
 % \ie weeks-months versus thousands-millions of years, this underlying structure enables the use of parallelization
@@ -985,7 +995,7 @@ In this figure, nodes represent pathogen subpopulations within individual hosts 
 
 Just as in the prior vignette, the backbone of this model is a flexible SLiM script that can accept a specific tree sequence as a starting point in addition to other
 parameter values.
-Our baseline script simulates the logistic growth of pathogen individuals within a host,
+This script simulates the logistic growth of pathogen individuals within a host,
 as well as a bottleneck of a few pathogens to be transmitted to each subsequent host.
 These dynamics will play out repeatedly as we model the pathogen
 spreading through the host population.
@@ -997,7 +1007,7 @@ a first try at this might be to save the tree sequence at the times of each new 
 However, this fails:
 previously, we could assume when combining two simulations
 (see Figure~\ref{fig:union}) that all shared individuals had identical lives,
-but in the presence of overlapping generations more care must be taken.
+but with overlapping generations more care must be taken.
 If two simulations begin with the same tree sequence for an initial state,
 then the ``same'' individuals could live parallel and contradictory lives along the two branches of the simulation.
 Furthermore, we would like to save only those few individuals who start each new infection,
@@ -1011,8 +1021,8 @@ rather than the entire population.
 % as it would necessitate storing massive amounts of genealogical data, ultimately running up against memory and storage limits within just a few simulated generations.
 So, we will store only the information needed for piecing the full genealogy back together, allowing SLiM to simplify out the rest to maintain efficiency.
 Each host simulation produces a single output tree sequence
-that contains all the samples required to represent all downstream transmission events,
-and then make use of advanced operations to use this single tree sequence
+that contains all the samples required to represent all downstream transmission events.
+Then, we make use of advanced operations to use this single tree sequence
 to start several different downstream simulations.
 
 The basic workflow for a within-host SLiM simulation is as follows. The infection starts by loading an input tree sequence, if specified,
@@ -1024,80 +1034,80 @@ to some rules; in our case, we parametrize this process by setting an overall gr
 and an upper limit, or carrying capacity, for pathogens within the host (\verb|K|).
 
 \begin{lstlisting}[language=slim, style=slimstyle, breaklines=true]
-// INITIALIZE
 initialize() {
-	initializeSLiMModelType("nonWF");
-	initializeSLiMOptions(keepPedigrees = T);
-	initializeTreeSeq();
-	defaults = Dictionary(
-		"SEED", getSeed(),
-		"HOST_ID", "00", 				// the current host ID
-		"INFILE", c(""),					// optional list of files to read in to initiate this infection
-		"TRANSMISSION_DAYS", c(20),	// a list of days (relative to start of infection) in which transmission events occur
-		"OUTPUT_HOST_IDS", c("01"),	// a list of host IDs to transmit infections to
-		"N_FOUNDERS", 20,			// number of pathogen individuals that starts a new infection
-		"POP_GROWTH_RATE", 1.0,		// rate of growth of population
-		"K", 1e5,						// carrying capacity within host
-		);
-	
-	// Set up parameters with a user-defined function
-	setupParams(defaults);
-	defineConstant("PARAMS", defaults);
-	initializeChromosome(1, GENOME_LENGTH, "H");
-	initializeRecombinationRate(0);
-	initializeMutationRate(0);
-	initializeMutationType("m0", 0, "f", 0);
-	initializeGenomicElementType("g1", m0, 1);
-	initializeGenomicElement(g1, 0, 0);
+  initializeSLiMModelType("nonWF");
+  initializeSLiMOptions(keepPedigrees = T);
+  initializeTreeSeq();
+  defineConstant("HOST_ID", "00");  // the current host ID
+  defineConstant("INFILE", "");  // optional file to read in to initiate the infection
+  // information about successive transmission events:
+  // which days they occur on, relative to the start,
+  // and which host IDs are transmitted
+  defineConstant("TRANSMISSION_DAYS", c(20));
+  defineConstant("OUTPUT_HOST_IDS", c("01"));
+  defineConstant("N_FOUNDERS", 20);  // number transmitted
+  defineConstant("POP_GROWTH_RATE", 1.0); // number of offspring
+  defineConstant("K", 1e5);  // carrying capacity within host
+  
+  initializeChromosome(1, GENOME_LENGTH, "H");
+  initializeRecombinationRate(0);
+  initializeMutationRate(0);
+  initializeMutationType("m0", 0, "f", 0);
+  initializeGenomicElementType("g1", m0, 1);
+  initializeGenomicElement(g1, 0, 0);
+
+  // used to pass information along with the tree sequence
+  defineConstant("PARAMS", Dictionary());
 }
 \end{lstlisting}
 
-We can begin a seed simulation by not specifying an input tree sequence in our initialize callback. This creates a new subpopulation in SLiM that is the integer version of the
-current host ID. This step also takes care of some important bookkeeping by creating entries for founder pathogen IDs and infection start times (\ie \textit{founding times}). These
-values are stored in a dictionary that we can access within SLiM as well as within tskit, which is important for later processing steps.
+We begin by creating a new subpopulation in SLiM whose ID is equal to the current host ID.
+If there is no input tree sequence given,
+this is filled with new individuals.
+This step also creates dictionaries for founder pathogen IDs and infection start times (\ie \textit{founding times})
+that will be stored later in metadata, for access within \slim as well as \tskit.
+If there is a tree sequence file given,
+we reload the simulation state from the file,
+as well as additional \emph{metadata} from the tree sequence file.
+In the metadata, we've stored the IDs of the individuals who are to be the founders,
+so we move these to a newly created subpopulation.
 Finally, this code
 calculates the \textit{absolute transmission times} (the day of the overall simulation) by adding the start time of the current simulation to transmission days supplied.
-
 \begin{lstlisting}[language=slim, style=slimstyle, breaklines=true]
 // Pathogens infect host
 1 late() {
-   // start seed simulation or load an input file
    if (INFILE == "") {
       catn("\nSTARTING SEED SIMULATION\n");
-      // infections are started with 'N_FOUNDERS' pathogens
       sim.addSubpop(asInteger(HOST_ID), N_FOUNDERS);
       PARAMS.setValue("FOUNDERS", Dictionary(HOST_ID, c()));
       PARAMS.setValue("FOUNDING_TIME", Dictionary(HOST_ID, sim.cycle));
+   } else {
+      sim.readFromPopulationFile(INFILE);
+      metadata = treeSeqMetadata(INFILE);
+      founder_ids = metadata.getValue("FOUNDERS").getValue(HOST_ID);
+      active_pop = sim.addSubpop(asInteger(HOST_ID), 0);
+      founders = sim.individualsWithPedigreeIDs(founder_ids);
+      active_pop.takeMigrants(founders);
    }
-   // track simulation start day
    defineConstant("SIM_START", sim.cycle);		
-   PARAMS.setValue("SIM_START", SIM_START);
-   // calculate the overall transmission day
-   defineConstant("ABS_TRANSMISSION_DAYS", SIM_START + asInteger(TRANSMISSION_DAYS));
-   PARAMS.setValue("ABS_TRANSMISSION_DAYS", ABS_TRANSMISSION_DAYS);
+   defineConstant("ABS_TRANSMISSION_DAYS",
+        SIM_START + asInteger(TRANSMISSION_DAYS));
 }
 \end{lstlisting}
 
-We then allow this population to evolve using the callbacks below. Reproduction proceeds with each individual producing a designated number of clones, as
-determined by a draw from the Poisson distribution. After these individuals are produced, their fitness is rescaled depending on the overall population size; when
+We then allow this population to evolve using the callbacks below. Reproduction proceeds with each individual producing a random number of clones.
+After these individuals are produced, their fitness is rescaled depending on the overall population size; when
 the population exceeds size the carrying capacity, individual pathogen fitness of the population is reduced accordingly to bring their numbers back down.
-
-\begin{lstlisting}[language=slim, style=slimstyle, breaklines=true]
+\begin{minted}[fontsize=\small, linenos, bgcolor=gray!10, breaklines]{slim}
 // Pathogens replicate within the host
 reproduction() {
-	active_pop = sim.subpopulations[sim.subpopulations.id == asInteger(HOST_ID)];
-	// choose the target population size based on the specified population growth rate
-	num_offspring = rpois(sum(active_pop.individualCount), POP_GROWTH_RATE);
-	for (i in active_pop.individuals, n in num_offspring) {
-		offspring = active_pop.addCloned(i, count=n);
-	}
-	self.active = 0;
+	num_offspring = rpois(1, POP_GROWTH_RATE);
+    subpop.addCloned(individual, count=num_offspring);
 }
 
-// Individuals have their fitness scaled according to the overall population size (logistic growth)
 2: early() {
 	active_pop = sim.subpopulations[sim.subpopulations.id == asInteger(HOST_ID)];
-	sim.subpopulations.fitnessScaling = min(0.9, K / active_pop.individualCount);
+	active_pop.fitnessScaling = min(0.9, K / active_pop.individualCount);
 }
 \end{lstlisting}
 
@@ -1124,7 +1134,7 @@ unique(ABS_TRANSMISSION_DAYS) late() {
 	N_pathogens = rep(N_FOUNDERS, count = length(hosts_to_infect));
 	// sample individuals to transmit
 	transmitted_inds = sample(sim.subpopulations.individuals, size = sum(N_pathogens), replace = F);
-	sim.treeSeqRememberIndividuals(transmitted_inds); // permanently remember these individuals in subsequent parallel infection steps
+	sim.treeSeqRememberIndividuals(transmitted_inds);
 	// construct dictionary of infected hosts and viral genomes to be transmitted to each
 	founders = PARAMS.getValue("FOUNDERS");
 	founding_time = PARAMS.getValue("FOUNDING_TIME");
@@ -1133,10 +1143,7 @@ unique(ABS_TRANSMISSION_DAYS) late() {
 		founders.setValue(host, sampled_inds.pedigreeID);
 		founding_time.setValue(host, sim.cycle);
 	}
-	// kill transmitted individuals by first marking them with a unique tag
-	sim.subpopulations.individuals.tagL0 = T;
-	transmitted_inds.tagL0 = F;
-	sim.killIndividuals(sim.subpopulations.subsetIndividuals(tagL0 = F));
+    sim.killIndividuals(transmitted_inds);
 }
 \end{lstlisting}
 
@@ -1167,7 +1174,6 @@ Of course, SLiM only pays attention to those individuals that are marked as bein
 so this is harmless.
 This step is done for every host that the current infection transmits to, producing
 a distinct version of the output tree sequence for each one.
-
 \begin{minted}[fontsize=\small, linenos, bgcolor=gray!10, breaklines]{python}
     user_metadata = ts.metadata['SLiM']['user_metadata']
     output_host_ids = user_metadata['OUTPUT_HOST_IDS']
@@ -1186,33 +1192,30 @@ to disambiguate distinct nodes that might happen to share a \verb|slim_id|.
 That won't work here because some of the shared nodes can be more recent than the split time,
 thanks to the resetting done by \verb|set_slim_state|.
 As previously noted, we use the integer version of the current host ID as the subpopulation ID within SLiM.
-Crucially, host IDs are unique in our simulation set-up - no host is infected more than
-one time and so their IDs are never reused  (Figure~\ref{fig:DAG_no_reticulation}). This means that we can use a combination of the \verb|slim_id| and \verb|population| property of nodes to
+Crucially, host IDs are unique in our simulation set-up.
+This means that we can use a combination of the \verb|slim_id| and \verb|population| property of nodes to
 definitively match them across pairs of trees, and to generate the node map required by \verb|tskit.union|.
 Tree sequence merging can then be achieved in the same way as outlined
 in our previous vignette. %%See full example on github? appendix?
 
-\begin{figure}[h!]
-    \centering
-     \includegraphics[width=\textwidth]{figures/DAG_w_reticulation.pdf}
-     \caption{
-        Nodes in this figure represent individual host infections, while the arrows represent the direction in which pathogens are transmitted from one to the next. Here, red arrows represent cases of reticulation in the transmission graph, where a host infection is founded by pathogens from two distinct source infections
-     \label{fig:DAG_w_reticulation}
-     }
-    \end{figure}
-
 The main advantage to using a host or population ID to disambiguate nodes is that we can accommodate reticulation in our phylogeny without having to make major
-changes to our modeling framework. For example, consider the phylogeny depicted in Figure~\ref{fig:DAG_w_reticulation}. This phylogeny is based on our original example (Figure~\ref{fig:DAG_no_reticulation}) but with some
-additional 'loops'. These represent events where more than one transmission event contributes to the infection of the next host. In the real world, the likelihood of a co-infection event
-increases as the overall infection rate increases. It is therefore important to be able to model this kind of scenario. It is clear that using split time would not work in this case because
-different branches of the phylogeny can come back into contact even after their initial split. Therefore, reticulation in the phylogeny necessitates the use of a second id, such as the host ID, that is unique to each infection in order to correctly identify shared nodes across different tree sequences. The full code needed to reproduce the scenario represented by Figure~\ref{fig:DAG_w_reticulation} is available on \href{https://github.com/petrelharp/pyslim_paper/tree/main/code/virus_example_w_reticulation}{Github}.
+changes to our modeling framework.
+For example, consider the transmission network depicted in Figure~\ref{fig:DAG_w_reticulation},
+which has ``reticulation'' events where more than one transmission event contributes to the infection of the next host.
+It is clear that using split time would not work in this case because
+different branches of the transmission network can come back into contact even after their initial split.
+Therefore, reticulation necessitates the use of a second ID, such as the host ID,
+that is unique to each infection in order to correctly identify shared nodes across different tree sequences.
+The full code needed to reproduce the scenario represented by Figure~\ref{fig:DAG_w_reticulation} is available in the accompanying code.
 This includes the additional intermediate step (using \verb|union|)
 required to produce the input tree sequence for co-infected hosts (\ie H07, H10, and H11 in our example). %% see full details on github
 
 The framework we outline here makes it possible to model the evolution of very large and complex pathogen meta-populations in order to understand how both among-host
-and within-host factor impact these processes. For example, we can use our model to develop expectations for how pathogens evolve under variable selection pressures. Let
-us imagine that there exists a genetic variant in the pathogen population that underlies a life history trade-off between replication and transmissibility; one allele allows the
-individual carrying it to reproduce at a faster rate while the alternate allele increases an individual's likelihood of being transmitted to a new host. Similar trade-offs have been observed in influenza, HIV, and COVID-19 \citep{liang2023pathogenicity, arien2005replicative, zhu2022ancestral}, but would be challenging to model realistically without parallelization. 
+and within-host factor impact these processes. For example, we can use our model to develop expectations for how pathogens evolve under variable selection pressures.
+Imagine a life history trade-off between replication and transmissibility, so that one allele at a particular locus allows the
+individual carrying it to reproduce at a faster rate while the alternate allele increases an individual's likelihood of being transmitted to a new host.
+Similar trade-offs have been observed in influenza, HIV, and COVID-19 \citep{liang2023pathogenicity, arien2005replicative, zhu2022ancestral},
+but would be challenging to model realistically without parallelization. 
 %Parallelizing forward-in-time models represents a powerful approach to increasing the complexity and realism of evolutionary models, but introduces some additional challenges. Luckily, there now exists a coherent software ecosystem, which includes \slim, \tskit, and \pyslim, that allows users to overcome these challenges in order to leverage the full
 %power of the ARG.
 
@@ -1272,375 +1275,3 @@ As with all cases where the validity of a particular approximation may be questi
 \appendix
 
 \end{document}
-
-\comment{STUFF WE MAYBE DON'T WANT: moved here from above:}
-
-\comment{Remove ILS thing and just add a paragraph citing Rodrigues et al and saying why this would be faster and would split the memory requirements across a bunch of processes.}
-
-\section{Recapitation}
-
-
-Doing this is as simple as:
-
-\begin{lstlisting}[language=slim, style=slimstyle, breaklines=true]
-orig_ts = tskit.load("example_sim.trees")
-rts = pyslim.recapitate(orig_ts,
-            recombination_rate=1e-8,
-            ancestral_Ne=200, random_seed=5)
-\end{lstlisting}
-The warning is harmless; it is reminding us to think about generation time
-when recapitating a nonWF simulation (a topic we'll deal with later).
-
-We can check that this worked as expected, by verifying that after recapitation
-all trees have only one root:
-\begin{lstlisting}[language=slim, style=slimstyle, breaklines=true]
-orig_max_roots = max(t.num_roots for t in orig_ts.trees())
-recap_max_roots = max(t.num_roots for t in rts.trees())
-print(f"Maximum number of roots before recapitation: {orig_max_roots}\n"
-      f"After recapitation: {recap_max_roots}")
-\end{lstlisting}
-
-The `.recapitate` method
-is just a thin wrapper around `msprime.sim\_ancestry`,
-and you need to set up demography explicitly - for instance, in the example above
-we've simulated from an ancestral population of ``Ne=200`` diploids.
-If you have more than one population,
-you must set migration rates or else coalescence will never happen.
-% (see [](sec_recapitate_with_migration) for an example, and {func}`.recapitate` for more).
-
-(TODO: mention about how to recapitate with a nonuniform map, as in the docs?)
-
-
-\section{Simplification}
-
-
-Probably, your simulations have produced many more fictitious genomes
-than you will be lucky enough to have in real life,
-so at some point you may want to reduce your dataset to a realistic sample size.
-We can get rid of unneeded samples and any extra information from them by using
-an operation called *simplification* (this is the same basic approach that SLiM
-implements under the hood when outputting a tree sequence).
-
-Depicted in Figure~\ref{fig:recap_simp}B is the result of applying an explicit call to
-simplify to our example tree sequence.
-In the call we asked to keep only 4
-genomes (contained in 2 of the individuals in the current generation). This has
-substantially simplified the tree sequence, because only information relevant to the
-genealogies of the 4 sample nodes has been kept. (Precisely, simplification retains only
-nodes of the tree sequence that are branching points of some marginal genealogy -- see
-CITE % [Kelleher et al 2018](https://doi.org/10.1371/journal.pcbi.1006581) for details.)
-While simplification sounds very appealing - it makes things simpler after all -
-it is often not necessary in practice, because tree sequences are very compact,
-and many operations with them are quite fast.
-(It will, however, speed up many operations, so if you plan to do a large number of simulations,
-your workflow could benefit from early simplification.)
-So, you should probably not make simplification a standard step in your workflow,
-only using it if necessary.
-
-It is important that simplification - if it happens at all -
-either (a) comes after recapitation, or (b) is done with the
-``keep\_input\_roots=True`` option.
-This is because simplification removes some of the
-ancestral genomes in the first generation,
-which are necessary for recapitation,
-unless it is asked to "keep the input roots".
-If we simplify without this option before recapitating,
-some of the first-generation blue chromosomes in the figure on the right
-would not be present, so the coalescent simulation would start from a more recent point in time
-than it really should.
-As an extreme example, suppose our SLiM simulation has a single diploid who has reproduced
-by clonal reproduction for 1,000 generations,
-so that the final tree sequence is just two vertical lines of descent going back
-to the two chromosomes in the initial individual alive 1,000 generations ago.
-Recapitation would produce a shared history for these two chromosomes,
-that would coalesce some time longer ago than 1,000 generations.
-However, if we simplified first, then those two branches going back 1,000 generations would be removed,
-since they don't convey any information about the shape of the tree;
-and so recapitation might produce a common ancestor more recently than 1,000 generations,
-which would be inconsistent with the SLiM simulation.
-
-After recapitation,
-simplification to the history of 100 individuals alive today
-can be done with the {meth}`tskit.TreeSequence.simplify` method:
-\begin{lstlisting}[language=slim, style=slimstyle, breaklines=true]
-import numpy as np
-rng = np.random.default_rng(seed=3)
-alive_inds = pyslim.individuals_alive_at(rts, 0)
-keep_indivs = rng.choice(alive_indivs, 100, replace=False)
-keep_nodes = []
-for i in keep_indivs:
-  keep_nodes.extend(rts.individual(i).nodes)
-
-sts = rts.simplify(keep_nodes, keep_input_roots=True)
-\end{lstlisting}
-
-Note that you must pass simplify a list of \textit{node IDs}, not individual IDs.
-Here, we used the `.individuals\_alive\_at` method to obtain the list
-of individuals alive today.
-Also note that there are *still* more than 100 individuals remaining - 15 non-sample individuals
-have not been simplified away,
-because they have nodes that are required to describe the genealogies of the samples.
-(Since this is a non-Wright-Fisher simulation,
-parents and children can be both alive at the same time in the final generation.)
-
-
-
-\section{Adding neutral mutations to a SLiM simulation}
-
-% ```{figure} _static/pedigree_mutate.png
-
-If you have recorded a tree sequence in SLiM, likely you have not included any neutral mutations,
-since it is much more efficient to simply add these on afterwards.
-To add these (in a completely equivalent way to having included them during the simulation),
-you can use the `msprime.sim\_mutations` function, which returns a new tree sequence with additional mutations.
-Continuing with the cartoons from above, these are added to each branch of the tree sequence
-at the rate per unit time that you request.
-We'll add these using the {class}`msprime.SLiMMutationModel`, so that the file can be read back into SLiM,
-but any of the other mutation models in msprime could be used.
-This works as follows:
-\begin{lstlisting}[language=slim, style=slimstyle, breaklines=true]
-next_id = pyslim.next_slim_mutation_id(sts)
-ts = msprime.sim_mutations(
-           sts,
-           rate=1e-8,
-           model=msprime.SLiMMutationModel(type=0, next_id=next_id),
-           keep=True,
-)
-\end{lstlisting}
-
-
-What's going on here? Let's step through the code.
-
-\begin{enumerate}
-    \item The mutation ``rate = 1e-8``, which adds mutations at a rate of $10^{-8}$ per bp.
-    Unlike previous versions of msprime, this adds mutations using a discrete-sites model,
-    i.e., only at integer locations (like SLiM).
-
-\item We're passing ``type=0`` to the mutation model.
-    This is because SLiM mutations need a "mutation type",
-    and it makes the most sense if we add a type that was unused in the simulation.
-    In this example we don't have any existing mutation types, so we can safely use ``type=0``.
-
-\item We also add ``keep = True``, to keep any existing mutations.
-    In this example there aren't any, so this isn't strictly necessary,
-    but this is a good default.
-
-\item If there are existing SLiM mutations on the tree sequence we need to
-    make sure any newly added mutations have distinct SLiM IDs,
-    so we use `.next\_slim\_mutation\_id` to figure out
-    what the next available ID is, and pass it in.
-
-\end{enumerate}
-
-TODO: writing out to VCF
-
-%%% identify all shared ancestors in a pair of tree sequences from the virus in host example
-The next task is to combine the partially-overlapping histories of different hosts.
-As in the previous section, we use \verb|union| to do this;
-however, we need to work a little harder
-to identify the portions of history that are shared between two tree sequences.
-To do this, we need to
-(a) find the founders that are present in both tree sequences,
-and (b) identify all nodes that are ancestral to these founders.
-The first step is easily done by consulting metadata.
-Here is code that identifies all ancestors in the tree sequence
-of a given set of nodes:
-\comment{Either remove this; move it to the appendix; or explain what it's doing.}
-\begin{minted}[fontsize=\small, linenos, bgcolor=gray!10]{python}
-def ancestors(ts, nodes):
-    """
-    Returns the list of nodes reachable from `nodes` by following
-    child->parent relationships in the edge table.
-    """
-    out = np.zeros(ts.num_nodes, dtype='int')
-    out[nodes] = 1
-    x = out.copy()
-    A = scipy.sparse.coo_array(
-            (
-                np.ones(ts.num_edges, dtype='int'),
-                (ts.edges_parent, ts.edges_child)
-            ), dtype='int', shape=(ts.num_nodes, ts.num_nodes)
-    )
-    while np.sum(x) > 0:
-        x = A @ x
-        out += x
-    return np.where(out > 0)[0]
-\end{minted}
-With this in hand, we can use \verb|union|
-as in the prvious section.
-
-
-%%%%%%%%%%%%%%%%%%%%%%
-
-\section*{Meta-population dynamics with simulation networks}
-
-Finally, we consider a more complex scenario that requires more detailed understanding of the tree sequence:
-simulation of the within-host dynamics of a pathogen,
-with separate hosts simulated in parallel by the same \slim script.
-This is therefore similar to the previous example, but more complex because of two complications:
-1) we will want to not remember the entire population at branch points, for efficiency reasons; and
-2) reticulations in the phylogeny.
-% Accommodating these scenarios requires some tweaks to the previous modeling
-% framework such that we can retain all the information necessary to identify shared sections in all possible pairs of tree sequences.
-% We demonstrate how to accomplish this task
-% by using pathogen evolution as an example.
-
-Let us imagine a pathogen that infects a host species, such as humans.
-We can model this as a large meta-population, where each infected human host constitutes a distinct pathogen deme.
-Similar to our previous section, we can represent the relationship between individual hosts with a simple branching structure, \ie a phylogeny (Figure A).
-In %% Figure A to be created
-this figure, nodes represent pathogen subpopulations within host individuals and transmission events from one host to another are represented by edges.
-Although this model operates in a much different time scale compared prior example,
-\ie weeks-months versus thousands-millions of years, this underlying structure enables the use of parallelization
-to significantly reduce the speed and computational burden of running this simulation.
-
-Similar to the prior vignette, the backbone of this model is a flexible SLiM model that can accept a specific tree sequence as a starting point in addition to other
-parameter values as required to carry out the specific simulation scenario. In this case, our baseline model is one that simulates the logistic growth of pathogen individuals
-within the host followed by a strong population bottleneck as the pathogen is transmitted on to the next host. These dynamics will play out repeatedly as we model the pathogen
-spreading through the host population. There are, however, some structural changes to this model that have been made to accommodate the two issues highlighted at the
-beginning of this section.
-
-The first issue with is how to deal with branching occurring at different times; here, we allow transmission events to occur at different points throughout the host infection.
-We could simply saved the state of the population at the various time when the transmission events occur and have the \slim run representing the next host use this
-as its initial state. However, without significant modifications, this would result in the loss of crucial information during simplification, making it impossible
-to merge the resulting tree sequences at the end of the simulation. Put simply, the reason for this is that earlier transmission events, and
-the associated tree sequences, cannot `know' what the future state of the population will be when later transmission events occur. As a result, the nodes associated with
-individuals that will be transmitted at a later time point, and/or their ancestors, might be simplified out of earlier-transmitted tree sequences. Of course, if we turned off
-simplification, we would never lose any genealogical information and could merge all resulting tree sequences without issue. Unfortunately, this is very impractical in most cases,
-as it would necessitate storing massive amounts of genealogical data, ultimately running up against memory and storage limits within just a few simulated generations.
-The key, then, is to store only the information that is critical for piecing the full genealogy back together and allow SLiM to simplify out the rest to maintain efficiency. The
-solution we present achieves this by generating a single output tree sequence that contains all the samples required to represent all downstream transmission events.
-We execute our solution by making use of advanced SLiM properties, such as tags and top-level metadata, as well as additional \pyslim functions.
-
-The basic workflow for a within-host SLiM simulation in our framework is as follows. The infection starts by loading an input tree sequence, if specified. The SLiM script also
-loads additional information that specifies which hosts the current infection will be transmitted to ('OUTPUT\_HOST\_IDS'), when these transmission events will happen
-('TRANSMISSION\_DAYS), and how many pathogen individuals will be transmitted ('NUM\_SAMPLES). The simulation proceeds with the pathogen reproducing according
-to some rules; in our case, we parametrize this process by setting an overall growth rate ('POP\_GROWTH\_RATE) and an upper limit, or carrying capacity, for pathogens
-within the host ('K'). This simulation runs as long as necessary to complete all the specified transmission events and ultimately writes out an output tree sequence in which
-all transmitted pathogens are marked as samples. The full SLiM script is available on github? appendix?
-
-\begin{lstlisting}[language=slim, style=slimstyle, breaklines=true]
-// INITIALIZE
-initialize() {
-	initializeSLiMModelType("nonWF");
-	initializeSLiMOptions(keepPedigrees = T);
-	initializeTreeSeq();
-	defaults = Dictionary(
-		"SEED", getSeed(),
-		"INFILE", "",                  // optional file to read in start from
-		"N_FOUNDERS", 20,              // average number chosen to start a new infection
-		"REPRODUCTION_BENEFIT", 1.0,   // increase in reproduction rate for m2 mutations
-		"TRANSMISSION_BENEFIT", 1e5,   // increase in transmission probability for m1 mutations
-		"TRANSMISSION_DAYS", integer(0), // a list of which day does transmission happen relative to start
-		"SAMPLING_DAY", 60,            // final sampling day relative to start
-		"NUM_SAMPLES",  10,            // number of samples
-		"OUTPUT_HOST_IDS", integer(0), // a list of IDs of hosts to output infections for
-		"HOST_ID", "00",               // this host ID
-		"POP_GROWTH_RATE", 1.0,        // rate of growth of population
-		"K", 1e5     				       // carrying capacity within host
-		);
-}
-\end{lstlisting}
-
-If a particular host infection step represents a branch point, i.e. there is more than one value in 'OUTPUT\_HOST\_IDS', we have to ensure that each set of samples is tracked
-and marked according to the downstream infection step that they are destined for. To do this, our script executes the following code on days that a transmission event occurs:
-
-%% SSG: propose cutting the transmission vs. reproduction benefit stuff for now
-\begin{lstlisting}[language=slim, style=slimstyle, breaklines=true]
-ABS_TRANSMISSION_DAYS late() {
-	// parse 'output_host_id' to figure out which hosts to transmit to
-	which_hosts = which(ABS_TRANSMISSION_DAYS == community.tick);
-	hosts_to_infect = OUTPUT_HOST_IDS[which_hosts];
-	// determine how many pathogens are needed to infect all hosts
-	N_pathogens = rztpois(length(hosts_to_infect), N_FOUNDERS); %% could simplify this, too - just choose fixed number
-%%	// determine mutational status of all pathogens
-%%	mut_status = sim.subpopulations.individuals.countOfMutationsOfType(m1);
-%%	weights = 1 + (mut_status * TRANSMISSION_BENEFIT); // carrying the mutation confers X% higher probability of being transmitted
-	transmitted_inds = sample(sim.subpopulations.individuals, size = sum(N_pathogens), replace = F);%, weights=weights);
-	sim.treeSeqRememberIndividuals(transmitted_inds); // permanently remember these individuals in subsequent parallel infection steps
-	// kill everyone else - mark individuals to be transmitted with a unique tag
-	sim.subpopulations.individuals.tagL0 = T;
-	sim.subpopulations.individuals.tagL0 = T;
-	transmitted_inds.tagL0 = F;
-	sim.killIndividuals(sim.subpopulations.subsetIndividuals(tagL0 = T));
-	// construct dictionary of infected hosts and viral genomes to be transmitted to each
-	founders = PARAMS.getValue("FOUNDERS");
-	founding_time = PARAMS.getValue("FOUNDING_TIME");
-	for (host in hosts_to_infect, count in N_pathogens, range_end in cumSum(N_pathogens)) {
-		sampled_inds = transmitted_inds[(range_end-count):(range_end-1)];
-		founders.setValue(host, sampled_inds.pedigreeID);
-		founding_time.setValue(host, sim.cycle);
-	}
-}
-\end{lstlisting}
-
-The code in this block first identifies the host ID corresponding to the current transmission event. Then, it selects the individuals to be transmitted to the next host from the
-pathogen population. These individuals are permanently remembered and marked with a unique tag, 'tagL0', which stores a boolean value. These individuals are then 'killed'
-so that they can no longer be chosen for future transmission events. However, as we will see, these individuals are only dead temporarily; they will be resurrected in order to
-continue the simulation as the founders of a new host infection. A final piece of bookkeeping is to store information about this event in two slots of the 'PARAMS' object
-called 'FOUNDERS' and 'FOUNDING\_TIME'. The 'FOUNDERS' object is a dictionary that records the 'slim\_id' values (called 'pedigreeID' values in SLiM) of the pathogen
-individuals to be transmitted under a key that identifies the specific host that they are going to infect. The 'FOUNDING\_TIME' object simply records when, in simulation time,
-this transmission event happens. This information, along with everything else in 'PARAMS', is attached to the output tree sequence as 'top-level metadata'. This property
-of tree sequences, which is accessible in both \slim and python, is extremely useful because it can store arbitrary bits of information that we might want later. In our case,
-we will use 'FOUNDERS' and 'FOUNDING\_TIME' to determine which individuals to bring back from the dead and how far to rewind tree sequence time, respectively.
-
-Once the last transmission event has occurred, our script will write out a output tree sequence where all individuals transmitted at any point in the simulation will be 'remembered'
-but dead. Additionally, we kill all remaining individuals in the host population when we output this tree. If we did not do this, thousands of individuals alive at the final tick of
-the simulation would be marked as samples and their full genealogical history would be stored in the tree sequence. Because we only care about the relatively few individuals
-that will go on to found new infections, we can save significant hard disk space (as well as time and memory) by getting rid of everyone else, too.
-
-\begin{lstlisting}[language=slim, style=slimstyle, breaklines=true]
-max(c(ABS_TRANSMISSION_DAYS, ABS_SAMPLING_DAY)) late() {
-	// write out a tree sequence containing the information needed for all subsequent infections
-	sim.killIndividuals(sim.subpopulations.individuals);
-	sim.treeSeqOutput("sim_" + HOST_ID + ".trees", metadata=PARAMS);
-	sim.simulationFinished();
-}
-\end{lstlisting}
-
-Now we have a tree sequence with no living individuals at all, which will not be of much use if we were to load it back into SLiM. We therefore need to do some pre-processing
-before we attempt to initiate the next set of infections. The following python script is run prior to each new host infection and executes the two main functions mentioned above:
-it marks the necessary founder individuals as 'alive' and turns back time to the precise moment of transmission. The latter step is crucial for all but the very last transmission
-event from a given host, as the output tree sequence's 'time' property will correspond to the final tick of the simulation.
-
-%% insert python script
-% set flags of the correct individuals to 'alive'
-% run pyslim.reset_time() function (to be written?)
-%%%
-
-Similar to the previous example, we can run our simulation in parallel using a job scheduler like Make. See full example on github? appendix? At the end of this process, we
-also have the same problem of merging multiple tree sequences into a single one. In our previous example, we used the split time between two branches to disambiguate
-distinct nodes that might happen to share a 'slim\_id'. We could theoretically use the same approach here, but we will instead demonstrate an alternative method that is equally
-effective. Within our SLiM model, we initiate each within-host infection by moving or creating founder individuals in a subpopulation that is labelled with the host ID:
-
-\begin{lstlisting}[language=slim, style=slimstyle, breaklines=true]
-	pop_id = asInteger(HOST_ID);
-\end{lstlisting}
-
-Crucially, host IDs are unique in our simulation set-up - no host is infected more than one time and so their IDs are never reused. This means that we can use a combination
-of the 'slim\_id' and 'population' property of nodes to definitively match them across pairs of trees, and to generate the node map required by tskit.union(). Tree sequence
-merging can then be achieved in the same way as outlined above. See full example on github? appendix?
-
-The main advantage to using a host or population ID to disambiguate nodes is that we can accommodate reticulation in our phylogeny without having to make any other major
-changes to our modeling framework. For example, consider the phylogeny depicted in Figure B. This phylogeny is based on our original example (Figure A) but with some
-additional 'loops'. These represent events where more than one transmission event contributes to the infection of the next host. In the real world, these types of events become
-more likely in regions where the overall rate of infection is high. It is thus important to be able to model this kind of scenario. It is clear that using split time does not make much
-sense in this case, since different branches of the phylogeny can come back into contact even after they initially split. Therefore, reticulation in the phylogeny necessitates the
-use of a second id that is unique to each infection in order to correctly identify shared nodes across different tree sequences.
-
-%%%
-% code? or just put on github?
-%%%
-
-The framework we outline here makes it possible to model the evolution of very large and complex pathogen meta-populations in order to understand how both among-host
-and within-host factor impact these processes. For example, we can use our model to develop expectations for how pathogens evolve under variable selection pressures. Let
-us imagine that there exists a genetic variant in the pathogen population that underlies a life history trade-off between replication and transmissibility; one allele allows the
-individual carrying it to reproduce at a faster rate while the alternate allele increases an individual's likelihood of being transmitted to a new host. This kind of trade-off has been
-observed in influenza, HIV, and COVID-19 [cite], but would be challenging to model realistically without parallelization. Therefore, we present an extension of our framework
-that can accommodate a transmission-reproduction trade-off within the host on github(?), and show how this process can impact the tree sequence.
-
-Parallelizing forward-in-time models represents a powerful approach to increasing the complexity and realism of evolutionary models, but introduces some additional challenges.
-Luckily, there now exists a coherent software ecosystem, which includes \slim, \tskit, and \pyslim, that allows users to overcome these challenges in order to leverage the full
-power of the ARG.
-
-
