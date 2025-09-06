@@ -55,14 +55,12 @@ initialize() {
       // load metadata, which stores information about which individuals are needed to seed this infection
       metadata = treeSeqMetadata(INFILE);
       // determine which individuals to keep
-      founder_ids = metadata.getValue("FOUNDERS").getValue(HOST_ID);
       PARAMS.setValue("FOUNDERS", metadata.getValue("FOUNDERS"));
       PARAMS.setValue("FOUNDING_TIME", metadata.getValue("FOUNDING_TIME"));
-      // transfer founders to a new population and kill everyone else
-      active_pop = sim.addSubpop(pop_id, 0);
-      founders = sim.individualsWithPedigreeIDs(founder_ids);
-      active_pop.takeMigrants(founders);
-      if (size(founders) != size(founder_ids)) {
+      // check we have the founders we want
+      founder_ids = metadata.getValue("FOUNDERS").getValue(HOST_ID);
+		active_pop = sim.subpopulations[sim.subpopulations.id == asInteger(HOST_ID)];
+      if (active_pop.individualCount != size(founder_ids)) {
          catn("Desired founders: " + paste(founder_ids, sep=","));
          catn("Obtained founders: " + paste(active_pop.individuals.pedigreeID, sep=","));
       	stop("Some founding individuals are not present (or alive)!");
@@ -87,7 +85,6 @@ unique(ABS_TRANSMISSION_DAYS) late() {
 	N_pathogens = rep(N_FOUNDERS, count = length(hosts_to_infect));
 	// sample individuals to transmit
 	transmitted_inds = sample(sim.subpopulations.individuals, size = sum(N_pathogens), replace = F);
-	sim.treeSeqRememberIndividuals(transmitted_inds); // permanently remember these individuals in subsequent parallel infection steps
 	// construct dictionary of infected hosts and viral genomes to be transmitted to each
 	founders = PARAMS.getValue("FOUNDERS");
 	founding_time = PARAMS.getValue("FOUNDING_TIME");
@@ -95,7 +92,13 @@ unique(ABS_TRANSMISSION_DAYS) late() {
 		sampled_inds = transmitted_inds[(range_end-count):(range_end-1)];
 		founders.setValue(host, sampled_inds.pedigreeID);
 		founding_time.setValue(host, sim.cycle);
+      // transfer founders to a new population
+      new_pop = sim.addSubpop(asInteger(host), 0);
+      new_pop.takeMigrants(sampled_inds);
 	}
+	// permanently remember these individuals through subsequent tree sequences;
+ 	// this must happen after they are moved to the new population above
+	sim.treeSeqRememberIndividuals(transmitted_inds);
 	sim.killIndividuals(transmitted_inds);
 }
 
