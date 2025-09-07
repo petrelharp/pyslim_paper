@@ -40,9 +40,6 @@ def merge_ts(ts1, ts2):
             sts1.assert_equals(sts2, ignore_provenance=True, ignore_ts_metadata=True)
                                
     md = merged.metadata
-    md['SLiM']['user_metadata']['FOUNDERS'][0].update(
-            ts2.metadata['SLiM']['user_metadata']['FOUNDERS'][0]
-    )
     md['SLiM']['user_metadata']['FOUNDING_TIME'][0].update(
             ts2.metadata['SLiM']['user_metadata']['FOUNDING_TIME'][0]
     )
@@ -88,17 +85,15 @@ def update_founder_metadata(tables1, tables2):
     metadata value has a larger `age`.  Use case: they were remembered in
     tables1 in their youth, but then tables2 recorded them later in life.
     """
-    map2 = { i.metadata['pedigree_id'] : k for k, i in enumerate(tables2.individuals) }
-    f1 = tables1.metadata['SLiM']['user_metadata']['FOUNDERS'][0]
-    f2 = tables2.metadata['SLiM']['user_metadata']['FOUNDERS'][0]
-    slim_ids = [i for k in f1 if k in f2 for i in f2[k]]
+    map2 = { (i.metadata['subpopulation'], i.metadata['pedigree_id']) :
+            k for k, i in enumerate(tables2.individuals) }
     individuals = tables1.individuals.copy()
     tables1.individuals.clear()
     for ind in individuals:
         md = ind.metadata
-        sid = md['pedigree_id']
-        if sid in slim_ids:
-            other = tables2.individuals[map2[sid]].metadata
+        k = (md['subpopulation'], md['pedigree_id'])
+        if k in map2:
+            other = tables2.individuals[map2[k]].metadata
             if other['age'] > md['age']:
                 md = other
         tables1.individuals.append(ind.replace(metadata=md))

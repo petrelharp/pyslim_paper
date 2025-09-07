@@ -47,7 +47,6 @@ initialize() {
    if (INFILE == "") {
       catn("\nSTARTING SEED SIMULATION\n");
       sim.addSubpop(pop_id, N_FOUNDERS);
-      PARAMS.setValue("FOUNDERS", Dictionary(HOST_ID, c()));
       PARAMS.setValue("FOUNDING_TIME", Dictionary(HOST_ID, sim.cycle));
    } else {
       catn("\nSTARTING SIMULATION FROM " + INFILE + "\n");
@@ -55,16 +54,7 @@ initialize() {
       // load metadata, which stores information about which individuals are needed to seed this infection
       metadata = treeSeqMetadata(INFILE);
       // determine which individuals to keep
-      PARAMS.setValue("FOUNDERS", metadata.getValue("FOUNDERS"));
       PARAMS.setValue("FOUNDING_TIME", metadata.getValue("FOUNDING_TIME"));
-      // check we have the founders we want
-      founder_ids = metadata.getValue("FOUNDERS").getValue(HOST_ID);
-		active_pop = sim.subpopulations[sim.subpopulations.id == asInteger(HOST_ID)];
-      if (active_pop.individualCount != size(founder_ids)) {
-         catn("Desired founders: " + paste(founder_ids, sep=","));
-         catn("Obtained founders: " + paste(active_pop.individuals.pedigreeID, sep=","));
-      	stop("Some founding individuals are not present (or alive)!");
-      }
    }
    // track simulation start day
    defineConstant("SIM_START", sim.cycle);		
@@ -79,21 +69,12 @@ unique(ABS_TRANSMISSION_DAYS) late() {
 	// determine how many pathogens are needed to infect all hosts
 	N_pathogens = rep(N_FOUNDERS, count = length(hosts_to_infect));
 	// sample individuals to transmit
-	// exclude founders, since founders passing through multiple simulations creates logistical problems
-	sim.subpopulations.individuals.tagL0 = T;
-	founder_ids = PARAMS.getValue("FOUNDERS").getValue(HOST_ID);
-	if (!isNULL(founder_ids)) {
-		founders = sim.individualsWithPedigreeIDs(founder_ids);
-		founders.tagL0 = F;
-	}
 	active_pop = sim.subpopulations[sim.subpopulations.id == asInteger(HOST_ID)];
-	transmitted_inds = active_pop.sampleIndividuals(size=sum(N_pathogens), replace = F, tagL0=T);
+	transmitted_inds = active_pop.sampleIndividuals(size=sum(N_pathogens), replace=F);
 	// construct dictionary of infected hosts and viral genomes to be transmitted to each
-	founders = PARAMS.getValue("FOUNDERS");
 	founding_time = PARAMS.getValue("FOUNDING_TIME");
 	for (host in hosts_to_infect, count in N_pathogens, range_end in cumSum(N_pathogens)) {
 		sampled_inds = transmitted_inds[(range_end-count):(range_end-1)];
-		founders.setValue(host, sampled_inds.pedigreeID);
 		founding_time.setValue(host, sim.cycle);
       // transfer founders to a new population
       new_pop = sim.addSubpop(asInteger(host), 0);
