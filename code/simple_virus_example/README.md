@@ -79,15 +79,8 @@ Given two tree sequences, `merge_ts.py` does:
 
 3. Updates individual metadata for any founder individuals contained in both.
 
-4. Constructs a node mapping from the second to the first:
-
-    * Finds the shared founder nodes between the two,
-        by taking the intersection of their `FOUNDERS` dictionaries,
-        and then finding all nodes belonging to the individuals with those SLiM IDs.
-    * Finds in each the ancestors of those shared founder nodes,
-        as all those reachable by edges.
-    * These are identical, so should be in the same order; verifying this,
-        map from one to the other.
+4. Constructs a node mapping from the second to the first, by identifying those
+    nodes sharing unique (population, slim_id) pairs.
 
 5. Unions the two with this mapping.
 
