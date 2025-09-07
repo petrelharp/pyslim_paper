@@ -9,7 +9,7 @@ def main(args):
     argp.add_argument('-o', '--output', type = str, help = 'Path to desired output file', required=True)
     args = argp.parse_args(args)
 
-    tslist = [clear_alive(tskit.load(x)) for x in args.input]
+    tslist = [tskit.load(x) for x in args.input]
     ticks = [ts.metadata['SLiM']['tick'] for ts in tslist]
     dt = [max(ticks) - t for t in ticks]
     tslist = [shift_times(ts, t) for ts, t in zip(tslist, dt)]
