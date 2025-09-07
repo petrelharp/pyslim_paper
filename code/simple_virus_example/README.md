@@ -2,8 +2,22 @@
 
 1. Run SLiM script to product tree sequence.
 2. If necessary, use `merge_ts.py` to merge tree sequences for a multiply-infected individual.
-2. For each new host, use `reset.py` to get the tree sequence ready to start a new run.
+3. For each new host, use `reset.py` to get the tree sequence ready to start a new run.
 
+Transmission diagram:
+```
+1               00
+                /\
+10            01  \
+              /\   \
+15          03  \   \
+                |    \
+20              |     02
+                |     |
+35              04    |
+                      |
+60                    05
+```
 
 ## The SLiM script
 
@@ -61,7 +75,9 @@ Given two tree sequences, `merge_ts.py` does:
 2. Merges the population tables so that any populations described in the second
     are also described in the first.
 
-2. Constructs a node mapping from the second to the first:
+3. Updates individual metadata for any founder individuals contained in both.
+
+4. Constructs a node mapping from the second to the first:
 
     * Finds the shared founder nodes between the two,
         by taking the intersection of their `FOUNDERS` dictionaries,
@@ -71,8 +87,8 @@ Given two tree sequences, `merge_ts.py` does:
     * These are identical, so should be in the same order; verifying this,
         map from one to the other.
 
-3. Unions the two with this mapping.
+5. Unions the two with this mapping.
 
-4. Copies missing keys from `FOUNDERS` and `FOUNDING_TIME` in the second's metadata to the union.
+6. Copies missing keys from `FOUNDERS` and `FOUNDING_TIME` in the second's metadata to the union.
 
-5. Outputs the result.
+7. Outputs the result.
