@@ -81,6 +81,10 @@ def merge_pop_tables(ts1, ts2):
 
 
 def get_ind_pop(tables):
+    """
+    Returns a vector that gives for each individual their birth population,
+    which is their nodes' population.
+    """
     ind_pop = np.full(tables.individuals.num_rows, tskit.NULL)
     ind_pop[tables.nodes.individual] = tables.nodes.population
     return ind_pop
@@ -100,12 +104,15 @@ def update_founder_metadata(tables1, tables2):
     tables1.individuals.clear()
     for j, ind in enumerate(individuals):
         md = ind.metadata
+        f = ind.flags
         k = (ind_pop1[j], md['pedigree_id'])
         if k in map2:
-            other = tables2.individuals[map2[k]].metadata
-            if other['age'] > md['age']:
-                md = other
-        tables1.individuals.append(ind.replace(metadata=md))
+            other_ind = tables2.individuals[map2[k]]
+            other_md = other_ind.metadata
+            if other_md['age'] > md['age']:
+                md = other_md
+                f = other_ind.flags
+        tables1.individuals.append(ind.replace(metadata=md, flags=f))
 
 
 def node_mapping(ts1, ts2):
