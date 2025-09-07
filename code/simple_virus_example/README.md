@@ -77,8 +77,9 @@ Given two tree sequences, `merge_ts.py` does:
 2. Merges the population tables so that any populations described in the second
     are also described in the first.
 
-3. Updates individual metadata for any individuals contained in both,
-    identified by unique combinations of birth population, pedigree_id.
+3. Updates individual metadata and flags for any individuals contained in both,
+    identified by unique combinations of birth population, pedigree_id,
+    so that these agree between the two tree sequences for shared individuals.
 
 4. Constructs a node mapping from the second to the first, by identifying those
     nodes sharing unique (birth population, slim_id) pairs.
