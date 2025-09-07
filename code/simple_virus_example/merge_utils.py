@@ -50,13 +50,6 @@ def merge_ts(ts1, ts2):
     return merged.tree_sequence()
 
 
-def slim_to_nodes(ts):
-    return { i.metadata['pedigree_id'] : i.nodes for i in ts.individuals() }
-
-def slim_to_inds(ts):
-    return { i.metadata['pedigree_id'] : i.id for i in ts.individuals() }
-
-
 def merge_pop_tables(ts1, ts2):
     """
     Returns the tables corresponding to ts1, but with any additional
@@ -111,19 +104,27 @@ def update_founder_metadata(tables1, tables2):
         tables1.individuals.append(ind.replace(metadata=md))
 
 
+def slim_to_nodes(ts):
+    # note this does NOT use the individual.population property,
+    # because that pulls from nodes, which reflect *birth* location,
+    # not final location.
+    return { (i.metadata['subpopulation'], i.metadata['pedigree_id'])
+            : i.nodes for i in ts.individuals() }
+
+
 def shared_founder_nodes(ts1, ts2):
     f1 = ts1.metadata['SLiM']['user_metadata']['FOUNDERS'][0]
     f2 = ts2.metadata['SLiM']['user_metadata']['FOUNDERS'][0]
-    shared = set(f1.keys()).intersection(set(f2.keys()))
     map1 = slim_to_nodes(ts1)
     map2 = slim_to_nodes(ts2)
     sn1 = []
     sn2 = []
     for k in f1:
+        pop = int(k)
         if k in f2:
             assert f1[k] == f2[k]
-            sn1.extend([u for sid in f1[k] for u in map1[sid]])
-            sn2.extend([u for sid in f2[k] for u in map2[sid]])
+            sn1.extend([u for sid in f1[k] for u in map1[(pop,sid)]])
+            sn2.extend([u for sid in f2[k] for u in map2[(pop,sid)]])
     t1 = ts1.nodes_time[sn1]
     t2 = ts2.nodes_time[sn2]
     assert np.allclose(t1, t2)

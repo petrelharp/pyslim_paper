@@ -84,7 +84,15 @@ unique(ABS_TRANSMISSION_DAYS) late() {
 	// determine how many pathogens are needed to infect all hosts
 	N_pathogens = rep(N_FOUNDERS, count = length(hosts_to_infect));
 	// sample individuals to transmit
-	transmitted_inds = sample(sim.subpopulations.individuals, size = sum(N_pathogens), replace = F);
+	// exclude founders, since founders passing through multiple simulations creates logistical problems
+	sim.subpopulations.individuals.tagL0 = T;
+	founder_ids = PARAMS.getValue("FOUNDERS").getValue(HOST_ID);
+	if (!isNULL(founder_ids)) {
+		founders = sim.individualsWithPedigreeIDs(founder_ids);
+		founders.tagL0 = F;
+	}
+	active_pop = sim.subpopulations[sim.subpopulations.id == asInteger(HOST_ID)];
+	transmitted_inds = active_pop.sampleIndividuals(size=sum(N_pathogens), replace = F, tagL0=T);
 	// construct dictionary of infected hosts and viral genomes to be transmitted to each
 	founders = PARAMS.getValue("FOUNDERS");
 	founding_time = PARAMS.getValue("FOUNDING_TIME");
