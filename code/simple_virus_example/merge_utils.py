@@ -104,66 +104,14 @@ def update_founder_metadata(tables1, tables2):
         tables1.individuals.append(ind.replace(metadata=md))
 
 
-def slim_to_nodes(ts):
-    # note this does NOT use the individual.population property,
-    # because that pulls from nodes, which reflect *birth* location,
-    # not final location.
-    return { (i.metadata['subpopulation'], i.metadata['pedigree_id'])
-            : i.nodes for i in ts.individuals() }
-
-
-def shared_founder_nodes(ts1, ts2):
-    f1 = ts1.metadata['SLiM']['user_metadata']['FOUNDERS'][0]
-    f2 = ts2.metadata['SLiM']['user_metadata']['FOUNDERS'][0]
-    map1 = slim_to_nodes(ts1)
-    map2 = slim_to_nodes(ts2)
-    sn1 = []
-    sn2 = []
-    for k in f1:
-        pop = int(k)
-        if k in f2:
-            assert f1[k] == f2[k]
-            sn1.extend([u for sid in f1[k] for u in map1[(pop,sid)]])
-            sn2.extend([u for sid in f2[k] for u in map2[(pop,sid)]])
-    t1 = ts1.nodes_time[sn1]
-    t2 = ts2.nodes_time[sn2]
-    assert np.allclose(t1, t2)
-    return sn1, sn2
-
-
 def node_mapping(ts1, ts2):
     """
     Appropriate for doing ts1.union(ts2, node_mapping)
     """
-    sn1, sn2 = shared_founder_nodes(ts1, ts2)
-    anc1 = ancestors(ts1, sn1)
-    anc2 = ancestors(ts2, sn2)
-    assert len(anc1) == len(anc2)
-    for a1, a2 in zip(anc1, anc2):
-        n1 = ts1.node(a1)
-        n2 = ts2.node(a2)
-        assert n1.metadata['slim_id'] == n2.metadata['slim_id']
-        assert n1.time == n2.time
+    sn2 = { (n.population, n.metadata['slim_id']) : n.id for n in ts2.nodes() }
     node_map = np.full(ts2.num_nodes, tskit.NULL)
-    node_map[anc2] = anc1
+    for n in ts1.nodes():
+        k = (n.population, n.metadata['slim_id'])
+        if k in sn2:
+            node_map[sn2[k]] = n.id
     return node_map
-
-
-def ancestors(ts, nodes):
-    """
-    Returns the list of nodes reachable from `nodes` by following
-    child->parent relationships in the edge table.
-    """
-    out = np.zeros(ts.num_nodes, dtype='int')
-    out[nodes] = 1
-    x = out.copy()
-    A = scipy.sparse.coo_array(
-            (
-                np.ones(ts.num_edges, dtype='int'),
-                (ts.edges_parent, ts.edges_child)
-            ), dtype='int', shape=(ts.num_nodes, ts.num_nodes)
-    )
-    while np.sum(x) > 0:
-        x = A @ x
-        out += x
-    return np.where(out > 0)[0]
