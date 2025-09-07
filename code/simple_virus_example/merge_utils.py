@@ -33,8 +33,10 @@ def merge_ts(ts1, ts2):
         if "TSK_ERR_UNION_DIFF_HISTORIES" in str(err):
             n2 = np.where(node_map >= 0)[0]
             n1 = node_map[n2]
-            sts1 = merged.subset(n1)
-            sts2 = tables2.subset(n2)
+            sts1 = merged.copy()
+            sts2 = tables2.copy()
+            sts1.subset(n1)
+            sts2.subset(n2)
             sts1.canonicalise()
             sts2.canonicalise()
             sts1.assert_equals(sts2, ignore_provenance=True, ignore_ts_metadata=True)
@@ -78,6 +80,11 @@ def merge_pop_tables(ts1, ts2):
     return tables
 
 
+def get_ind_pop(tables):
+    ind_pop = np.full(tables.individuals.num_rows, tskit.NULL)
+    ind_pop[tables.nodes.individual] = tables.nodes.population
+    return ind_pop
+
 def update_founder_metadata(tables1, tables2):
     """
     Update *in place* the individual metadata in tables1 for founder individuals
@@ -85,13 +92,15 @@ def update_founder_metadata(tables1, tables2):
     metadata value has a larger `age`.  Use case: they were remembered in
     tables1 in their youth, but then tables2 recorded them later in life.
     """
-    map2 = { (i.metadata['subpopulation'], i.metadata['pedigree_id']) :
+    ind_pop1 = get_ind_pop(tables1)
+    ind_pop2 = get_ind_pop(tables2)
+    map2 = { (ind_pop2[k], i.metadata['pedigree_id']) :
             k for k, i in enumerate(tables2.individuals) }
     individuals = tables1.individuals.copy()
     tables1.individuals.clear()
-    for ind in individuals:
+    for j, ind in enumerate(individuals):
         md = ind.metadata
-        k = (md['subpopulation'], md['pedigree_id'])
+        k = (ind_pop1[j], md['pedigree_id'])
         if k in map2:
             other = tables2.individuals[map2[k]].metadata
             if other['age'] > md['age']:

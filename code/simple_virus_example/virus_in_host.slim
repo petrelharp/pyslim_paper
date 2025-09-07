@@ -51,10 +51,17 @@ initialize() {
    } else {
       catn("\nSTARTING SIMULATION FROM " + INFILE + "\n");
       sim.readFromPopulationFile(INFILE);
-      // load metadata, which stores information about which individuals are needed to seed this infection
+      // pass on information kept in metadata
       metadata = treeSeqMetadata(INFILE);
-      // determine which individuals to keep
       PARAMS.setValue("FOUNDING_TIME", metadata.getValue("FOUNDING_TIME"));
+      // check we've got the individuals alive that we want
+      if (any(sim.subpopulations.individuals.subpopulation.id != asInteger(HOST_ID))) {
+      	catn("All individuals should be from subpop " + asInteger(HOST_ID));
+      	for (pop in sim.subpopulations) {
+      		catn("Subpop " + pop.id + " has " + pop.individualCount);
+      	}
+      	stop("This is not good.");
+      }
    }
    // track simulation start day
    defineConstant("SIM_START", sim.cycle);		
