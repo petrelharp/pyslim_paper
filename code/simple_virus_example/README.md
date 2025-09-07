@@ -13,10 +13,12 @@ Transmission diagram:
 15          03  \   \
                 |    \
 20              |     02
-                |     |
-35              04    |
-                      |
-60                    05
+                |    /
+                |   /
+                |  /
+35              04
+                |
+60              05
 ```
 
 ## The SLiM script

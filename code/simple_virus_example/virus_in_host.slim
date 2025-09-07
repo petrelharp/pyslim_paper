@@ -11,9 +11,9 @@ initialize() {
 		"SEED", getSeed(),
 		"HOST_ID", "00",               // this host ID
 		"INFILE", "",                  // optional file to start from
-		"TRANSMISSION_DAYS", integer(0), // a list of which day does transmission happen relative to start
+		"ABS_TRANSMISSION_DAYS", integer(0), // a list of which day does transmission happen
 		"OUTPUT_HOST_IDS", integer(0), // a list of IDs of hosts to output infections for
-		"SAMPLING_DAY", 60,            // final sampling day relative to start
+		"ABS_SAMPLING_DAY", 60,            // final sampling day
 		"NUM_SAMPLES",  10,            // number of samples
 		"N_FOUNDERS", 20,              // number chosen to start a new infection
 		"POP_GROWTH_RATE", 1.0,        // rate of growth of population
@@ -32,7 +32,7 @@ initialize() {
 	initializeGenomicElement(g1, 0, 0);
 
 	// stop if number of output host ids is not the same as the number of transmission events
-	if (length(TRANSMISSION_DAYS) != length(OUTPUT_HOST_IDS)) {
+	if (length(ABS_TRANSMISSION_DAYS) != length(OUTPUT_HOST_IDS)) {
 		stop("Number of output host ids does not equal the number of transmission days");
 	}
 
@@ -69,11 +69,6 @@ initialize() {
    // track simulation start day
    defineConstant("SIM_START", sim.cycle);		
    PARAMS.setValue("SIM_START", SIM_START);
-   // calculate the overall transmission day
-   defineConstant("ABS_TRANSMISSION_DAYS", SIM_START + asInteger(TRANSMISSION_DAYS));
-   PARAMS.setValue("ABS_TRANSMISSION_DAYS", ABS_TRANSMISSION_DAYS);
-   defineConstant("ABS_SAMPLING_DAY", SIM_START + asInteger(SAMPLING_DAY));
-   PARAMS.setValue("ABS_SAMPLING_DAY", ABS_SAMPLING_DAY);
 }
 
 // Pathogens are transmitted to next host
