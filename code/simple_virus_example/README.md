@@ -25,25 +25,23 @@ Transmission diagram:
 
 In `virus_in_host.slim`:
 
-- `FOUNDERS` and `FOUNDING_TIME` are dictionaries whose keys are host IDs.
+- `FOUNDING_TIME` is a dictionary whose keys are host IDs.
 - `OUTPUT_HOST_IDS` and `TRANSMISSION_DAYS` are lists of the same length that say to whom and when
     to transmit individuals.
 
-0. When initializing a seed simulation, saves an empty list to `FOUNDERS`
-    and the current tick to `FOUNDING_TIME`.
+0. When initializing a seed simulation, saves the current tick to `FOUNDING_TIME`.
 
 1. When loading from a file, 
 
-    * saves the `FOUNDERS` and `FOUNDING_TIME` to metadata so it will passed on;
+    * saves the `FOUNDING_TIME` to metadata so it will passed on;
 
 2. When transmitting,
 
     * samples founding individuals for each output host
-    * saves the pedigree IDs of these founders to `FOUNDERS` under the output host ID key,
-        and also the current tick to `FOUNDING_TIME`, also under the output host ID key.
+    * saves the current tick to `FOUNDING_TIME`, also under the output host ID key.
     * remembers these founders
-    * creates a new population with id `HOST_ID`
-    * transfers those individuals listed under `HOST_ID` in `FOUNDERS` to the new population
+    * creates a new subpopulation with id `HOST_ID`
+    * transfers the founders to the new subpopulation
 
 3. On the sampling day,
 
@@ -62,10 +60,12 @@ python reset.py infile.trees host_id outfile.trees
 ```
 does:
 
-1. Finds the founding time and list of founders under `host_id` in metadata.
-2. Computes the (tskit) time ago from the founding time and the current tick recorded in metadata.
-3. Uses `pyslim.set_slim_state` to reset to that time and with those founders alive.
-4. Writes out the tree sequence.
+1. Finds the founding time under `host_id` in metadata.
+2. Finds the founding individuals as the only individuals in the population whose id is `host_id`.
+3. Computes the (tskit) time ago from the founding time and the current tick recorded in metadata.
+4. Removes individuals with duplicate pedigree IDs from the list of founders.
+5. Uses `pyslim.set_slim_state` to reset to that time and with those founders alive.
+6. Writes out the tree sequence.
 
 ## The merge script
 
@@ -77,13 +77,14 @@ Given two tree sequences, `merge_ts.py` does:
 2. Merges the population tables so that any populations described in the second
     are also described in the first.
 
-3. Updates individual metadata for any founder individuals contained in both.
+3. Updates individual metadata for any individuals contained in both,
+    identified by unique combinations of birth population, pedigree_id.
 
 4. Constructs a node mapping from the second to the first, by identifying those
-    nodes sharing unique (population, slim_id) pairs.
+    nodes sharing unique (birth population, slim_id) pairs.
 
 5. Unions the two with this mapping.
 
-6. Copies missing keys from `FOUNDERS` and `FOUNDING_TIME` in the second's metadata to the union.
+6. Copies missing keys from `FOUNDING_TIME` in the second's metadata to the union.
 
 7. Outputs the result.

@@ -1,3 +1,7 @@
+test.txt : test.py all.trees
+	python $< > $@
+	cat $@
+
 all.trees : sim_04.trees sim_05.trees sim_03.trees
 	python merge_ts.py -o $@ -i $^
 
