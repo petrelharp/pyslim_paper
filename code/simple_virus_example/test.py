@@ -17,3 +17,4 @@ assert d4[2] > 0
 # and that 04 does not inherit from 03 or 05
 assert d4[3] == 0
 assert d4[5] == 0
+print("All looks good!")

@@ -29,11 +29,11 @@ In `virus_in_host.slim`:
 - `OUTPUT_HOST_IDS` and `TRANSMISSION_DAYS` are lists of the same length that say to whom and when
     to transmit individuals.
 
-0. When initializing a seed simulation, saves the current tick to `FOUNDING_TIME`.
+0. When initializing a seed simulation, saves the current tick to the dictionary in `FOUNDING_TIME`.
 
 1. When loading from a file, 
 
-    * saves the `FOUNDING_TIME` to metadata so it will passed on;
+    * copies the `FOUNDING_TIME` dictionary to metadata so it will passed on;
 
 2. When transmitting,
 
@@ -71,7 +71,7 @@ does:
 
 Given two tree sequences, `merge_ts.py` does:
 
-1. Shfits the node and mutation times in each input so that time matches,
+1. Shifts the node and mutation times in each input so that time matches,
     by adding to the "time ago" of each the difference between their SLiM tick and the largest SLiM tick.
 
 2. Merges the population tables so that any populations described in the second
