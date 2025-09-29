@@ -1,18 +1,20 @@
 import numpy as np
 import pandas as pd
-import scipy.sparse
 
 import tskit, pyslim
 
 
-def shift_times(ts, t_to_add):
+def shift_times(ts, dt):
+    """
+    Add `dt` to the times ago of all nodes and mutations.
+    """
     ts_tables = ts.dump_tables()
     ts_tables.nodes.clear()
     ts_tables.mutations.clear()
     for node in ts.nodes():
-        ts_tables.nodes.append(node.replace(time=node.time + t_to_add))
+        ts_tables.nodes.append(node.replace(time=node.time + dt))
     for mutation in ts.mutations():
-        ts_tables.mutations.append(mutation.replace(time=mutation.time + t_to_add))
+        ts_tables.mutations.append(mutation.replace(time=mutation.time + dt))
     new_ts = ts_tables.tree_sequence()
     return new_ts
 
