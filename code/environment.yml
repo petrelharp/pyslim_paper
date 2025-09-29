@@ -1,4 +1,3 @@
-name: pyslim
 channels:
   - conda-forge
   - bioconda
@@ -12,5 +11,4 @@ dependencies:
   - pip
   - slim=5
   - tskit
-  - pip:
-    - git+https://github.com/tskit-dev/pyslim.git@740dc70
+  - pyslim
