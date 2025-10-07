@@ -26,6 +26,9 @@
 \usepackage{siunitx}
 \usepackage[numbers,round,sort]{natbib}
 
+% orcIDs
+\usepackage{orcidlink}
+
 %% annoying stuff for publication
 \usepackage{setspace}
 \doublespacing
@@ -53,10 +56,10 @@
 \begin{document}
 
 \title{Bridging forward-in-time and coalescent simulations using pyslim}
-\author[1,$\dagger$]{Shyamalika Gopalan}
-\author[2,3,$\dagger$]{Murillo F. Rodrigues}
-\author[3,4]{Peter L. Ralph}  % 0000-0002-9459-6866
-\author[5]{Benjamin C. Haller}
+\author[1,$\dagger$,\orcidlink{0000-0002-2608-8472}]{Shyamalika Gopalan}
+\author[2,3,$\dagger$,\orcidlink{0000-0001-7508-1384}]{Murillo F. Rodrigues}
+\author[3,4,\orcidlink{0000-0002-9459-6866}]{Peter L. Ralph}
+\author[5,\orcidlink{0000-0003-1874-8327}]{Benjamin C. Haller}
 
 \affil[1]{Department of Genetics and Biochemistry and Center for Human Genetics, Clemson University}
 \affil[2]{Division of Genetics, Oregon National Primate Center, Oregon Health \& Science University}
@@ -677,7 +680,7 @@ will influence their fitness as the population continues to evolve.
 
 A coalescent simulation from \msprime
 is statistically identical to that produced by a forwards-time simulation
-(using precisely what model depends on some details).
+(precisely which forwards-time model depends on some details).
 So, doing burn-in with \msprime is (nearly) identical to running a very long burn-in period
 with \slim and the same population size.
 (The only caveat here has to do with differences between discrete and continuous time.)
