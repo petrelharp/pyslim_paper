@@ -682,10 +682,10 @@ So, doing burn-in with \msprime is (nearly) identical to running a very long bur
 with \slim and the same population size.
 (The only caveat here has to do with differences between discrete and continuous time.)
 This \slim burn-in would need to be long enough so that everything has ``coalesced''.
-This often takes 20 or 30 times $N_e$ generations.
+As discussed in \citet{haller_tree-sequence_2019}, this often takes 20 or 30 times $N_e$ generations.
 So, it is tempting to use \slim's option that allows for ``checking for coalescence''
 and stop the burn-in when coalescence is reached.
-However, as discussed in \citet{haller_tree-sequence_2019}, 
+However, as pointed out by the \slim manual,
 this is incorrect: the first time coalescence is reached is special, and has lower diversity than a typical time point.
 
 
