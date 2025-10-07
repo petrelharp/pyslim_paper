@@ -12,3 +12,4 @@ _minted
 .Rhistory
 __pycache__
 .snakemake
+public_code

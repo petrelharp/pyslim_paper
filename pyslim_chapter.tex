@@ -16,15 +16,20 @@
 \usepackage{placeins}
 \usepackage{flafter}
 \usepackage{floatrow}
+% \usepackage{float}
 \usepackage{subcaption}
 \usepackage{minted} 
 \setminted[python]{breaklines}
 \usepackage{caption}
-\usepackage{float}
 \usepackage{csvsimple}
 \usepackage{booktabs}
 \usepackage{siunitx}
-\usepackage{natbib}
+\usepackage[numbers,round,sort]{natbib}
+
+%% annoying stuff for publication
+\usepackage{setspace}
+\doublespacing
+\usepackage[figuresonly,nolists,nomarkers]{endfloat}
 
 % local definitions
 \newcommand{\msprime}[0]{\texttt{msprime}\xspace}
@@ -43,14 +48,14 @@
 \definecolor{bg}{rgb}{0.95,0.95,0.98}
 \newminted[pycon]{pycon}{bgcolor=bg, linenos=true, tabsize=4}
 
-%\linenumbers
+\linenumbers
 
 \begin{document}
 
 \title{Bridging forward-in-time and coalescent simulations using pyslim}
 \author[1,$\dagger$]{Shyamalika Gopalan}
 \author[2,3,$\dagger$]{Murillo F. Rodrigues}
-\author[3,4]{Peter L. Ralph}
+\author[3,4]{Peter L. Ralph}  % 0000-0002-9459-6866
 \author[5]{Benjamin C. Haller}
 
 \affil[1]{Department of Genetics and Biochemistry and Center for Human Genetics, Clemson University}
@@ -84,7 +89,7 @@
 \date{}
 
 
-\section*{Introduction}
+\section{Introduction}
 % The importance of simulations in popgen and flavors of simulations
 Simulations have become an invaluable tool in population genetics over the past six decades,
 allowing researchers to model increasingly complex evolutionary scenarios.
@@ -126,6 +131,9 @@ in the spatial simulations of \citet{battey_space_2020} and \citet{petr_slendr_2
 As described later in this chapter,
 \citet{rodrigues_shared_2024} performed whole-chromosome simulations of 10 million years of the entire great apes history,
 which would not have been possible without hybrid simulation techniques.
+%% NOT citing this because they recommend doing burn-in with CheckCoalescent
+% For a recent review (and benchmarking) of these approaches,
+% see \citet{johnson2024population}.
 
 % something here to motivate the pathogen evolution scenario we present?
 
@@ -143,8 +151,13 @@ the main uses of \pyslim in conducting hybrid simulations, specifically:
 (ii) generation of initial diversity using the coalescent process for forward-in-time simulations with selection,
 (iii) parallelization of multi-population simulations.
 Finally, to illustrate the realism that can be achieved with a hybrid approach, we present a vignette of an organism evolving under a complex life history.
-For further details on these examples, refer to the \pyslim{} documentation (\url{https://tskit.dev/pyslim/docs/latest}), from which some of the text presented here was adapted.
-The code used in this paper is available in the accompanying Jupyter notebooks at \url{https://github.com/petrelharp/pyslim_paper/tree/main/code}.
+For introductions on using \msprime and \slim,
+see Chapters 14 and 15 of this volume.
+For further details on these examples,
+refer to the \pyslim{} documentation (\url{https://tskit.dev/pyslim/docs/latest}),
+from which some of the text presented here was adapted.
+The code used in this paper is available in the accompanying git repository at
+\url{https://github.com/StatisticalPopulationGenomics-2ndEd/pyslim/}.
 
 %%%%%%%%%%%%%%%%%%%%%
 \section{Tree sequences and \slim}
@@ -245,7 +258,7 @@ so parentage information is also available even if no genetic material has been 
 but only if both parent and child individuals are represented in the tree sequence.
 
 %%%%%%%% %%%%%%%%%%%%%%
-\section*{Historical individuals}
+\section{Historical individuals}
 By default, only the nodes associated with individuals alive in the final generation are part of the set of samples.
 However, there are many cases where we might want to retain the complete ancestry, and other metadata, for
 historical individuals.
@@ -448,6 +461,7 @@ This means that \emph{different} mutation and recombination rates need to be pas
 because these rates in \slim are ``per generation'' while for \msprime they are ``per unit time''.
 For these and other considerations, see the \pyslim documentation.
 
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Generating initial diversity} % is there a better name for this process? this doesn`t have the same ring as 'recapitation'
 
@@ -479,7 +493,7 @@ not under selection in the wild. To implement this, we will:
         and edit the mutation metadata to assign selection coefficients; and finally
 (4) run the \slim portion of the simulation.
 
-\subsection*{Annotating a tree sequence with \slim metadata}
+\subsection{Annotating a tree sequence with \slim metadata}
 
 Suppose we run the following coalescent simulation in \msprime:
 \begin{minted}[fontsize=\small, linenos, bgcolor=gray!10]{python}
@@ -521,7 +535,7 @@ If we wanted, for instance, a sexual population we would then edit these values.
 Below, we show how to edit the metadata of mutations; other modifications such as modifying individuals
 can be done in a similar manner.
 
-\subsection*{Adding mutations with \slim metadata}
+\subsection{Adding mutations with \slim metadata}
 
 The simulation thus far had no mutations, so
 the next step is to generate the initial genetic diversity that natural selection will act on
@@ -621,7 +635,7 @@ correspond to the \verb|slim_time| recorded in metadata ($-13$ generations in th
 off by one, depending on the model type''. For a detailed discussion of how time is converted between the tree sequence and the \slim
 model, see the \pyslim documentation.
 
-\subsection*{Loading into \slim}
+\subsection{Loading into \slim}
 
 We can finally move on to the forward-in-time component of our hybrid simulation.
 First, suppose we have written out the tree sequence from the previous section to file
@@ -659,6 +673,22 @@ for an additional 100 generations.
 However, in this phase, an individual's genetic make-up (\ie the non-neutral genetic variants they carry)
 will influence their fitness as the population continues to evolve.
 
+\subsection{On the equivalence of recapitation and burn-in}
+
+A coalescent simulation from \msprime
+is statistically identical to that produced by a forwards-time simulation
+(using precisely what model depends on some details).
+So, doing burn-in with \msprime is (nearly) identical to running a very long burn-in period
+with \slim and the same population size.
+(The only caveat here has to do with differences between discrete and continuous time.)
+This \slim burn-in would need to be long enough so that everything has ``coalesced''.
+This often takes 20 or 30 times $N_e$ generations.
+So, it is tempting to use \slim's option that allows for ``checking for coalescence''
+and stop the burn-in when coalescence is reached.
+However, as discussed in \citet{haller_tree-sequence_2019}, 
+this is incorrect: the first time coalescence is reached is special, and has lower diversity than a typical time point.
+
+
 \section{Generating genetic data}
 
 Next, we will discuss some final steps for generating a genetic dataset from our hybrid simulation that has many of the properties of real data that is generated from
@@ -666,7 +696,7 @@ sequencing or genotyping real organisms. Whether it was generated by recapitatio
 diversity with a coalescent simulation, the following steps are necessary for adding realistic levels of neutral diversity and for ultimately producing a
 file that can be analyzed by standard methods.
 
-\subsection*{Overlaying neutral mutations}
+\subsection{Overlaying neutral mutations}
 In our two previous sections outlining the two main methods of performing a hybrid simulation, we did not bother to add neutral mutations to the tree sequence.
 This is because neutral mutations do not impact the shape of the genealogy, and so adding them after the fact is equivalent to tracking them as the
 simulation proceeds;
@@ -690,7 +720,7 @@ We use \pyslim's \verb|next_slim_mutation_id| to identify the \slim mutation ID 
 which is important as all \slim mutation IDs in the tree sequence must be unique.
 Additionally, we include \verb|keep=True| so that existing mutations are not discarded.
 
-\subsection*{VCF output}
+\subsection{VCF output}
 The final step we demonstrate is to output the \slim-coded genotype information as a Variant Call Format (VCF) file.
 Doing so requires remapping some of the information to a form that resembles real genetic data.
 For example, the \slim mutation model encodes the ancestral state of every site as the empty string and the derived state
@@ -738,6 +768,26 @@ in practice many things can go wrong.
 To ensure that we can put them together smoothly,
 we need to make sure that the parts of shared history recorded in each simulation agree.
 This is discussed in more detail below.
+
+\subsubsection{Coordinates in the VCF}
+
+There is one more source of VCF-related problems: position 0.
+The VCF standard says that positions must be positive.
+\slim and \msprime both, by default, have genomes that begin at 0.
+So it is easy to produce a VCF using the pipeline above with a variant at position 0,
+and this causes problems with some downstream tools.
+To deal with this \slim \textbf{adds one to all positions} on VCF output
+(and then subtracts one when reading in VCFs).
+On the other hand, \tskit is agnostic: it just represents coordinates and so takes no position
+about where the start of the chromosome should be.
+To deal with situations like this, \tskit's \verb|write_vcf| method of a tree sequence
+has a \verb|position_transform| argument.
+For instance, passing \verb|lambda x: np.fmax(1, np.round(x))| will move any variant at position 0 to position 1
+(which may be less confusing than shifting by one).
+Or, passing \verb|lambda x: x + 1| imitate \slim's default output.
+If your output contains a variant at position 0, \verb|write_vcf| throws an error
+(which can be disabled).
+
 
 \section{Parallelizing forward-in-time simulations of multiple species}
 
@@ -842,7 +892,7 @@ Figure~\ref{fig:union} illustrates how this works.
      these new nodes and relationships are shown in light red in the result.
      \label{fig:union}
      }
-    \end{figure}
+\end{figure}
 
 The key to correctly combining a given pair of tree sequences is to identify which parts of each are shared between the two.
 There are potentially many ways to do this;
@@ -1010,7 +1060,7 @@ which occur when a host individual is infected from more than one source.
         Nodes in this figure represent individual host infections, while the arrows represent the direction in which pathogens are transmitted from one to the next. Here, red arrows represent cases of reticulation in the transmission graph, where a host infection is founded by pathogens from two distinct source infections.
      \label{fig:DAG_w_reticulation}
      }
-    \end{figure}
+\end{figure}
 
 We can model a pathogen infecting a host species as a large meta-population, where each infected host constitutes a distinct pathogen deme.
 Similar to our previous section, we can represent the relationship between individual hosts with a phylogeny-like branching structure, as in Figure~\ref{fig:DAG_w_reticulation}.
@@ -1276,7 +1326,7 @@ but would be challenging to model realistically without parallelization.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%
-\section*{Discussion}
+\section{Discussion}
 
 Moving from simulation of genotype data to full ARGs presents many opportunities for evolutionary genomic inference.
 ARGs can store a great deal more information about a population's evolutionary history,
