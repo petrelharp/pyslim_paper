@@ -24,3 +24,9 @@ clean:
 
 %.pdf : %.md
 	pandoc -f markdown -o $@ $<
+
+pyslim_chapter-diff%.tex : pyslim_chapter.tex
+	latexdiff-git --force -r $* $<
+
+diff-to-submitted.pdf : pyslim_chapter-diffa6d8c2e.pdf
+	cp $< $@
