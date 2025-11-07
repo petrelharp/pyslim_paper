@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="100%" height="100%" viewBox="0 0 350 250" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:1.5;">
+    <g id="graph0" transform="matrix(1,0,0,1,-104,323)">
+        <g>
+            <g transform="matrix(0.618375,0,0,0.618812,106.473,-75.4752)">
+                <rect x="-4" y="-400" width="566" height="404" style="fill:white;"/>
+            </g>
+            <g transform="matrix(1,0,0,1,-14,0)">
+                <g transform="matrix(0.647482,0,0,0.417266,201.504,-317.587)">
+                    <path d="M61,173L200,173" style="fill:none;stroke:rgb(150,93,167);stroke-width:14.69px;"/>
+                </g>
+                <g transform="matrix(4.66952e-17,-1.07914,0.76259,6.60781e-17,109.072,-28.5727)">
+                    <path d="M61,173L200,173" style="fill:none;stroke:rgb(150,93,167);stroke-width:8.56px;"/>
+                </g>
+                <g transform="matrix(4.66952e-17,-0.809353,0.76259,4.95585e-17,199.072,-139.779)">
+                    <path d="M61,173L200,173" style="fill:none;stroke:rgb(132,169,85);stroke-width:10.17px;"/>
+                </g>
+                <g transform="matrix(1.29496,0,0,0.76259,162.007,-225.328)">
+                    <path d="M61,173L200,173" style="fill:none;stroke:rgb(150,93,167);stroke-width:7.53px;"/>
+                </g>
+                <g transform="matrix(0.647482,0,0,0.417266,291.504,-374.787)">
+                    <path d="M61,173L200,173" style="fill:none;stroke:rgb(132,169,85);stroke-width:14.69px;"/>
+                </g>
+                <g transform="matrix(0.647482,0,0,0.417266,291.504,-260.287)">
+                    <path d="M61,173L200,173" style="fill:none;stroke:rgb(132,169,85);stroke-width:14.69px;"/>
+                </g>
+                <g transform="matrix(1,0,0,1,120.5,-11.6)">
+                    <g>
+                        <g transform="matrix(0.793103,0,0,0.571429,167.655,-309.857)">
+                            <path d="M211,22.5C211,16.705 207.61,12 203.435,12L131.565,12C127.39,12 124,16.705 124,22.5L124,43.5C124,49.295 127.39,54 131.565,54L203.435,54C207.61,54 211,49.295 211,43.5L211,22.5Z" style="fill:white;stroke:rgb(132,169,85);stroke-width:4.34px;"/>
+                        </g>
+                        <g transform="matrix(1,0,0,1,271.095,-286.567)">
+                            <text x="0px" y="0px" style="font-family:'CourierNewPS-BoldMT', 'Courier New', monospace;font-weight:700;font-size:14px;fill:rgb(132,169,85);">A.trees</text>
+                        </g>
+                    </g>
+                </g>
+                <g transform="matrix(1,0,0,1,120.5,102.9)">
+                    <g>
+                        <g transform="matrix(0.793103,0,0,0.571429,167.655,-309.857)">
+                            <path d="M211,22.5C211,16.705 207.61,12 203.435,12L131.565,12C127.39,12 124,16.705 124,22.5L124,43.5C124,49.295 127.39,54 131.565,54L203.435,54C207.61,54 211,49.295 211,43.5L211,22.5Z" style="fill:white;stroke:rgb(132,169,85);stroke-width:4.34px;"/>
+                        </g>
+                        <g transform="matrix(1,0,0,1,271.095,-286.567)">
+                            <text x="0px" y="0px" style="font-family:'CourierNewPS-BoldMT', 'Courier New', monospace;font-weight:700;font-size:14px;fill:rgb(132,169,85);">B.trees</text>
+                        </g>
+                    </g>
+                </g>
+                <g transform="matrix(1,0,0,1,142,-29.4)">
+                    <g transform="matrix(0.793103,0,0,0.571429,56.6552,-234.857)">
+                        <path d="M211,22.5C211,16.705 207.61,12 203.435,12L131.565,12C127.39,12 124,16.705 124,22.5L124,43.5C124,49.295 127.39,54 131.565,54L203.435,54C207.61,54 211,49.295 211,43.5L211,22.5Z" style="fill:white;stroke:rgb(150,93,167);stroke-width:4.34px;"/>
+                    </g>
+                    <g transform="matrix(1,0,0,1,160.095,-211.567)">
+                        <text x="0px" y="0px" style="font-family:'CourierNewPS-BoldMT', 'Courier New', monospace;font-weight:700;font-size:14px;fill:rgb(150,93,167);">I.trees</text>
+                    </g>
+                </g>
+                <g transform="matrix(1,0,0,1,74.5,16.6)">
+                    <g transform="matrix(0.793103,0,0,0.571429,213.655,-128.857)">
+                        <path d="M211,22.5C211,16.705 207.61,12 203.435,12L131.565,12C127.39,12 124,16.705 124,22.5L124,43.5C124,49.295 127.39,54 131.565,54L203.435,54C207.61,54 211,49.295 211,43.5L211,22.5Z" style="fill:white;stroke:rgb(150,93,167);stroke-width:4.34px;"/>
+                    </g>
+                    <g transform="matrix(1,0,0,1,317.095,-105.567)">
+                        <text x="0px" y="0px" style="font-family:'CourierNewPS-BoldMT', 'Courier New', monospace;font-weight:700;font-size:14px;fill:rgb(150,93,167);">C.trees</text>
+                    </g>
+                </g>
+                <g transform="matrix(0.647482,0,0,0.597122,91.0036,-272.702)">
+                    <path d="M61,173L200,173" style="fill:none;stroke:rgb(188,93,65);stroke-width:12.84px;"/>
+                </g>
+                <g transform="matrix(1,0,0,1,-90,-26.4)">
+                    <g transform="matrix(1.11494,0,0,0.571429,144.247,-161.857)">
+                        <path d="M211,22.5C211,16.705 208.589,12 205.619,12L129.381,12C126.411,12 124,16.705 124,22.5L124,43.5C124,49.295 126.411,54 129.381,54L205.619,54C208.589,54 211,49.295 211,43.5L211,22.5Z" style="fill:white;stroke:rgb(188,93,65);stroke-width:3.39px;"/>
+                    </g>
+                    <g transform="matrix(1,0,0,1,288.993,-138.567)">
+                        <text x="0px" y="0px" style="font-family:'CourierNewPS-BoldMT', 'Courier New', monospace;font-weight:700;font-size:14px;fill:rgb(188,93,65);">root.trees</text>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>
