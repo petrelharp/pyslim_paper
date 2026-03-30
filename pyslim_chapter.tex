@@ -34,6 +34,12 @@
 \doublespacing
 \usepackage[figuresonly,nolists,nomarkers]{endfloat}
 
+% reduce size of authors and affil
+\usepackage{authblk}
+
+\renewcommand\Authfont{\small}
+\renewcommand\Affilfont{\footnotesize}
+
 % local definitions
 \newcommand{\msprime}[0]{\texttt{msprime}\xspace}
 \newcommand{\tskit}[0]{\texttt{tskit}\xspace}
@@ -51,11 +57,20 @@
 \definecolor{bg}{rgb}{0.95,0.95,0.98}
 \newminted[pycon]{pycon}{bgcolor=bg, linenos=true, tabsize=4}
 
+%% Include a Running Head
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[R]{\small Hybrid simulations with \pyslim}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+
 \linenumbers
 
 \begin{document}
 
 \title{Bridging forward-in-time and coalescent simulations using pyslim}
+
 \author[1,$\dagger$,\orcidlink{0000-0002-2608-8472}]{Shyamalika Gopalan}
 \author[2,3,$\dagger$,\orcidlink{0000-0001-7508-1384}]{Murillo F. Rodrigues}
 \author[3,4,\orcidlink{0000-0002-9459-6866}]{Peter L. Ralph}
@@ -89,6 +104,9 @@
     and parallelization of simulations, first across branches of a phylogenetic tree,
     and then across the populations of parasites infecting different hosts.
 }
+\begin{center}
+\textbf{Keywords:} hybrid simulation, forward-in-time simulation, coalescent simulation, tree sequence, ancestral recombination graph
+\end{center}
 \date{}
 
 
@@ -810,7 +828,7 @@ Figure~\ref{fig:phylo} shows the simple example we work with.
 
 \begin{figure}[h!]
     \centering
-     \includegraphics[width=0.33\textwidth]{code/parallelizing_multiple_species/phylo.pdf}
+     \includegraphics[width=0.5\textwidth]{code/parallelizing_multiple_species/phylo.pdf}
      \caption{
          Example phylogeny.
          Branches with the same color can be simulated in parallel if there is no migration between them.
